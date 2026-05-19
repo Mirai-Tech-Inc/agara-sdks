@@ -1,0 +1,72 @@
+[project]
+name = "agara-sdk"
+version = "0.2.0"
+description = "Python client for the agara prediction-markets trading API."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Agara" }]
+keywords = ["prediction-markets", "trading", "agara"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Financial and Insurance Industry",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Office/Business :: Financial",
+]
+dependencies = [
+    "requests >= 2.31",
+]
+
+[project.optional-dependencies]
+# `pip install 'agara-sdk[streaming]'` pulls in `websockets` for
+# `agara_sdk.streaming`. The HTTP client (`AgaraClient`) works
+# without it.
+streaming = [
+    "websockets >= 12",
+]
+# `pip install -e ".[dev]"` to run the test suite locally.
+# `responses` mocks `requests` at the HTTP layer — no network, no
+# fixtures to spin up — which is the right grain for smoke-testing
+# the request shape, header propagation, micro encode/decode, and
+# the HTTP-status → exception mapping.
+dev = [
+    "pytest >= 7",
+    "pytest-asyncio >= 0.23",
+    "responses >= 0.25",
+    "websockets >= 12",
+]
+
+[project.urls]
+Documentation = "https://d3r180aqvl5ynd.cloudfront.net/docs"
+Repository = "https://github.com/Mirai-Tech-Inc/prediction-markets"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["agara_sdk"]
+# PEP 561: shipping `agara_sdk/py.typed` tells type checkers (mypy,
+# pyright) that the package's inline annotations are authoritative.
+# Hatchling includes non-`.py` files from listed packages by default,
+# but we declare it explicitly via `force-include` so the marker can't
+# silently drop out of a wheel build.
+[tool.hatch.build.targets.wheel.force-include]
+"agara_sdk/py.typed" = "agara_sdk/py.typed"
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "agara_sdk/",
+    "README.md",
+    "LICENSE",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
