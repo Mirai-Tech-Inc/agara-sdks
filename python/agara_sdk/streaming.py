@@ -144,8 +144,11 @@ def account_events() -> Channel:
 
 @dataclass(frozen=True)
 class Level:
-    price: float
-    size: float
+    """Engine-native level. Convert to dollars / shares with the
+    enclosing frame's `price_scale` / `size_scale`."""
+
+    price: int
+    size: int
 
 
 @dataclass(frozen=True)
@@ -154,7 +157,9 @@ class OrderbookSnapshot:
     sequence: int
     bids: list[Level]
     asks: list[Level]
-    tick_size: str
+    tick_size: int
+    price_scale: int
+    size_scale: int
 
 
 @dataclass(frozen=True)
@@ -164,6 +169,8 @@ class OrderbookDelta:
     # Each entry replaces the level at that price; `size == 0` removes.
     bids: list[Level]
     asks: list[Level]
+    price_scale: int
+    size_scale: int
 
 
 @dataclass(frozen=True)
@@ -172,6 +179,8 @@ class BestQuote:
     sequence: int
     bid: Optional[Level]
     ask: Optional[Level]
+    price_scale: int
+    size_scale: int
 
 
 @dataclass(frozen=True)
@@ -203,14 +212,14 @@ class MarketResumed:
 class OutcomeProposed:
     condition_id: str
     sequence: int
-    proposed_outcome: int
+    proposed_token_id: str
 
 
 @dataclass(frozen=True)
 class MarketResolved:
     condition_id: str
     sequence: int
-    winning_outcome: int
+    winning_token_id: str
 
 
 @dataclass(frozen=True)
@@ -231,25 +240,45 @@ class Trade:
     condition_id: str
     sequence: int
     fill_id: str
-    outcome: int
+    # Token traded on each side. NORMAL fills have
+    # `taker_token_id == maker_token_id`. MINT / MERGE fills touch two
+    # outcomes — taker on one side, maker on the other — so the two
+    # differ. Consumers can render normal trades against either token;
+    # mint / merge need both to fully attribute the collateral split.
+    taker_token_id: str
+    maker_token_id: str
     side: Literal["buy", "sell", "unspecified"]
-    price: float
-    size: float
+    # Engine-native; convert with `price / price_scale`. Self-describing
+    # — scales travel with the event.
+    price: int
+    size: int
+    price_scale: int
+    size_scale: int
     settlement_mode: Literal["normal", "mint", "merge", "unspecified"]
 
 
 @dataclass(frozen=True)
 class Fill:
+    # Envelope-level sequence — monotonic across the whole account
+    # event log for the subscribing user. Use it to detect gaps after a
+    # `sequence_reset`.
     sequence: int
     role: Literal["taker", "maker"]
     fill_id: str
-    order_id: Optional[str]
-    engine_seq_num: int
-    market_id: str
-    outcome: int
+    # Agara UUID for the side this fill is rendered against (taker
+    # order's UUID on `role="taker"`, maker order's on `role="maker"`).
+    order_id: str
+    # The outcome token traded — YES or NO. The role-relative side:
+    # on NORMAL fills both roles trade the same token; on MINT / MERGE
+    # the two roles touch different tokens.
+    token_id: str
     side: Literal["buy", "sell", "unspecified"]
-    price_micro: int
-    shares_micro: int
+    # Engine-native units; convert with `price / price_scale` and
+    # `size / size_scale`.
+    price: int
+    size: int
+    price_scale: int
+    size_scale: int
     settlement_mode: Literal["normal", "mint", "merge", "unspecified"]
     fee_micro_usdc: int
 
@@ -257,43 +286,45 @@ class Fill:
 @dataclass(frozen=True)
 class OrderAccepted:
     sequence: int
-    order_id: Optional[str]
-    engine_seq_num: int
-    market_id: str
-    outcome: int
+    order_id: str
+    token_id: str
     side: Literal["buy", "sell", "unspecified"]
-    price_micro: int
-    remaining_shares_micro: int
+    price: int
+    remaining_size: int
+    price_scale: int
+    size_scale: int
     tif: Literal["gtc", "fak", "fok", "unspecified"]
 
 
 @dataclass(frozen=True)
 class OrderCancelled:
     sequence: int
-    order_id: Optional[str]
-    engine_seq_num: int
-    market_id: str
-    outcome: int
+    order_id: str
+    token_id: str
     side: Literal["buy", "sell", "unspecified"]
-    price_micro: int
-    remaining_shares_micro: int
+    price: int
+    remaining_size: int
+    price_scale: int
+    size_scale: int
     reason: Literal["user", "fak_remainder", "self_trade_prevention", "unspecified"]
 
 
 @dataclass(frozen=True)
 class TokensMinted:
     sequence: int
-    engine_seq_num: int
-    market_id: str
-    shares_micro: int
+    # Per-market identifier — mint affects both outcomes by
+    # construction (one collateral → one YES + one NO).
+    condition_id: str
+    size: int
+    size_scale: int
 
 
 @dataclass(frozen=True)
 class TokensMerged:
     sequence: int
-    engine_seq_num: int
-    market_id: str
-    shares_micro: int
+    condition_id: str
+    size: int
+    size_scale: int
 
 
 @dataclass(frozen=True)
@@ -408,13 +439,13 @@ class Reconnect:
 
 
 def _level(entry: list[Any]) -> Level:
-    return Level(price=float(entry[0]), size=float(entry[1]))
+    return Level(price=int(entry[0]), size=int(entry[1]))
 
 
 def _optional_level(entry: Optional[dict[str, Any]]) -> Optional[Level]:
     if entry is None:
         return None
-    return Level(price=float(entry["price"]), size=float(entry["size"]))
+    return Level(price=int(entry["price"]), size=int(entry["size"]))
 
 
 def _int(value: Any) -> int:
@@ -440,10 +471,10 @@ _MARKET_STATUS_DECODERS: dict[str, Callable[[str, int, dict[str, Any]], Frame]] 
     "market_halted": lambda cid, seq, _: MarketHalted(cid, seq),
     "market_resumed": lambda cid, seq, _: MarketResumed(cid, seq),
     "outcome_proposed": lambda cid, seq, d: OutcomeProposed(
-        condition_id=cid, sequence=seq, proposed_outcome=int(d["proposed_outcome"])
+        condition_id=cid, sequence=seq, proposed_token_id=str(d["proposed_token_id"])
     ),
     "market_resolved": lambda cid, seq, d: MarketResolved(
-        condition_id=cid, sequence=seq, winning_outcome=int(d["winning_outcome"])
+        condition_id=cid, sequence=seq, winning_token_id=str(d["winning_token_id"])
     ),
     "fee_policy_updated": lambda cid, seq, _: FeePolicyUpdated(cid, seq),
     "cross_match_toggled": lambda cid, seq, d: CrossMatchToggled(
@@ -457,13 +488,13 @@ def _decode_fill(seq: int, d: dict[str, Any]) -> Fill:
         sequence=seq,
         role=d["role"],
         fill_id=str(d["fill_id"]),
-        order_id=_opt_str(d.get("order_id")),
-        engine_seq_num=_int(d["engine_seq_num"]),
-        market_id=str(d["market_id"]),
-        outcome=int(d["outcome"]),
+        order_id=str(d["order_id"]),
+        token_id=str(d["token_id"]),
         side=d["side"],
-        price_micro=_int(d["price_micro"]),
-        shares_micro=_int(d["shares_micro"]),
+        price=_int(d["price"]),
+        size=_int(d["size"]),
+        price_scale=_int(d["price_scale"]),
+        size_scale=_int(d["size_scale"]),
         settlement_mode=d["settlement_mode"],
         fee_micro_usdc=_int(d["fee_micro_usdc"]),
     )
@@ -472,13 +503,13 @@ def _decode_fill(seq: int, d: dict[str, Any]) -> Fill:
 def _decode_order_accepted(seq: int, d: dict[str, Any]) -> OrderAccepted:
     return OrderAccepted(
         sequence=seq,
-        order_id=_opt_str(d.get("order_id")),
-        engine_seq_num=_int(d["engine_seq_num"]),
-        market_id=str(d["market_id"]),
-        outcome=int(d["outcome"]),
+        order_id=str(d["order_id"]),
+        token_id=str(d["token_id"]),
         side=d["side"],
-        price_micro=_int(d["price_micro"]),
-        remaining_shares_micro=_int(d["remaining_shares_micro"]),
+        price=_int(d["price"]),
+        remaining_size=_int(d["remaining_size"]),
+        price_scale=_int(d["price_scale"]),
+        size_scale=_int(d["size_scale"]),
         tif=d["tif"],
     )
 
@@ -486,13 +517,13 @@ def _decode_order_accepted(seq: int, d: dict[str, Any]) -> OrderAccepted:
 def _decode_order_cancelled(seq: int, d: dict[str, Any]) -> OrderCancelled:
     return OrderCancelled(
         sequence=seq,
-        order_id=_opt_str(d.get("order_id")),
-        engine_seq_num=_int(d["engine_seq_num"]),
-        market_id=str(d["market_id"]),
-        outcome=int(d["outcome"]),
+        order_id=str(d["order_id"]),
+        token_id=str(d["token_id"]),
         side=d["side"],
-        price_micro=_int(d["price_micro"]),
-        remaining_shares_micro=_int(d["remaining_shares_micro"]),
+        price=_int(d["price"]),
+        remaining_size=_int(d["remaining_size"]),
+        price_scale=_int(d["price_scale"]),
+        size_scale=_int(d["size_scale"]),
         reason=d["reason"],
     )
 
@@ -500,18 +531,18 @@ def _decode_order_cancelled(seq: int, d: dict[str, Any]) -> OrderCancelled:
 def _decode_tokens_minted(seq: int, d: dict[str, Any]) -> TokensMinted:
     return TokensMinted(
         sequence=seq,
-        engine_seq_num=_int(d["engine_seq_num"]),
-        market_id=str(d["market_id"]),
-        shares_micro=_int(d["shares_micro"]),
+        condition_id=str(d["condition_id"]),
+        size=_int(d["size"]),
+        size_scale=_int(d["size_scale"]),
     )
 
 
 def _decode_tokens_merged(seq: int, d: dict[str, Any]) -> TokensMerged:
     return TokensMerged(
         sequence=seq,
-        engine_seq_num=_int(d["engine_seq_num"]),
-        market_id=str(d["market_id"]),
-        shares_micro=_int(d["shares_micro"]),
+        condition_id=str(d["condition_id"]),
+        size=_int(d["size"]),
+        size_scale=_int(d["size_scale"]),
     )
 
 
@@ -581,11 +612,18 @@ def _decode_update(raw: dict[str, Any]) -> Frame:
                 sequence=sequence,
                 bids=bids,
                 asks=asks,
-                tick_size=str(data.get("tick_size", "")),
+                tick_size=_int(data["tick_size"]),
+                price_scale=_int(data["price_scale"]),
+                size_scale=_int(data["size_scale"]),
             )
         if kind == "delta":
             return OrderbookDelta(
-                token_id=token_id, sequence=sequence, bids=bids, asks=asks
+                token_id=token_id,
+                sequence=sequence,
+                bids=bids,
+                asks=asks,
+                price_scale=_int(data["price_scale"]),
+                size_scale=_int(data["size_scale"]),
             )
         return UnknownFrame(raw=raw)
     if channel == "best_quote":
@@ -594,6 +632,8 @@ def _decode_update(raw: dict[str, Any]) -> Frame:
             sequence=sequence,
             bid=_optional_level(data.get("bid")),
             ask=_optional_level(data.get("ask")),
+            price_scale=_int(data["price_scale"]),
+            size_scale=_int(data["size_scale"]),
         )
     if channel == "market_status":
         kind = data.get("kind")
@@ -608,10 +648,13 @@ def _decode_update(raw: dict[str, Any]) -> Frame:
             condition_id=raw["condition_id"],
             sequence=sequence,
             fill_id=str(data["fill_id"]),
-            outcome=int(data["outcome"]),
+            taker_token_id=str(data["taker_token_id"]),
+            maker_token_id=str(data["maker_token_id"]),
             side=data["side"],
-            price=float(data["price"]),
-            size=float(data["size"]),
+            price=_int(data["price"]),
+            size=_int(data["size"]),
+            price_scale=_int(data["price_scale"]),
+            size_scale=_int(data["size_scale"]),
             settlement_mode=data["settlement_mode"],
         )
     if channel == _ACCOUNT_CHANNEL:

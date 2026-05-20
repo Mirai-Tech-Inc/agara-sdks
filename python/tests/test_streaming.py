@@ -33,17 +33,21 @@ def test_orderbook_snapshot_decodes():
         "sequence": 12345,
         "data": {
             "kind": "snapshot",
-            "bids": [["0.60", "100"], ["0.59", "50"]],
-            "asks": [["0.62", "80"]],
-            "tick_size": "0.01",
+            "bids": [[60, 100], [59, 50]],
+            "asks": [[62, 80]],
+            "tick_size": 1,
+            "price_scale": 100,
+            "size_scale": 1,
         },
     })
     assert isinstance(frame, streaming.OrderbookSnapshot)
     assert frame.token_id == "21742"
     assert frame.sequence == 12345
-    assert frame.bids == [streaming.Level(0.60, 100.0), streaming.Level(0.59, 50.0)]
-    assert frame.asks == [streaming.Level(0.62, 80.0)]
-    assert frame.tick_size == "0.01"
+    assert frame.bids == [streaming.Level(60, 100), streaming.Level(59, 50)]
+    assert frame.asks == [streaming.Level(62, 80)]
+    assert frame.tick_size == 1
+    assert frame.price_scale == 100
+    assert frame.size_scale == 1
 
 
 def test_orderbook_delta_decodes():
@@ -54,13 +58,17 @@ def test_orderbook_delta_decodes():
         "sequence": 12346,
         "data": {
             "kind": "delta",
-            "bids": [["0.60", "120"]],
-            "asks": [["0.62", "0"]],
+            "bids": [[60, 120]],
+            "asks": [[62, 0]],
+            "price_scale": 100,
+            "size_scale": 1,
         },
     })
     assert isinstance(frame, streaming.OrderbookDelta)
-    assert frame.bids == [streaming.Level(0.60, 120.0)]
-    assert frame.asks == [streaming.Level(0.62, 0.0)]
+    assert frame.bids == [streaming.Level(60, 120)]
+    assert frame.asks == [streaming.Level(62, 0)]
+    assert frame.price_scale == 100
+    assert frame.size_scale == 1
 
 
 def test_best_quote_handles_empty_side():
@@ -70,13 +78,17 @@ def test_best_quote_handles_empty_side():
         "token_id": "21742",
         "sequence": 99,
         "data": {
-            "bid": {"price": "0.60", "size": "120"},
+            "bid": {"price": 60, "size": 120},
             "ask": None,
+            "price_scale": 100,
+            "size_scale": 1,
         },
     })
     assert isinstance(frame, streaming.BestQuote)
-    assert frame.bid == streaming.Level(0.60, 120.0)
+    assert frame.bid == streaming.Level(60, 120)
     assert frame.ask is None
+    assert frame.price_scale == 100
+    assert frame.size_scale == 1
 
 
 def test_market_resolved_decodes():
@@ -85,11 +97,23 @@ def test_market_resolved_decodes():
         "channel": "market_status",
         "condition_id": "0x21",
         "sequence": 12349,
-        "data": {"kind": "market_resolved", "winning_outcome": 0},
+        "data": {"kind": "market_resolved", "winning_token_id": "yes-token"},
     })
     assert isinstance(frame, streaming.MarketResolved)
     assert frame.condition_id == "0x21"
-    assert frame.winning_outcome == 0
+    assert frame.winning_token_id == "yes-token"
+
+
+def test_outcome_proposed_decodes():
+    frame = streaming.decode_frame({
+        "op": "update",
+        "channel": "market_status",
+        "condition_id": "0x21",
+        "sequence": 12350,
+        "data": {"kind": "outcome_proposed", "proposed_token_id": "yes-token"},
+    })
+    assert isinstance(frame, streaming.OutcomeProposed)
+    assert frame.proposed_token_id == "yes-token"
 
 
 def test_market_halted_decodes_without_data_fields():
@@ -112,10 +136,13 @@ def test_trade_decodes():
         "data": {
             "kind": "trade",
             "fill_id": "42",
-            "outcome": 0,
+            "taker_token_id": "yes-token",
+            "maker_token_id": "yes-token",
             "side": "buy",
-            "price": "0.60",
-            "size": "120.00",
+            "price": 60,
+            "size": 120,
+            "price_scale": 100,
+            "size_scale": 1,
             "settlement_mode": "normal",
         },
     })
@@ -123,14 +150,19 @@ def test_trade_decodes():
     assert frame.condition_id == "0x21"
     assert frame.sequence == 12351
     assert frame.fill_id == "42"
-    assert frame.outcome == 0
+    assert frame.taker_token_id == "yes-token"
+    assert frame.maker_token_id == "yes-token"
     assert frame.side == "buy"
-    assert frame.price == 0.60
-    assert frame.size == 120.0
+    assert frame.price == 60
+    assert frame.size == 120
+    assert frame.price_scale == 100
+    assert frame.size_scale == 1
     assert frame.settlement_mode == "normal"
 
 
-def test_trade_mint_settlement_decodes():
+def test_trade_mint_settlement_decodes_with_split_tokens():
+    # MINT fills touch two outcomes — taker buys YES, maker effectively
+    # buys NO via the collateral split. The two token_ids differ.
     frame = streaming.decode_frame({
         "op": "update",
         "channel": "trades",
@@ -139,15 +171,19 @@ def test_trade_mint_settlement_decodes():
         "data": {
             "kind": "trade",
             "fill_id": "43",
-            "outcome": 1,
+            "taker_token_id": "yes-token",
+            "maker_token_id": "no-token",
             "side": "buy",
-            "price": "0.50",
-            "size": "10.00",
+            "price": 50,
+            "size": 10,
+            "price_scale": 100,
+            "size_scale": 1,
             "settlement_mode": "mint",
         },
     })
     assert isinstance(frame, streaming.Trade)
     assert frame.settlement_mode == "mint"
+    assert frame.taker_token_id != frame.maker_token_id
 
 
 def test_unknown_trade_kind_falls_through():
@@ -185,12 +221,12 @@ def test_fill_taker_decodes():
             "role": "taker",
             "fill_id": "fill-1",
             "order_id": "11111111-1111-1111-1111-111111111111",
-            "engine_seq_num": "9001",
-            "market_id": "m-1",
-            "outcome": 0,
+            "token_id": "yes-token",
             "side": "buy",
-            "price_micro": "600000",
-            "shares_micro": "1000000",
+            "price": 60,
+            "size": 1_000_000,
+            "price_scale": 100,
+            "size_scale": 1_000_000,
             "settlement_mode": "normal",
             "fee_micro_usdc": "1234",
         },
@@ -198,15 +234,17 @@ def test_fill_taker_decodes():
     assert isinstance(frame, streaming.Fill)
     assert frame.role == "taker"
     assert frame.fill_id == "fill-1"
-    assert frame.engine_seq_num == 9001
-    assert frame.price_micro == 600_000
-    assert frame.shares_micro == 1_000_000
+    assert frame.token_id == "yes-token"
+    assert frame.price == 60
+    assert frame.size == 1_000_000
+    assert frame.price_scale == 100
+    assert frame.size_scale == 1_000_000
     assert frame.fee_micro_usdc == 1234
     assert frame.settlement_mode == "normal"
     assert frame.sequence == 42
 
 
-def test_fill_with_null_order_id_decodes():
+def test_fill_maker_role_decodes():
     frame = streaming.decode_frame({
         "op": "update",
         "channel": "account_events",
@@ -215,19 +253,21 @@ def test_fill_with_null_order_id_decodes():
             "kind": "fill",
             "role": "maker",
             "fill_id": "fill-2",
-            "order_id": None,
-            "engine_seq_num": "9002",
-            "market_id": "m-1",
-            "outcome": 1,
+            "order_id": "22222222-2222-2222-2222-222222222222",
+            "token_id": "no-token",
             "side": "sell",
-            "price_micro": "400000",
-            "shares_micro": "5000000",
+            "price": 40,
+            "size": 5_000_000,
+            "price_scale": 100,
+            "size_scale": 1_000_000,
             "settlement_mode": "normal",
             "fee_micro_usdc": "0",
         },
     })
     assert isinstance(frame, streaming.Fill)
-    assert frame.order_id is None
+    assert frame.order_id == "22222222-2222-2222-2222-222222222222"
+    assert frame.role == "maker"
+    assert frame.token_id == "no-token"
 
 
 def test_order_accepted_and_cancelled_decode():
@@ -238,17 +278,20 @@ def test_order_accepted_and_cancelled_decode():
         "data": {
             "kind": "order_accepted",
             "order_id": "11111111-1111-1111-1111-111111111111",
-            "engine_seq_num": "100",
-            "market_id": "m-1",
-            "outcome": 0,
+            "token_id": "yes-token",
             "side": "buy",
-            "price_micro": "600000",
-            "remaining_shares_micro": "5000000",
+            "price": 60,
+            "remaining_size": 5_000_000,
+            "price_scale": 100,
+            "size_scale": 1_000_000,
             "tif": "gtc",
         },
     })
     assert isinstance(accepted, streaming.OrderAccepted)
     assert accepted.tif == "gtc"
+    assert accepted.price == 60
+    assert accepted.remaining_size == 5_000_000
+    assert accepted.token_id == "yes-token"
 
     cancelled = streaming.decode_frame({
         "op": "update",
@@ -257,17 +300,19 @@ def test_order_accepted_and_cancelled_decode():
         "data": {
             "kind": "order_cancelled",
             "order_id": "11111111-1111-1111-1111-111111111111",
-            "engine_seq_num": "100",
-            "market_id": "m-1",
-            "outcome": 0,
+            "token_id": "yes-token",
             "side": "buy",
-            "price_micro": "600000",
-            "remaining_shares_micro": "5000000",
+            "price": 60,
+            "remaining_size": 5_000_000,
+            "price_scale": 100,
+            "size_scale": 1_000_000,
             "reason": "user",
         },
     })
     assert isinstance(cancelled, streaming.OrderCancelled)
     assert cancelled.reason == "user"
+    assert cancelled.remaining_size == 5_000_000
+    assert cancelled.token_id == "yes-token"
 
 
 def test_tokens_minted_and_merged_decode():
@@ -277,13 +322,15 @@ def test_tokens_minted_and_merged_decode():
         "sequence": 60,
         "data": {
             "kind": "tokens_minted",
-            "engine_seq_num": "200",
-            "market_id": "m-1",
-            "shares_micro": "10000000",
+            "condition_id": "0xcond",
+            "size": 10_000_000,
+            "size_scale": 1_000_000,
         },
     })
     assert isinstance(minted, streaming.TokensMinted)
-    assert minted.shares_micro == 10_000_000
+    assert minted.size == 10_000_000
+    assert minted.size_scale == 1_000_000
+    assert minted.condition_id == "0xcond"
 
     merged = streaming.decode_frame({
         "op": "update",
@@ -291,13 +338,14 @@ def test_tokens_minted_and_merged_decode():
         "sequence": 61,
         "data": {
             "kind": "tokens_merged",
-            "engine_seq_num": "201",
-            "market_id": "m-1",
-            "shares_micro": "5000000",
+            "condition_id": "0xcond",
+            "size": 5_000_000,
+            "size_scale": 1_000_000,
         },
     })
     assert isinstance(merged, streaming.TokensMerged)
-    assert merged.shares_micro == 5_000_000
+    assert merged.size == 5_000_000
+    assert merged.condition_id == "0xcond"
 
 
 def test_unknown_account_event_kind_falls_through():
@@ -465,17 +513,20 @@ async def test_trade_dispatch_routes_to_on_trade():
         "data": {
             "kind": "trade",
             "fill_id": "42",
-            "outcome": 0,
+            "taker_token_id": "yes-token",
+            "maker_token_id": "yes-token",
             "side": "buy",
-            "price": "0.60",
-            "size": "120.00",
+            "price": 60,
+            "size": 120,
+            "price_scale": 100,
+            "size_scale": 1,
             "settlement_mode": "normal",
         },
     }))
     assert len(captured) == 1
     assert captured[0].fill_id == "42"
     assert captured[0].condition_id == "0x21"
-    assert captured[0].price == 0.60
+    assert captured[0].price == 60
 
 
 @pytest.mark.asyncio
@@ -495,19 +546,20 @@ async def test_fill_dispatch_routes_to_on_fill():
             "kind": "fill",
             "role": "taker",
             "fill_id": "f1",
-            "order_id": None,
-            "engine_seq_num": "1",
-            "market_id": "m",
-            "outcome": 0,
+            "order_id": "33333333-3333-3333-3333-333333333333",
+            "token_id": "yes-token",
             "side": "buy",
-            "price_micro": "600000",
-            "shares_micro": "1000000",
+            "price": 60,
+            "size": 1_000_000,
+            "price_scale": 100,
+            "size_scale": 1_000_000,
             "settlement_mode": "normal",
             "fee_micro_usdc": "0",
         },
     }))
     assert len(captured) == 1
     assert captured[0].fill_id == "f1"
+    assert captured[0].order_id == "33333333-3333-3333-3333-333333333333"
 
 
 @pytest.mark.asyncio
@@ -531,9 +583,11 @@ async def test_orderbook_snapshot_and_delta_route_separately():
         "sequence": 1,
         "data": {
             "kind": "snapshot",
-            "bids": [["0.60", "100"]],
+            "bids": [[60, 100]],
             "asks": [],
-            "tick_size": "0.01",
+            "tick_size": 1,
+            "price_scale": 100,
+            "size_scale": 1,
         },
     }))
     await client._dispatch(streaming.decode_frame({
@@ -541,7 +595,13 @@ async def test_orderbook_snapshot_and_delta_route_separately():
         "channel": "orderbook",
         "token_id": "t",
         "sequence": 2,
-        "data": {"kind": "delta", "bids": [["0.60", "0"]], "asks": []},
+        "data": {
+            "kind": "delta",
+            "bids": [[60, 0]],
+            "asks": [],
+            "price_scale": 100,
+            "size_scale": 1,
+        },
     }))
     assert len(snaps) == 1 and snaps[0].sequence == 1
     assert len(deltas) == 1 and deltas[0].sequence == 2
@@ -599,10 +659,13 @@ async def test_handler_exception_routes_to_on_error():
         "data": {
             "kind": "trade",
             "fill_id": "f1",
-            "outcome": 0,
+            "taker_token_id": "yes-token",
+            "maker_token_id": "yes-token",
             "side": "buy",
-            "price": "0.60",
-            "size": "1.00",
+            "price": 60,
+            "size": 1,
+            "price_scale": 100,
+            "size_scale": 1,
             "settlement_mode": "normal",
         },
     }))

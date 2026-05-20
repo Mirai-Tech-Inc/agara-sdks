@@ -60,8 +60,8 @@ async def run(token_id: str, condition_id: str, token: str, base_url: str) -> No
         print(
             f"[fill {fill.role}] id={fill.fill_id} order={fill.order_id} "
             f"market={fill.market_id} outcome={fill.outcome} "
-            f"side={fill.side} px_micro={fill.price_micro} "
-            f"sh_micro={fill.shares_micro} mode={fill.settlement_mode} "
+            f"side={fill.side} px={fill.price}/{fill.price_scale} "
+            f"sz={fill.size}/{fill.size_scale} mode={fill.settlement_mode} "
             f"fee={fill.fee_micro_usdc}"
         )
 
@@ -69,8 +69,8 @@ async def run(token_id: str, condition_id: str, token: str, base_url: str) -> No
     async def _(o: streaming.OrderAccepted) -> None:
         print(
             f"[accepted] order={o.order_id} market={o.market_id} "
-            f"outcome={o.outcome} side={o.side} px_micro={o.price_micro} "
-            f"remaining={o.remaining_shares_micro} tif={o.tif}"
+            f"outcome={o.outcome} side={o.side} px={o.price}/{o.price_scale} "
+            f"remaining={o.remaining_size}/{o.size_scale} tif={o.tif}"
         )
 
     @client.on_order_cancelled
