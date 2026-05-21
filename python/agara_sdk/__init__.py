@@ -337,18 +337,27 @@ class AgaraClient:
         """Cancel every open order across all your wallets."""
         return self._request("POST", "/trade/v1/orders/cancel-all")
 
-    def get_portfolio_summary(self) -> list[dict[str, Any]]:
+    def get_portfolio_summary(
+        self,
+        exchanges: Optional[list[str]] = None,
+    ) -> list[dict[str, Any]]:
         """Per-exchange balance + positions value + open commitments.
         Returns one entry per backend you're onboarded on (`POLYMARKET`,
         `AGARA`) — separate USDC pools don't add coherently, so the
         server returns them side-by-side and lets the caller pick.
+
+        `exchanges` restricts the fan-out (e.g. `["AGARA"]` skips the
+        Polymarket round-trips entirely); `None` or `[]` queries every
+        exchange you're onboarded on.
         Scope: `portfolio:read`."""
-        data = self._request("GET", "/trade/v1/portfolio/summary")
+        params = {"exchanges": ",".join(exchanges)} if exchanges else None
+        data = self._request("GET", "/trade/v1/portfolio/summary", params=params)
         return data["summaries"] if data else []
 
     def list_positions(
         self,
         condition_ids: Optional[list[str]] = None,
+        exchanges: Optional[list[str]] = None,
         limit: int = 100,
         offset: int = 0,
     ) -> list[dict[str, Any]]:
@@ -357,30 +366,48 @@ class AgaraClient:
         collisions across chains are still disambiguable.
 
         `condition_ids` filters server-side; pass `None` (or `[]`) for
-        everything. Pagination is applied per-backend before the merge,
-        so very large position counts may need multiple calls.
+        everything. `exchanges` restricts the fan-out (e.g. `["AGARA"]`
+        skips Polymarket entirely); `None` or `[]` queries every
+        exchange you're onboarded on. Pagination is applied per-backend
+        before the merge, so very large position counts may need
+        multiple calls.
         Scope: `portfolio:read`."""
         data = self._request(
             "POST",
             "/trade/v1/portfolio/positions/list",
-            json={"condition_ids": condition_ids or [], "limit": limit, "offset": offset},
+            json={
+                "condition_ids": condition_ids or [],
+                "exchanges": exchanges or [],
+                "limit": limit,
+                "offset": offset,
+            },
         )
         return data["positions"] if data else []
 
     def list_open_orders(
         self,
         token_ids: Optional[list[str]] = None,
+        exchanges: Optional[list[str]] = None,
         limit: int = 100,
         offset: int = 0,
     ) -> list[dict[str, Any]]:
         """Resting orders across both backends, newest-first. Distinct
         from `list_orders` which returns *all* orders (including
         terminal); this returns only orders that could still fill.
+
+        `exchanges` restricts the fan-out (e.g. `["AGARA"]` skips
+        Polymarket entirely); `None` or `[]` queries every exchange you
+        are onboarded on.
         Scope: `portfolio:read`."""
         data = self._request(
             "POST",
             "/trade/v1/portfolio/open-orders/list",
-            json={"token_ids": token_ids or [], "limit": limit, "offset": offset},
+            json={
+                "token_ids": token_ids or [],
+                "exchanges": exchanges or [],
+                "limit": limit,
+                "offset": offset,
+            },
         )
         return data["orders"] if data else []
 
