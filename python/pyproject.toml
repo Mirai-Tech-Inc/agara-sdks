@@ -31,6 +31,12 @@ dependencies = [
 streaming = [
     "websockets >= 12",
 ]
+# `pip install 'agara-sdk[signing]'` enables `agara_sdk.signing` for
+# locally-signed orders (no Privy roundtrip per order). Only needed
+# for bot/server traders that hold their own EOA private key.
+signing = [
+    "eth-account >= 0.13",
+]
 # `pip install -e ".[dev]"` to run the test suite locally.
 # `responses` mocks `requests` at the HTTP layer — no network, no
 # fixtures to spin up — which is the right grain for smoke-testing
@@ -41,6 +47,7 @@ dev = [
     "pytest-asyncio >= 0.23",
     "responses >= 0.25",
     "websockets >= 12",
+    "eth-account >= 0.13",
 ]
 
 [project.urls]

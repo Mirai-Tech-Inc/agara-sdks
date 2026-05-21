@@ -8,9 +8,12 @@ from __future__ import annotations
 
 import time
 from dataclasses import dataclass
-from typing import Any, Optional
+from typing import TYPE_CHECKING, Any, Optional
 
 import requests
+
+if TYPE_CHECKING:
+    from agara_sdk.signing import SignedOrder
 
 
 __all__ = [
@@ -254,6 +257,33 @@ class AgaraClient:
             body["expiration_unix_seconds"] = expiration_unix_seconds
 
         return self._request("POST", "/trade/v1/orders", json=body)
+
+    def place_signed_order(
+        self,
+        *,
+        token_id: str,
+        side: str,                          # "BUY" or "SELL"
+        price_micro: int,                   # μUSDC per share, in (0, 1_000_000)
+        shares_micro: int,                  # μshares
+        signed_order: "SignedOrder",        # from `agara_sdk.signing.sign_limit_order`
+        time_in_force: str = "GTC",         # "GTC" only for v1
+        post_only: bool = False,
+        expiration_unix_seconds: Optional[int] = None,
+    ) -> dict[str, Any]:
+        """Place a pre-signed LIMIT order. The bot/server holds the
+        EOA private key and signed `signed_order` locally — the router
+        validates the signature against the wallet's EOA and skips
+        Privy entirely. Scope: `orders:place_signed`."""
+        body = signed_order.to_request_body(
+            token_id_string=token_id,
+            side_string=side,
+            price_micro=price_micro,
+            shares_micro=shares_micro,
+            time_in_force=time_in_force,
+            post_only=post_only,
+            expiration_unix_seconds=expiration_unix_seconds,
+        )
+        return self._request("POST", "/trade/v1/orders/signed", json=body)
 
     def place_market_order(
         self,
