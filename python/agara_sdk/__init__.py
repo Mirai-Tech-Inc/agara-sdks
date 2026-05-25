@@ -296,19 +296,22 @@ class AgaraClient:
     ) -> dict[str, Any]:
         """Place a market order.
 
-        BUY: pass `collateral_amount` (the USDC budget). The server
-        translates to a LIMIT BUY at the worst-acceptable band edge for
-        `budget / max_price` shares — the chain envelope caps the
-        signed `makerAmount` at the budget, and the contract refunds
-        any price improvement on fills below `max_price`.
+        BUY: pass `collateral_amount` (USDC budget). The server walks
+        the asks until the budget is exhausted, then signs a LIMIT BUY
+        at the deepest level the walk consumed (or `max_price` if the
+        book has no in-range asks). The chain envelope caps
+        `makerAmount` at the budget so over-fills are impossible, and
+        fills at earlier, better-priced levels pay out at those better
+        prices on chain.
 
-        SELL: pass `shares`. The server translates to a LIMIT SELL at
-        the min-price band edge for the requested shares; fills against
-        any in-range bid pay out the better price.
+        SELL: pass `shares`. The server signs a LIMIT SELL at the
+        market's `min_price` floor; fills against any bid above the
+        floor pay out at the better bid price.
 
-        Market orders are FAK (fill what's available, cancel
-        remainder) or FOK (fill entirely or reject). Returns the
-        accepted-order ack; poll with `get_order` to track fills."""
+        FAK fills what's available and cancels the remainder; FOK
+        rejects without placing if the order can't fully fill.
+        Returns the accepted-order ack; poll with `get_order` to track
+        fills."""
         if side not in ("BUY", "SELL"):
             raise ValueError("side must be 'BUY' or 'SELL'")
         if time_in_force not in ("FAK", "FOK"):

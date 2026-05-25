@@ -121,6 +121,7 @@ class SignedOrder:
             "salt": str(self.salt),
             "maker": self.maker,
             "signer": self.signer,
+            "chain_token_id": str(self.token_id),
             "maker_amount": str(self.maker_amount),
             "taker_amount": str(self.taker_amount),
             "side_u8": self.side,
