@@ -1,6 +1,6 @@
 [project]
 name = "agara-sdk"
-version = "0.2.0"
+version = "0.3.0"
 description = "Python client for the agara prediction-markets trading API."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -37,6 +37,12 @@ streaming = [
 signing = [
     "eth-account >= 0.13",
 ]
+# `pip install 'agara-sdk[async]'` pulls in `httpx` for the
+# async-native `agara_sdk.aio.AsyncAgaraClient`. The blocking
+# `AgaraClient` works without it.
+async = [
+    "httpx >= 0.27",
+]
 # `pip install -e ".[dev]"` to run the test suite locally.
 # `responses` mocks `requests` at the HTTP layer — no network, no
 # fixtures to spin up — which is the right grain for smoke-testing
@@ -48,6 +54,7 @@ dev = [
     "responses >= 0.25",
     "websockets >= 12",
     "eth-account >= 0.13",
+    "httpx >= 0.27",
 ]
 
 [project.urls]

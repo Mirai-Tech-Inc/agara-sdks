@@ -37,6 +37,36 @@ with AgaraClient(token="agt_…") as client:
 See [examples/trading.py](./examples/trading.py) for a complete
 working script.
 
+## Async
+
+Prefer `async`/`await`? The `[async]` extra adds `AsyncAgaraClient`, an
+async-native client backed by `httpx` that mirrors `AgaraClient` method
+for method — same arguments, same return shapes, same exceptions:
+
+```bash
+pip install 'agara-sdk[async]'
+```
+
+```python
+import asyncio
+from agara_sdk.aio import AsyncAgaraClient
+
+async def main():
+    async with AsyncAgaraClient(token="agt_…") as client:
+        book = await client.get_orderbook(token_id)
+        resp = await client.place_order(
+            token_id=token_id, side="BUY", price=0.60, shares=1.0,
+        )
+        final = await client.wait_for_terminal(resp["order_id"], timeout=30.0)
+        print(final["status"])
+
+asyncio.run(main())
+```
+
+One `AsyncAgaraClient` is safe to use from many concurrent tasks on the
+same event loop — unlike the sync client's `requests.Session`, you don't
+need one per worker.
+
 ## What this SDK does
 
 - Wraps `Authorization: Bearer agt_…` so you set the token once.
@@ -93,11 +123,6 @@ account_events stream. Full reference at
 
 - Automatic retries on REST. 5xx surfaces as `ServerError`; pick your
   backoff.
-- Async REST. The REST client is blocking — the right default for most
-  strategies. If you need async REST, generate a client from the
-  OpenAPI spec at
-  `https://d3r180aqvl5ynd.cloudfront.net/trade/v1/openapi.json`. (The
-  streaming client is async-native.)
 
 ## Getting a token
 

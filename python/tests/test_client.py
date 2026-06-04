@@ -635,7 +635,7 @@ def test_list_positions_sends_filter_and_pagination(client: AgaraClient) -> None
         json={"positions": [{"id": "p1"}]},
         match=[
             json_params_matcher(
-                {"condition_ids": ["0xabc"], "limit": 25, "offset": 10},
+                {"condition_ids": ["0xabc"], "exchanges": [], "limit": 25, "offset": 10},
                 strict_match=True,
             )
         ],
@@ -653,7 +653,7 @@ def test_list_positions_defaults_to_empty_condition_filter(client: AgaraClient) 
         json={"positions": []},
         match=[
             json_params_matcher(
-                {"condition_ids": [], "limit": 100, "offset": 0},
+                {"condition_ids": [], "exchanges": [], "limit": 100, "offset": 0},
                 strict_match=True,
             )
         ],
@@ -669,7 +669,7 @@ def test_list_open_orders_sends_token_ids_and_pagination(client: AgaraClient) ->
         json={"orders": [{"id": "o1"}, {"id": "o2"}]},
         match=[
             json_params_matcher(
-                {"token_ids": [TOKEN_ID], "limit": 50, "offset": 0},
+                {"token_ids": [TOKEN_ID], "exchanges": [], "limit": 50, "offset": 0},
                 strict_match=True,
             )
         ],

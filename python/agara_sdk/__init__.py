@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import time
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any, NoReturn, Optional
 
 import requests
 
@@ -28,17 +28,24 @@ __all__ = [
     "ServerError",
     "Orderbook",
     "OrderbookLevel",
+    "DEFAULT_BASE_URL",
     "TERMINAL_STATUSES",
     "micro_to_float",
 ]
 
-__version__ = "0.2.0"
+__version__ = "0.3.0"
 
+
+DEFAULT_BASE_URL = "https://d3r180aqvl5ynd.cloudfront.net"
 
 MICRO = 1_000_000
 TERMINAL_STATUSES = frozenset(
     {"CONFIRMED", "CANCELLED", "EXPIRED", "REJECTED", "FAILED"}
 )
+
+#: Consecutive transient 5xx tolerated inside `wait_for_terminal` before
+#: it gives up. Shared by the sync and async clients.
+_MAX_CONSECUTIVE_SERVER_ERRORS = 3
 
 
 class AgaraError(Exception):
@@ -129,12 +136,126 @@ def micro_to_float(value: str | int | None) -> Optional[float]:
     return int(value) / MICRO
 
 
+def _raise_api_error(status_code: int, message: str) -> NoReturn:
+    """Map an HTTP status to the matching typed exception and raise it.
+    Shared by the sync and async clients so the mapping lives once."""
+    if status_code == 400:
+        raise BadRequestError(status_code, message)
+    if status_code == 401:
+        raise AuthError(status_code, message)
+    if status_code == 403:
+        raise ForbiddenError(status_code, message)
+    if status_code == 404:
+        raise NotFoundError(status_code, message)
+    if status_code == 409:
+        raise ConflictError(status_code, message)
+    if status_code == 422:
+        raise RejectedError(status_code, message)
+    if 500 <= status_code < 600:
+        raise ServerError(status_code, message)
+    raise AgaraError(status_code, message)
+
+
+def _parse_orderbook(data: dict[str, Any]) -> Orderbook:
+    return Orderbook(
+        bids=[OrderbookLevel(lvl["price"], lvl["size"]) for lvl in data["bids"]],
+        asks=[OrderbookLevel(lvl["price"], lvl["size"]) for lvl in data["asks"]],
+        timestamp=data["timestamp"],
+        hash=data["hash"],
+        tick_size=data["tick_size"],
+    )
+
+
+def _build_limit_order_body(
+    *,
+    token_id: str,
+    side: str,
+    price: float,
+    shares: Optional[float],
+    collateral_amount: Optional[float],
+    time_in_force: str,
+    post_only: bool,
+    expiration_unix_seconds: Optional[int],
+) -> dict[str, Any]:
+    if (shares is None) == (collateral_amount is None):
+        raise ValueError("set exactly one of shares or collateral_amount")
+    if collateral_amount is not None and side == "SELL":
+        raise ValueError(
+            "collateral_amount is only valid for BUY orders; use shares for SELL"
+        )
+    if time_in_force == "GTD" and expiration_unix_seconds is None:
+        raise ValueError("GTD orders require expiration_unix_seconds")
+    if price <= 0:
+        raise ValueError("price must be > 0")
+    if shares is not None and shares <= 0:
+        raise ValueError("shares must be > 0")
+    if collateral_amount is not None and collateral_amount <= 0:
+        raise ValueError("collateral_amount must be > 0")
+
+    body: dict[str, Any] = {
+        "token_id": token_id,
+        "side": side,
+        "type": "LIMIT",
+        "time_in_force": time_in_force,
+        "price_micro": _to_micro_str(price),
+        "post_only": post_only,
+    }
+    if shares is not None:
+        body["shares_micro"] = _to_micro_str(shares)
+    if collateral_amount is not None:
+        body["collateral_amount_micro"] = _to_micro_str(collateral_amount)
+    if expiration_unix_seconds is not None:
+        body["expiration_unix_seconds"] = expiration_unix_seconds
+    return body
+
+
+def _build_market_order_body(
+    *,
+    token_id: str,
+    side: str,
+    shares: Optional[float],
+    collateral_amount: Optional[float],
+    time_in_force: str,
+) -> dict[str, Any]:
+    if side not in ("BUY", "SELL"):
+        raise ValueError("side must be 'BUY' or 'SELL'")
+    if time_in_force not in ("FAK", "FOK"):
+        raise ValueError("market orders require FAK or FOK time_in_force")
+    if side == "BUY":
+        if collateral_amount is None:
+            raise ValueError("market BUY orders require collateral_amount")
+        if shares is not None:
+            raise ValueError("market BUY orders must not set shares")
+    else:
+        if shares is None:
+            raise ValueError("market SELL orders require shares")
+        if collateral_amount is not None:
+            raise ValueError("market SELL orders must not set collateral_amount")
+    if shares is not None and shares <= 0:
+        raise ValueError("shares must be > 0")
+    if collateral_amount is not None and collateral_amount <= 0:
+        raise ValueError("collateral_amount must be > 0")
+
+    body: dict[str, Any] = {
+        "token_id": token_id,
+        "side": side,
+        "type": "MARKET",
+        "time_in_force": time_in_force,
+        "post_only": False,
+    }
+    if shares is not None:
+        body["shares_micro"] = _to_micro_str(shares)
+    if collateral_amount is not None:
+        body["collateral_amount_micro"] = _to_micro_str(collateral_amount)
+    return body
+
+
 class AgaraClient:
     """Trading API client.
 
     Pass a personal access token at construction. All methods are
-    blocking; for async, use the OpenAPI spec at
-    `/trade/v1/openapi.json` with an async generator.
+    blocking; for an async-native equivalent backed by `httpx`, use
+    `agara_sdk.aio.AsyncAgaraClient` (the `[async]` extra).
 
     Thread safety: each instance wraps a single `requests.Session`,
     which is **not safe to share across threads** — concurrent
@@ -147,7 +268,7 @@ class AgaraClient:
     def __init__(
         self,
         token: str,
-        base_url: str = "https://d3r180aqvl5ynd.cloudfront.net",
+        base_url: str = DEFAULT_BASE_URL,
         timeout: float = 10.0,
         session: Optional[requests.Session] = None,
     ):
@@ -183,33 +304,12 @@ class AgaraClient:
         except ValueError:
             err_msg = resp.text or resp.reason or ""
 
-        sc = resp.status_code
-        if sc == 400:
-            raise BadRequestError(sc, err_msg)
-        if sc == 401:
-            raise AuthError(sc, err_msg)
-        if sc == 403:
-            raise ForbiddenError(sc, err_msg)
-        if sc == 404:
-            raise NotFoundError(sc, err_msg)
-        if sc == 409:
-            raise ConflictError(sc, err_msg)
-        if sc == 422:
-            raise RejectedError(sc, err_msg)
-        if 500 <= sc < 600:
-            raise ServerError(sc, err_msg)
-        raise AgaraError(sc, err_msg)
+        _raise_api_error(resp.status_code, err_msg)
 
     def get_orderbook(self, token_id: str) -> Orderbook:
         """Snapshot of bid/ask depth for one outcome."""
         data = self._request("GET", f"/trade/v1/orderbook/{token_id}")
-        return Orderbook(
-            bids=[OrderbookLevel(lvl["price"], lvl["size"]) for lvl in data["bids"]],
-            asks=[OrderbookLevel(lvl["price"], lvl["size"]) for lvl in data["asks"]],
-            timestamp=data["timestamp"],
-            hash=data["hash"],
-            tick_size=data["tick_size"],
-        )
+        return _parse_orderbook(data)
 
     def place_order(
         self,
@@ -226,36 +326,16 @@ class AgaraClient:
         """Place a limit order. Returns the accepted-order ack —
         treat it as "we got it," not as a fill. Poll with `get_order`
         or `wait_for_terminal` to track progression."""
-        if (shares is None) == (collateral_amount is None):
-            raise ValueError("set exactly one of shares or collateral_amount")
-        if collateral_amount is not None and side == "SELL":
-            raise ValueError(
-                "collateral_amount is only valid for BUY orders; use shares for SELL"
-            )
-        if time_in_force == "GTD" and expiration_unix_seconds is None:
-            raise ValueError("GTD orders require expiration_unix_seconds")
-        if price <= 0:
-            raise ValueError("price must be > 0")
-        if shares is not None and shares <= 0:
-            raise ValueError("shares must be > 0")
-        if collateral_amount is not None and collateral_amount <= 0:
-            raise ValueError("collateral_amount must be > 0")
-
-        body: dict[str, Any] = {
-            "token_id": token_id,
-            "side": side,
-            "type": "LIMIT",
-            "time_in_force": time_in_force,
-            "price_micro": _to_micro_str(price),
-            "post_only": post_only,
-        }
-        if shares is not None:
-            body["shares_micro"] = _to_micro_str(shares)
-        if collateral_amount is not None:
-            body["collateral_amount_micro"] = _to_micro_str(collateral_amount)
-        if expiration_unix_seconds is not None:
-            body["expiration_unix_seconds"] = expiration_unix_seconds
-
+        body = _build_limit_order_body(
+            token_id=token_id,
+            side=side,
+            price=price,
+            shares=shares,
+            collateral_amount=collateral_amount,
+            time_in_force=time_in_force,
+            post_only=post_only,
+            expiration_unix_seconds=expiration_unix_seconds,
+        )
         return self._request("POST", "/trade/v1/orders", json=body)
 
     def place_signed_order(
@@ -312,37 +392,13 @@ class AgaraClient:
         rejects without placing if the order can't fully fill.
         Returns the accepted-order ack; poll with `get_order` to track
         fills."""
-        if side not in ("BUY", "SELL"):
-            raise ValueError("side must be 'BUY' or 'SELL'")
-        if time_in_force not in ("FAK", "FOK"):
-            raise ValueError("market orders require FAK or FOK time_in_force")
-        if side == "BUY":
-            if collateral_amount is None:
-                raise ValueError("market BUY orders require collateral_amount")
-            if shares is not None:
-                raise ValueError("market BUY orders must not set shares")
-        else:
-            if shares is None:
-                raise ValueError("market SELL orders require shares")
-            if collateral_amount is not None:
-                raise ValueError("market SELL orders must not set collateral_amount")
-        if shares is not None and shares <= 0:
-            raise ValueError("shares must be > 0")
-        if collateral_amount is not None and collateral_amount <= 0:
-            raise ValueError("collateral_amount must be > 0")
-
-        body: dict[str, Any] = {
-            "token_id": token_id,
-            "side": side,
-            "type": "MARKET",
-            "time_in_force": time_in_force,
-            "post_only": False,
-        }
-        if shares is not None:
-            body["shares_micro"] = _to_micro_str(shares)
-        if collateral_amount is not None:
-            body["collateral_amount_micro"] = _to_micro_str(collateral_amount)
-
+        body = _build_market_order_body(
+            token_id=token_id,
+            side=side,
+            shares=shares,
+            collateral_amount=collateral_amount,
+            time_in_force=time_in_force,
+        )
         return self._request("POST", "/trade/v1/orders", json=body)
 
     def list_orders(
@@ -484,7 +540,7 @@ class AgaraClient:
                 consecutive_server_errors = 0
             except ServerError:
                 consecutive_server_errors += 1
-                if consecutive_server_errors >= 3:
+                if consecutive_server_errors >= _MAX_CONSECUTIVE_SERVER_ERRORS:
                     raise
                 if time.monotonic() >= deadline:
                     raise
