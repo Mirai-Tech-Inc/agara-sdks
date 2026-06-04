@@ -47,6 +47,11 @@ TERMINAL_STATUSES = frozenset(
 #: it gives up. Shared by the sync and async clients.
 _MAX_CONSECUTIVE_SERVER_ERRORS = 3
 
+#: Page size the list-all helpers request per round-trip while walking the
+#: server's offset pagination. Matches the server's max page size, so a full
+#: book is fetched in the fewest requests. Shared by the sync and async clients.
+_LIST_PAGE_SIZE = 500
+
 
 class AgaraError(Exception):
     """Base for every error this SDK raises."""
@@ -447,19 +452,22 @@ class AgaraClient:
         self,
         condition_ids: Optional[list[str]] = None,
         exchanges: Optional[list[str]] = None,
-        limit: int = 100,
-        offset: int = 0,
     ) -> list[dict[str, Any]]:
-        """Your current positions, concatenated across both backends.
-        Each row carries its own `exchange` so positions from token-id
-        collisions across chains are still disambiguable.
+        """Every current position across both backends, in one shot —
+        the server returns the complete set, no pagination. Each row
+        carries its own `exchange` so positions from token-id collisions
+        across chains are still disambiguable.
 
         `condition_ids` filters server-side; pass `None` (or `[]`) for
         everything. `exchanges` restricts the fan-out (e.g. `["AGARA"]`
         skips Polymarket entirely); `None` or `[]` queries every
-        exchange you're onboarded on. Pagination is applied per-backend
-        before the merge, so very large position counts may need
-        multiple calls.
+        exchange you're onboarded on.
+
+        If a backend is unreachable the server returns the rest, naming the
+        failed one in `unavailable_exchanges`. When you scoped to specific
+        `exchanges`, a requested backend coming back unavailable raises
+        `ServerError` rather than silently returning a partial/empty set — so
+        you can't mistake "backend down" for "no positions".
         Scope: `portfolio:read`."""
         data = self._request(
             "POST",
@@ -467,38 +475,55 @@ class AgaraClient:
             json={
                 "condition_ids": condition_ids or [],
                 "exchanges": exchanges or [],
-                "limit": limit,
-                "offset": offset,
             },
         )
-        return data["positions"] if data else []
+        if not data:
+            return []
+        requested = exchanges or []
+        blocked = [e for e in (data.get("unavailable_exchanges") or []) if e in requested]
+        if blocked:
+            raise ServerError(
+                502, f"positions unavailable for requested exchange(s): {', '.join(blocked)}"
+            )
+        return data["positions"]
 
     def list_open_orders(
         self,
         token_ids: Optional[list[str]] = None,
         exchanges: Optional[list[str]] = None,
-        limit: int = 100,
-        offset: int = 0,
     ) -> list[dict[str, Any]]:
-        """Resting orders across both backends, newest-first. Distinct
-        from `list_orders` which returns *all* orders (including
-        terminal); this returns only orders that could still fill.
+        """Every resting order across both backends, newest-first. Walks
+        the server's offset pagination internally and returns the
+        complete set — a truncated snapshot would make a reconciler
+        treat unseen live orders as stale. Distinct from `list_orders`,
+        which also returns terminal orders; this returns only orders
+        that could still fill.
 
         `exchanges` restricts the fan-out (e.g. `["AGARA"]` skips
         Polymarket entirely); `None` or `[]` queries every exchange you
         are onboarded on.
         Scope: `portfolio:read`."""
-        data = self._request(
-            "POST",
-            "/trade/v1/portfolio/open-orders/list",
-            json={
-                "token_ids": token_ids or [],
-                "exchanges": exchanges or [],
-                "limit": limit,
-                "offset": offset,
-            },
-        )
-        return data["orders"] if data else []
+        orders: list[dict[str, Any]] = []
+        offset = 0
+        while True:
+            data = self._request(
+                "POST",
+                "/trade/v1/portfolio/open-orders/list",
+                json={
+                    "token_ids": token_ids or [],
+                    "exchanges": exchanges or [],
+                    "limit": _LIST_PAGE_SIZE,
+                    "offset": offset,
+                },
+            )
+            if not data:
+                break
+            orders.extend(data.get("orders", []))
+            next_offset = data.get("next_offset")
+            if next_offset is None or next_offset <= offset:
+                break
+            offset = next_offset
+        return orders
 
     def list_activities(self, limit: Optional[int] = None) -> list[dict[str, Any]]:
         """Activity feed sorted newest-first. Like `list_trades` but

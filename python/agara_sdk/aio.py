@@ -43,6 +43,7 @@ from agara_sdk import (
     TERMINAL_STATUSES,
     Orderbook,
     ServerError,
+    _LIST_PAGE_SIZE,
     _MAX_CONSECUTIVE_SERVER_ERRORS,
     _build_limit_order_body,
     _build_market_order_body,
@@ -225,12 +226,15 @@ class AsyncAgaraClient:
         self,
         condition_ids: Optional[list[str]] = None,
         exchanges: Optional[list[str]] = None,
-        limit: int = 100,
-        offset: int = 0,
     ) -> list[dict[str, Any]]:
-        """Your current positions, concatenated across both backends.
+        """Every current position across both backends, in one shot —
+        the server returns the complete set, no pagination.
         `condition_ids` filters server-side; `exchanges` restricts the
         fan-out. `None` or `[]` means "everything"/"every exchange".
+
+        If you scoped to specific `exchanges` and a requested backend comes
+        back unavailable, this raises `ServerError` rather than silently
+        returning a partial/empty set (see the sync client for details).
         Scope: `portfolio:read`."""
         data = await self._request(
             "POST",
@@ -238,34 +242,51 @@ class AsyncAgaraClient:
             json={
                 "condition_ids": condition_ids or [],
                 "exchanges": exchanges or [],
-                "limit": limit,
-                "offset": offset,
             },
         )
-        return data["positions"] if data else []
+        if not data:
+            return []
+        requested = exchanges or []
+        blocked = [e for e in (data.get("unavailable_exchanges") or []) if e in requested]
+        if blocked:
+            raise ServerError(
+                502, f"positions unavailable for requested exchange(s): {', '.join(blocked)}"
+            )
+        return data["positions"]
 
     async def list_open_orders(
         self,
         token_ids: Optional[list[str]] = None,
         exchanges: Optional[list[str]] = None,
-        limit: int = 100,
-        offset: int = 0,
     ) -> list[dict[str, Any]]:
-        """Resting orders across both backends, newest-first. Distinct
-        from `list_orders`, which also returns terminal orders; this
-        returns only orders that could still fill.
+        """Every resting order across both backends, newest-first. Walks
+        the server's offset pagination internally and returns the
+        complete set — a truncated snapshot would make a reconciler
+        treat unseen live orders as stale. Distinct from `list_orders`,
+        which also returns terminal orders; this returns only orders
+        that could still fill.
         Scope: `portfolio:read`."""
-        data = await self._request(
-            "POST",
-            "/trade/v1/portfolio/open-orders/list",
-            json={
-                "token_ids": token_ids or [],
-                "exchanges": exchanges or [],
-                "limit": limit,
-                "offset": offset,
-            },
-        )
-        return data["orders"] if data else []
+        orders: list[dict[str, Any]] = []
+        offset = 0
+        while True:
+            data = await self._request(
+                "POST",
+                "/trade/v1/portfolio/open-orders/list",
+                json={
+                    "token_ids": token_ids or [],
+                    "exchanges": exchanges or [],
+                    "limit": _LIST_PAGE_SIZE,
+                    "offset": offset,
+                },
+            )
+            if not data:
+                break
+            orders.extend(data.get("orders", []))
+            next_offset = data.get("next_offset")
+            if next_offset is None or next_offset <= offset:
+                break
+            offset = next_offset
+        return orders
 
     async def list_activities(
         self, limit: Optional[int] = None

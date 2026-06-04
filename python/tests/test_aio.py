@@ -200,16 +200,32 @@ async def test_list_positions_unwraps_and_sends_filters() -> None:
 
     async with _client(handler) as client:
         positions = await client.list_positions(
-            condition_ids=["0xabc"], exchanges=["AGARA"], limit=25, offset=10
+            condition_ids=["0xabc"], exchanges=["AGARA"]
         )
 
     assert [p["id"] for p in positions] == ["p1"]
     assert seen["body"] == {
         "condition_ids": ["0xabc"],
         "exchanges": ["AGARA"],
-        "limit": 25,
-        "offset": 10,
     }
+
+
+@pytest.mark.asyncio
+async def test_list_open_orders_walks_every_page() -> None:
+    offsets: list[int] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        body = _json.loads(request.content)
+        offsets.append(body["offset"])
+        if body["offset"] == 0:
+            return httpx.Response(200, json={"orders": [{"id": "o1"}], "next_offset": 500})
+        return httpx.Response(200, json={"orders": [{"id": "o2"}], "next_offset": None})
+
+    async with _client(handler) as client:
+        orders = await client.list_open_orders()
+
+    assert [o["id"] for o in orders] == ["o1", "o2"]
+    assert offsets == [0, 500]
 
 
 @pytest.mark.asyncio

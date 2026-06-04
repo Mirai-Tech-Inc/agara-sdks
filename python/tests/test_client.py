@@ -629,19 +629,19 @@ def test_get_portfolio_summary_returns_empty_when_body_is_empty(
 
 
 @responses.activate
-def test_list_positions_sends_filter_and_pagination(client: AgaraClient) -> None:
+def test_list_positions_sends_filter_in_one_shot(client: AgaraClient) -> None:
     responses.post(
         f"{BASE_URL}/trade/v1/portfolio/positions/list",
         json={"positions": [{"id": "p1"}]},
         match=[
             json_params_matcher(
-                {"condition_ids": ["0xabc"], "exchanges": [], "limit": 25, "offset": 10},
+                {"condition_ids": ["0xabc"], "exchanges": []},
                 strict_match=True,
             )
         ],
     )
 
-    positions = client.list_positions(condition_ids=["0xabc"], limit=25, offset=10)
+    positions = client.list_positions(condition_ids=["0xabc"])
 
     assert [p["id"] for p in positions] == ["p1"]
 
@@ -653,7 +653,7 @@ def test_list_positions_defaults_to_empty_condition_filter(client: AgaraClient) 
         json={"positions": []},
         match=[
             json_params_matcher(
-                {"condition_ids": [], "exchanges": [], "limit": 100, "offset": 0},
+                {"condition_ids": [], "exchanges": []},
                 strict_match=True,
             )
         ],
@@ -663,19 +663,71 @@ def test_list_positions_defaults_to_empty_condition_filter(client: AgaraClient) 
 
 
 @responses.activate
-def test_list_open_orders_sends_token_ids_and_pagination(client: AgaraClient) -> None:
+def test_list_positions_raises_when_requested_exchange_unavailable(client: AgaraClient) -> None:
+    responses.post(
+        f"{BASE_URL}/trade/v1/portfolio/positions/list",
+        json={"positions": [], "unavailable_exchanges": ["AGARA"]},
+    )
+
+    # Scoped to AGARA + AGARA is down → fail loud, don't return "[]" (no positions).
+    with pytest.raises(ServerError):
+        client.list_positions(exchanges=["AGARA"])
+
+
+@responses.activate
+def test_list_positions_unscoped_returns_partial_on_backend_outage(client: AgaraClient) -> None:
+    responses.post(
+        f"{BASE_URL}/trade/v1/portfolio/positions/list",
+        json={"positions": [{"id": "p1"}], "unavailable_exchanges": ["POLYMARKET"]},
+    )
+
+    # No exchanges scope → "give me everything" tolerates a partial result.
+    assert [p["id"] for p in client.list_positions()] == ["p1"]
+
+
+@responses.activate
+def test_list_open_orders_returns_single_page(client: AgaraClient) -> None:
     responses.post(
         f"{BASE_URL}/trade/v1/portfolio/open-orders/list",
-        json={"orders": [{"id": "o1"}, {"id": "o2"}]},
+        json={"orders": [{"id": "o1"}, {"id": "o2"}], "next_offset": None},
         match=[
             json_params_matcher(
-                {"token_ids": [TOKEN_ID], "exchanges": [], "limit": 50, "offset": 0},
+                {"token_ids": [TOKEN_ID], "exchanges": [], "limit": 500, "offset": 0},
                 strict_match=True,
             )
         ],
     )
 
-    orders = client.list_open_orders(token_ids=[TOKEN_ID], limit=50)
+    orders = client.list_open_orders(token_ids=[TOKEN_ID])
+
+    assert [o["id"] for o in orders] == ["o1", "o2"]
+
+
+@responses.activate
+def test_list_open_orders_walks_every_page(client: AgaraClient) -> None:
+    # Page 1 carries a next_offset → the client must fetch page 2.
+    responses.post(
+        f"{BASE_URL}/trade/v1/portfolio/open-orders/list",
+        json={"orders": [{"id": "o1"}], "next_offset": 500},
+        match=[
+            json_params_matcher(
+                {"token_ids": [], "exchanges": [], "limit": 500, "offset": 0},
+                strict_match=True,
+            )
+        ],
+    )
+    responses.post(
+        f"{BASE_URL}/trade/v1/portfolio/open-orders/list",
+        json={"orders": [{"id": "o2"}], "next_offset": None},
+        match=[
+            json_params_matcher(
+                {"token_ids": [], "exchanges": [], "limit": 500, "offset": 500},
+                strict_match=True,
+            )
+        ],
+    )
+
+    orders = client.list_open_orders()
 
     assert [o["id"] for o in orders] == ["o1", "o2"]
 
