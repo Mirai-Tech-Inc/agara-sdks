@@ -54,6 +54,7 @@ from __future__ import annotations
 import asyncio
 import json
 import random
+import time
 from dataclasses import dataclass
 from typing import (
     Any,
@@ -83,6 +84,16 @@ _ACCOUNT_CHANNEL = "account_events"
 #: `too_many_subscriptions` error frame. Necessary-but-not-sufficient
 #: (server still caps the rolling total across multiple subscribe calls).
 MAX_SUBSCRIPTIONS_PER_CONNECTION = 64
+
+#: Application-level keepalive. The SDK sends `{"op": "ping"}` every
+#: `_PING_INTERVAL_S` and treats a connection with no frame of any kind
+#: for `_SILENCE_TIMEOUT_S` as wedged — a proxy that stopped forwarding,
+#: a half-open socket — and drops it so the runner reconnects. The
+#: server's ~10s `heartbeat` keeps a healthy connection well under the
+#: timeout, so prolonged silence is a reliable dead-connection signal
+#: that protocol-level pongs alone can miss.
+_PING_INTERVAL_S = 25.0
+_SILENCE_TIMEOUT_S = 35.0
 
 
 # ── Channel descriptor ───────────────────────────────────────────────
@@ -344,6 +355,10 @@ class Unsubscribed:
 @dataclass(frozen=True)
 class SequenceReset:
     channel: str
+    # "lagged" (slow read) or "stream_reset" (brief upstream blip).
+    # Recovery is identical either way: discard local state for the
+    # subject and rebuild from the next update.
+    reason: Optional[str] = None
     token_id: Optional[str] = None
     condition_id: Optional[str] = None
 
@@ -362,6 +377,11 @@ class Pong:
 class StreamError:
     code: str
     message: str
+    # "resubscribe" (one feed stopped; resubscribe the subject),
+    # "reconnect" (reopen the socket with fresh credentials), or None
+    # (terminal — the request was rejected and retrying won't help).
+    # In callback mode the client acts on this automatically.
+    action: Optional[str] = None
     channel: Optional[str] = None
     token_id: Optional[str] = None
     condition_id: Optional[str] = None
@@ -577,6 +597,7 @@ def decode_frame(raw: dict[str, Any]) -> Frame:
     if op == "sequence_reset":
         return SequenceReset(
             channel=raw["channel"],
+            reason=raw.get("reason"),
             token_id=raw.get("token_id"),
             condition_id=raw.get("condition_id"),
         )
@@ -588,6 +609,7 @@ def decode_frame(raw: dict[str, Any]) -> Frame:
         return StreamError(
             code=raw["code"],
             message=raw["message"],
+            action=raw.get("action"),
             channel=raw.get("channel"),
             token_id=raw.get("token_id"),
             condition_id=raw.get("condition_id"),
@@ -714,6 +736,10 @@ def _endpoint_for(channel: Channel) -> _EndpointKind:
     return "account" if channel.is_account else "market"
 
 
+def _endpoint_kind_for_name(channel: Optional[str]) -> _EndpointKind:
+    return "account" if channel == _ACCOUNT_CHANNEL else "market"
+
+
 def _group_by_endpoint(channels: Iterable[Channel]) -> dict[_EndpointKind, list[Channel]]:
     out: dict[_EndpointKind, list[Channel]] = {"market": [], "account": []}
     for ch in channels:
@@ -730,6 +756,8 @@ class _Endpoint:
         self._kind: _EndpointKind = kind
         self._ws: Any = None
         self._reader: Optional[asyncio.Task[None]] = None
+        self._keepalive: Optional[asyncio.Task[None]] = None
+        self._last_rx: float = 0.0
 
     @property
     def is_open(self) -> bool:
@@ -744,16 +772,20 @@ class _Endpoint:
                 "`pip install 'agara-sdk[streaming]'`"
             ) from exc
         self._ws = await websockets.connect(self._url)
+        self._last_rx = time.monotonic()
         self._reader = asyncio.create_task(self._read_loop(queue))
+        self._keepalive = asyncio.create_task(self._keepalive_loop())
 
     async def close(self) -> None:
-        if self._reader is not None:
-            self._reader.cancel()
-            try:
-                await self._reader
-            except (asyncio.CancelledError, Exception):
-                pass
-            self._reader = None
+        for task in (self._keepalive, self._reader):
+            if task is not None:
+                task.cancel()
+                try:
+                    await task
+                except (asyncio.CancelledError, Exception):
+                    pass
+        self._keepalive = None
+        self._reader = None
         if self._ws is not None:
             try:
                 await self._ws.close()
@@ -773,6 +805,7 @@ class _Endpoint:
 
         try:
             async for raw in self._ws:
+                self._last_rx = time.monotonic()
                 try:
                     parsed = json.loads(raw)
                 except json.JSONDecodeError:
@@ -788,6 +821,26 @@ class _Endpoint:
             )
         finally:
             await queue.put(_Disconnected(endpoint=self._kind))
+
+    async def _keepalive_loop(self) -> None:
+        """Send an application `ping` on an interval and drop a wedged
+        connection — one whose frames (including the server heartbeat)
+        have stopped arriving — so the caller reconnects. Closing the
+        socket ends `_read_loop`, which emits `_Disconnected`."""
+        try:
+            while True:
+                await asyncio.sleep(_PING_INTERVAL_S)
+                if self._ws is None:
+                    return
+                if time.monotonic() - self._last_rx > _SILENCE_TIMEOUT_S:
+                    await self._ws.close()
+                    return
+                try:
+                    await self._ws.send(json.dumps({"op": "ping"}))
+                except Exception:
+                    return
+        except asyncio.CancelledError:
+            return
 
 
 # ── Client ───────────────────────────────────────────────────────────
@@ -1095,8 +1148,15 @@ class AgaraStreamClient:
         assert self._queue is not None
         await ep.open(self._queue)
         self._open_endpoints.add(kind)
+        await self._replay_subscriptions(kind)
+
+    async def _replay_subscriptions(self, kind: _EndpointKind) -> None:
+        """Send the endpoint's current subscription set as one `subscribe`
+        op — on first connect, on reconnect, and to re-establish a feed
+        after a `resubscribe` action."""
+        ep = self._endpoint(kind)
         my_subs = [c for c in self._subscriptions if _endpoint_for(c) == kind]
-        if my_subs:
+        if ep.is_open and my_subs:
             await ep.send(self._build_op("subscribe", my_subs))
 
     async def _close_endpoint(self, kind: _EndpointKind) -> None:
@@ -1188,6 +1248,24 @@ class AgaraStreamClient:
                 remaining.discard(item.endpoint)
                 continue
             await self._dispatch(item)
+            if isinstance(item, StreamError) and item.action:
+                await self._handle_error_action(item)
+
+    async def _handle_error_action(self, err: StreamError) -> None:
+        """Callback-mode auto-recovery for `error` frames that carry an
+        `action`. Runs after user handlers, so an `on_error` handler can
+        refresh the token (via `set_token`) before a `reconnect`.
+
+        - `resubscribe`: one feed stopped; replay the affected
+          endpoint's subscription set to re-establish it.
+        - `reconnect`: drop the affected endpoint so the runner reopens
+          it with backoff (and whatever token is now set).
+        """
+        kind = _endpoint_kind_for_name(err.channel)
+        if err.action == "resubscribe":
+            await self._replay_subscriptions(kind)
+        elif err.action == "reconnect":
+            await self._endpoint(kind).close()
 
     async def _dispatch(self, payload: Any) -> None:
         handlers = self._handlers.get(type(payload))

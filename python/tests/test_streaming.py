@@ -377,8 +377,16 @@ def test_sequence_reset():
         "op": "sequence_reset",
         "channel": "orderbook",
         "token_id": "21742",
+        "reason": "lagged",
     })
     assert isinstance(frame, streaming.SequenceReset)
+    assert frame.reason == "lagged"
+
+
+def test_sequence_reset_reason_optional():
+    frame = streaming.decode_frame({"op": "sequence_reset", "channel": "trades"})
+    assert isinstance(frame, streaming.SequenceReset)
+    assert frame.reason is None
 
 
 def test_heartbeat_and_pong():
@@ -398,6 +406,20 @@ def test_error_frame():
     })
     assert isinstance(frame, streaming.StreamError)
     assert frame.code == "unknown_token"
+    assert frame.action is None
+
+
+def test_error_frame_carries_action():
+    frame = streaming.decode_frame({
+        "op": "error",
+        "code": "subject_unavailable",
+        "message": "subject feed ended; resubscribe to resume",
+        "action": "resubscribe",
+        "channel": "orderbook",
+        "token_id": "123",
+    })
+    assert isinstance(frame, streaming.StreamError)
+    assert frame.action == "resubscribe"
 
 
 def test_unknown_op_yields_unknown_frame():
@@ -704,3 +726,69 @@ def test_grouping_partitions_correctly():
     grouped = streaming._group_by_endpoint(chs)
     assert {c.name for c in grouped["market"]} == {"orderbook", "trades"}
     assert {c.name for c in grouped["account"]} == {"account_events"}
+
+
+class _FakeEndpoint:
+    """Stand-in for `_Endpoint` capturing sends/closes for action tests."""
+
+    def __init__(self) -> None:
+        self.sent: list[dict[str, Any]] = []
+        self.closed = False
+        self._open = True
+
+    @property
+    def is_open(self) -> bool:
+        return self._open
+
+    async def send(self, payload: dict[str, Any]) -> None:
+        self.sent.append(payload)
+
+    async def close(self) -> None:
+        self.closed = True
+        self._open = False
+
+
+@pytest.mark.asyncio
+async def test_resubscribe_action_replays_endpoint_subscriptions():
+    client = streaming.AgaraStreamClient()
+    fake = _FakeEndpoint()
+    client._market = fake  # type: ignore[assignment]
+    client._subscriptions = [streaming.orderbook("tok"), streaming.trades("cond")]
+
+    await client._handle_error_action(
+        streaming.StreamError(
+            code="subject_unavailable",
+            message="gone",
+            action="resubscribe",
+            channel="orderbook",
+            token_id="tok",
+        )
+    )
+
+    assert len(fake.sent) == 1
+    op = fake.sent[0]
+    assert op["op"] == "subscribe"
+    assert {c["name"] for c in op["channels"]} == {"orderbook", "trades"}
+    assert not fake.closed
+
+
+@pytest.mark.asyncio
+async def test_reconnect_action_closes_affected_endpoint():
+    client = streaming.AgaraStreamClient(token="jwt")
+    fake_account = _FakeEndpoint()
+    fake_market = _FakeEndpoint()
+    client._account = fake_account  # type: ignore[assignment]
+    client._market = fake_market  # type: ignore[assignment]
+
+    await client._handle_error_action(
+        streaming.StreamError(
+            code="unauthorized",
+            message="token rejected",
+            action="reconnect",
+            channel="account_events",
+        )
+    )
+
+    assert fake_account.closed
+    assert not fake_market.closed
+    assert fake_account.sent == []
