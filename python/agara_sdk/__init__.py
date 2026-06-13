@@ -33,7 +33,7 @@ __all__ = [
     "micro_to_float",
 ]
 
-__version__ = "0.3.0"
+__version__ = "0.4.0"
 
 
 DEFAULT_BASE_URL = "https://d3r180aqvl5ynd.cloudfront.net"
@@ -48,8 +48,8 @@ TERMINAL_STATUSES = frozenset(
 _MAX_CONSECUTIVE_SERVER_ERRORS = 3
 
 #: Page size the list-all helpers request per round-trip while walking the
-#: server's offset pagination. Matches the server's max page size, so a full
-#: book is fetched in the fewest requests. Shared by the sync and async clients.
+#: server's keyset-cursor pagination. Matches the server's max page size, so a
+#: full book is fetched in the fewest requests. Shared by the sync and async clients.
 _LIST_PAGE_SIZE = 500
 
 
@@ -408,15 +408,20 @@ class AgaraClient:
 
     def list_orders(
         self,
-        limit: int = 100,
-        offset: int = 0,
+        limit: int = 500,
+        cursor: Optional[str] = None,
     ) -> dict[str, Any]:
-        """List your orders, newest first. Returns both open and terminal."""
-        return self._request(
-            "POST",
-            "/trade/v1/orders/list",
-            json={"limit": limit, "offset": offset},
-        )
+        """List your orders, newest first — open and terminal — keyset-
+        paginated. Returns the raw envelope `{"orders": [...],
+        "pagination": {"next_cursor": ..., "limit": ...}, "as_of": ...}`.
+        Omit `cursor` for the first page; pass the response's
+        `pagination.next_cursor` back as `cursor` to walk the rest,
+        stopping when it comes back `None`. Treat the cursor as opaque
+        and keep `limit` the same across pages."""
+        body: dict[str, Any] = {"limit": limit}
+        if cursor is not None:
+            body["cursor"] = cursor
+        return self._request("POST", "/trade/v1/orders/list", json=body)
 
     def get_order(self, order_id: str) -> dict[str, Any]:
         """Look up one order by its internal UUID."""
@@ -493,7 +498,7 @@ class AgaraClient:
         exchanges: Optional[list[str]] = None,
     ) -> list[dict[str, Any]]:
         """Every resting order across both backends, newest-first. Walks
-        the server's offset pagination internally and returns the
+        the server's keyset-cursor pagination internally and returns the
         complete set — a truncated snapshot would make a reconciler
         treat unseen live orders as stale. Distinct from `list_orders`,
         which also returns terminal orders; this returns only orders
@@ -504,44 +509,77 @@ class AgaraClient:
         are onboarded on.
         Scope: `portfolio:read`."""
         orders: list[dict[str, Any]] = []
-        offset = 0
+        cursor: Optional[str] = None
         while True:
+            body: dict[str, Any] = {
+                "token_ids": token_ids or [],
+                "exchanges": exchanges or [],
+                "limit": _LIST_PAGE_SIZE,
+            }
+            if cursor is not None:
+                body["cursor"] = cursor
             data = self._request(
-                "POST",
-                "/trade/v1/portfolio/open-orders/list",
-                json={
-                    "token_ids": token_ids or [],
-                    "exchanges": exchanges or [],
-                    "limit": _LIST_PAGE_SIZE,
-                    "offset": offset,
-                },
+                "POST", "/trade/v1/portfolio/open-orders/list", json=body
             )
             if not data:
                 break
             orders.extend(data.get("orders", []))
-            next_offset = data.get("next_offset")
-            if next_offset is None or next_offset <= offset:
+            next_cursor = (data.get("pagination") or {}).get("next_cursor")
+            # `== cursor` guards a server that hands back a non-advancing
+            # token; without an integer offset to compare, that's the
+            # only stall we can detect.
+            if next_cursor is None or next_cursor == cursor:
                 break
-            offset = next_offset
+            cursor = next_cursor
         return orders
 
-    def list_activities(self, limit: Optional[int] = None) -> list[dict[str, Any]]:
-        """Activity feed sorted newest-first. Like `list_trades` but
-        each row also includes realized P&L (`null` on rows that don't
-        realize — BUY / SPLIT / MERGE). Use this when you want the
-        same stream the user sees in their browser activity tab.
-        Scope: `portfolio:read`."""
-        params = {"limit": limit} if limit is not None else None
-        data = self._request("GET", "/trade/v1/portfolio/activities", params=params)
-        return data["activities"] if data else []
+    def list_activities(
+        self,
+        limit: Optional[int] = None,
+        cursor: Optional[str] = None,
+    ) -> dict[str, Any]:
+        """Activity feed, newest-first — keyset-paginated. Like
+        `list_trades` but each row also includes realized P&L (`null` on
+        rows that don't realize — BUY / SPLIT / MERGE). Returns the raw
+        envelope `{"activities": [...], "pagination": {"next_cursor": ...,
+        "limit": ...}, "unavailable_exchanges": [...], "as_of": ...}`.
+        Omit `cursor` for the first page; pass the response's
+        `pagination.next_cursor` back as `cursor`, stopping when it comes
+        back `None`. An empty `activities` page can still carry a non-null
+        cursor, so keep paging until it is `None` — don't stop on an empty
+        page. Scope: `portfolio:read`."""
+        params: dict[str, Any] = {}
+        if limit is not None:
+            params["limit"] = limit
+        if cursor is not None:
+            params["cursor"] = cursor
+        # `_request` returns None on a 204 / empty body; surface that as
+        # an empty dict so callers can still do `data.get("activities", [])`.
+        data = self._request(
+            "GET", "/trade/v1/portfolio/activities", params=params or None
+        )
+        return data if data else {}
 
-    def list_trades(self) -> list[dict[str, Any]]:
-        """Recent fill history. Sorted newest-first by the server."""
-        # `_request` returns None on 204 / empty body; a fresh
-        # account with no fills can legitimately come back that
-        # way. Treat it as "no trades yet" rather than crashing.
-        data = self._request("GET", "/trade/v1/portfolio/trades")
-        return data["trades"] if data else []
+    def list_trades(
+        self,
+        limit: int = 500,
+        cursor: Optional[str] = None,
+    ) -> dict[str, Any]:
+        """Recent fill history, newest-first — keyset-paginated. Returns
+        the raw envelope `{"trades": [...], "pagination": {"next_cursor":
+        ..., "limit": ...}, "unavailable_exchanges": [...], "as_of": ...}`.
+        Omit `cursor` for the first page; pass the response's
+        `pagination.next_cursor` back as `cursor` to walk the rest,
+        stopping when it comes back `None`. An empty `trades` page can
+        still carry a non-null cursor, so keep paging until it is `None`
+        — don't stop on an empty page. Scope: `portfolio:read`."""
+        params: dict[str, Any] = {"limit": limit}
+        if cursor is not None:
+            params["cursor"] = cursor
+        # `_request` returns None on a 204 / empty body; surface that as
+        # an empty dict so callers can still do `data.get("trades", [])`.
+        data = self._request("GET", "/trade/v1/portfolio/trades", params=params)
+        return data if data else {}
 
     def wait_for_terminal(
         self,

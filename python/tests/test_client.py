@@ -11,7 +11,7 @@ from __future__ import annotations
 
 import pytest
 import responses
-from responses.matchers import json_params_matcher
+from responses.matchers import json_params_matcher, query_param_matcher
 
 from agara_sdk import (
     AgaraClient,
@@ -578,33 +578,89 @@ def test_wait_for_terminal_raises_after_three_consecutive_server_errors(
 
 
 @responses.activate
-def test_list_trades_returns_empty_list_when_body_is_empty(
+def test_list_orders_sends_limit_only_on_first_page(client: AgaraClient) -> None:
+    # First page carries no cursor; the SDK sends only `limit` and
+    # returns the raw envelope verbatim.
+    responses.post(
+        f"{BASE_URL}/trade/v1/orders/list",
+        json={
+            "orders": [{"id": "ord-1"}],
+            "pagination": {"next_cursor": "nc", "limit": 500},
+            "as_of": "2026-06-13T00:00:00Z",
+        },
+        match=[json_params_matcher({"limit": 500}, strict_match=True)],
+    )
+
+    resp = client.list_orders()
+
+    assert [o["id"] for o in resp["orders"]] == ["ord-1"]
+    assert resp["pagination"]["next_cursor"] == "nc"
+
+
+@responses.activate
+def test_list_orders_threads_cursor(client: AgaraClient) -> None:
+    responses.post(
+        f"{BASE_URL}/trade/v1/orders/list",
+        json={
+            "orders": [],
+            "pagination": {"next_cursor": None, "limit": 250},
+            "as_of": "2026-06-13T00:00:00Z",
+        },
+        match=[json_params_matcher({"limit": 250, "cursor": "abc"}, strict_match=True)],
+    )
+
+    resp = client.list_orders(limit=250, cursor="abc")
+
+    assert resp["pagination"]["next_cursor"] is None
+
+
+@responses.activate
+def test_list_trades_returns_empty_dict_when_body_is_empty(
     client: AgaraClient,
 ) -> None:
     # The router can legitimately return 204 / empty body for an
-    # account with no fills. Previous behaviour subscripted `None`
-    # and crashed; we now treat empty as zero trades.
+    # account with no fills. We surface that as an empty dict so callers
+    # can still do `data.get("trades", [])` rather than crashing.
     responses.get(
         f"{BASE_URL}/trade/v1/portfolio/trades",
         body="",
         status=204,
     )
 
-    assert client.list_trades() == []
+    assert client.list_trades() == {}
 
 
 @responses.activate
-def test_list_trades_unwraps_trades_key_when_populated(
+def test_list_trades_returns_envelope_with_pagination(
     client: AgaraClient,
 ) -> None:
     responses.get(
         f"{BASE_URL}/trade/v1/portfolio/trades",
-        json={"trades": [{"id": "t1"}, {"id": "t2"}]},
+        json={
+            "trades": [{"id": "t1"}, {"id": "t2"}],
+            "pagination": {"next_cursor": "c1", "limit": 500},
+            "unavailable_exchanges": [],
+        },
+        match=[query_param_matcher({"limit": "500"})],
     )
 
-    trades = client.list_trades()
+    resp = client.list_trades()
 
-    assert [t["id"] for t in trades] == ["t1", "t2"]
+    assert [t["id"] for t in resp["trades"]] == ["t1", "t2"]
+    assert resp["pagination"]["next_cursor"] == "c1"
+
+
+@responses.activate
+def test_list_trades_threads_limit_and_cursor(client: AgaraClient) -> None:
+    responses.get(
+        f"{BASE_URL}/trade/v1/portfolio/trades",
+        json={"trades": [], "pagination": {"next_cursor": None, "limit": 250}},
+        match=[query_param_matcher({"limit": "250", "cursor": "abc"})],
+    )
+
+    resp = client.list_trades(limit=250, cursor="abc")
+
+    assert resp["pagination"]["limit"] == 250
 
 
 @responses.activate
@@ -687,12 +743,16 @@ def test_list_positions_unscoped_returns_partial_on_backend_outage(client: Agara
 
 @responses.activate
 def test_list_open_orders_returns_single_page(client: AgaraClient) -> None:
+    # next_cursor null on the only page → one request, no cursor sent.
     responses.post(
         f"{BASE_URL}/trade/v1/portfolio/open-orders/list",
-        json={"orders": [{"id": "o1"}, {"id": "o2"}], "next_offset": None},
+        json={
+            "orders": [{"id": "o1"}, {"id": "o2"}],
+            "pagination": {"next_cursor": None, "limit": 500},
+        },
         match=[
             json_params_matcher(
-                {"token_ids": [TOKEN_ID], "exchanges": [], "limit": 500, "offset": 0},
+                {"token_ids": [TOKEN_ID], "exchanges": [], "limit": 500},
                 strict_match=True,
             )
         ],
@@ -705,23 +765,25 @@ def test_list_open_orders_returns_single_page(client: AgaraClient) -> None:
 
 @responses.activate
 def test_list_open_orders_walks_every_page(client: AgaraClient) -> None:
-    # Page 1 carries a next_offset → the client must fetch page 2.
+    # Page 1 carries a next_cursor → the client must fetch page 2 with
+    # it echoed back as `cursor`. The strict matchers assert page 1 sends
+    # no cursor and page 2 sends exactly the page-1 token.
     responses.post(
         f"{BASE_URL}/trade/v1/portfolio/open-orders/list",
-        json={"orders": [{"id": "o1"}], "next_offset": 500},
+        json={"orders": [{"id": "o1"}], "pagination": {"next_cursor": "cur-2", "limit": 500}},
         match=[
             json_params_matcher(
-                {"token_ids": [], "exchanges": [], "limit": 500, "offset": 0},
+                {"token_ids": [], "exchanges": [], "limit": 500},
                 strict_match=True,
             )
         ],
     )
     responses.post(
         f"{BASE_URL}/trade/v1/portfolio/open-orders/list",
-        json={"orders": [{"id": "o2"}], "next_offset": None},
+        json={"orders": [{"id": "o2"}], "pagination": {"next_cursor": None, "limit": 500}},
         match=[
             json_params_matcher(
-                {"token_ids": [], "exchanges": [], "limit": 500, "offset": 500},
+                {"token_ids": [], "exchanges": [], "limit": 500, "cursor": "cur-2"},
                 strict_match=True,
             )
         ],
@@ -733,28 +795,74 @@ def test_list_open_orders_walks_every_page(client: AgaraClient) -> None:
 
 
 @responses.activate
-def test_list_activities_sends_limit_query_param(client: AgaraClient) -> None:
-    # responses matches the path + query string from the URL we register.
-    responses.get(
-        f"{BASE_URL}/trade/v1/portfolio/activities?limit=250",
-        json={"activities": [{"type": "TRADE"}]},
+def test_list_open_orders_stops_on_non_advancing_cursor(client: AgaraClient) -> None:
+    # A server bug that hands back the same token must not loop forever:
+    # both pages echo cur-1, so the walk stops after the second request.
+    responses.post(
+        f"{BASE_URL}/trade/v1/portfolio/open-orders/list",
+        json={"orders": [{"id": "o1"}], "pagination": {"next_cursor": "cur-1", "limit": 500}},
+        match=[
+            json_params_matcher(
+                {"token_ids": [], "exchanges": [], "limit": 500}, strict_match=True
+            )
+        ],
+    )
+    responses.post(
+        f"{BASE_URL}/trade/v1/portfolio/open-orders/list",
+        json={"orders": [{"id": "o2"}], "pagination": {"next_cursor": "cur-1", "limit": 500}},
+        match=[
+            json_params_matcher(
+                {"token_ids": [], "exchanges": [], "limit": 500, "cursor": "cur-1"},
+                strict_match=True,
+            )
+        ],
     )
 
-    activities = client.list_activities(limit=250)
+    orders = client.list_open_orders()
 
-    assert [a["type"] for a in activities] == ["TRADE"]
+    assert [o["id"] for o in orders] == ["o1", "o2"]
+    assert len(responses.calls) == 2
 
 
 @responses.activate
-def test_list_activities_omits_limit_when_none(client: AgaraClient) -> None:
-    # When `limit=None` (default), the SDK lets the server pick its
-    # own default rather than passing `?limit=` with no value.
+def test_list_activities_sends_limit_query_param(client: AgaraClient) -> None:
     responses.get(
         f"{BASE_URL}/trade/v1/portfolio/activities",
-        json={"activities": []},
+        json={"activities": [{"type": "TRADE"}], "pagination": {"next_cursor": None, "limit": 250}},
+        match=[query_param_matcher({"limit": "250"})],
     )
 
-    assert client.list_activities() == []
+    resp = client.list_activities(limit=250)
+
+    assert [a["type"] for a in resp["activities"]] == ["TRADE"]
+
+
+@responses.activate
+def test_list_activities_threads_limit_and_cursor(client: AgaraClient) -> None:
+    responses.get(
+        f"{BASE_URL}/trade/v1/portfolio/activities",
+        json={"activities": [], "pagination": {"next_cursor": None, "limit": 100}},
+        match=[query_param_matcher({"limit": "100", "cursor": "xyz"})],
+    )
+
+    resp = client.list_activities(limit=100, cursor="xyz")
+
+    assert resp["pagination"]["limit"] == 100
+
+
+@responses.activate
+def test_list_activities_omits_query_when_no_args(client: AgaraClient) -> None:
+    # No limit/cursor → no query string at all; empty/None args let the
+    # server pick its own default page size.
+    responses.get(
+        f"{BASE_URL}/trade/v1/portfolio/activities",
+        json={"activities": [], "pagination": {"next_cursor": None, "limit": 50}},
+    )
+
+    resp = client.list_activities()
+
+    assert resp["activities"] == []
+    assert "?" not in responses.calls[0].request.url
 
 
 def test_context_manager_closes_session() -> None:

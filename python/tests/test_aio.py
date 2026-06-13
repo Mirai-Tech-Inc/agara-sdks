@@ -182,12 +182,54 @@ async def test_http_status_maps_to_typed_exception(status: int, exc: type) -> No
 
 
 @pytest.mark.asyncio
-async def test_list_trades_returns_empty_list_when_body_is_empty() -> None:
+async def test_list_trades_returns_empty_dict_when_body_is_empty() -> None:
     def handler(request: httpx.Request) -> httpx.Response:
         return httpx.Response(204)
 
     async with _client(handler) as client:
-        assert await client.list_trades() == []
+        assert await client.list_trades() == {}
+
+
+@pytest.mark.asyncio
+async def test_list_trades_returns_envelope() -> None:
+    def handler(request: httpx.Request) -> httpx.Response:
+        assert request.url.params.get("limit") == "500"
+        return httpx.Response(
+            200,
+            json={
+                "trades": [{"id": "t1"}],
+                "pagination": {"next_cursor": "c", "limit": 500},
+                "unavailable_exchanges": [],
+            },
+        )
+
+    async with _client(handler) as client:
+        resp = await client.list_trades()
+
+    assert resp["trades"][0]["id"] == "t1"
+    assert resp["pagination"]["next_cursor"] == "c"
+
+
+@pytest.mark.asyncio
+async def test_list_orders_threads_cursor() -> None:
+    seen: dict = {}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen["body"] = _json.loads(request.content)
+        return httpx.Response(
+            200,
+            json={
+                "orders": [],
+                "pagination": {"next_cursor": None, "limit": 250},
+                "as_of": "2026-06-13T00:00:00Z",
+            },
+        )
+
+    async with _client(handler) as client:
+        resp = await client.list_orders(limit=250, cursor="abc")
+
+    assert seen["body"] == {"limit": 250, "cursor": "abc"}
+    assert resp["pagination"]["next_cursor"] is None
 
 
 @pytest.mark.asyncio
@@ -212,20 +254,28 @@ async def test_list_positions_unwraps_and_sends_filters() -> None:
 
 @pytest.mark.asyncio
 async def test_list_open_orders_walks_every_page() -> None:
-    offsets: list[int] = []
+    bodies: list[dict] = []
 
     def handler(request: httpx.Request) -> httpx.Response:
         body = _json.loads(request.content)
-        offsets.append(body["offset"])
-        if body["offset"] == 0:
-            return httpx.Response(200, json={"orders": [{"id": "o1"}], "next_offset": 500})
-        return httpx.Response(200, json={"orders": [{"id": "o2"}], "next_offset": None})
+        bodies.append(body)
+        if "cursor" not in body:
+            return httpx.Response(
+                200,
+                json={"orders": [{"id": "o1"}], "pagination": {"next_cursor": "cur-2", "limit": 500}},
+            )
+        return httpx.Response(
+            200,
+            json={"orders": [{"id": "o2"}], "pagination": {"next_cursor": None, "limit": 500}},
+        )
 
     async with _client(handler) as client:
         orders = await client.list_open_orders()
 
     assert [o["id"] for o in orders] == ["o1", "o2"]
-    assert offsets == [0, 500]
+    # Page 1 sends no cursor; page 2 echoes the page-1 token.
+    assert "cursor" not in bodies[0]
+    assert bodies[1]["cursor"] == "cur-2"
 
 
 @pytest.mark.asyncio

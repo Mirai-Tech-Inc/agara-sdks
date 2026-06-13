@@ -179,7 +179,7 @@ client.place_order(
     expiration_unix_seconds=None,
 )                                # → dict (see API docs)
 
-client.list_orders(limit=100, offset=0)       # → dict with `orders`, `next_offset`, …
+client.list_orders(limit=500, cursor=None)    # → dict: `orders`, `pagination.next_cursor`, …
 client.get_order(order_id)                    # → dict with `order`
 client.cancel_order(order_id)                 # → dict
 client.cancel_all_orders()                    # → dict
@@ -188,7 +188,7 @@ client.cancel_all_orders()                    # → dict
 ### Trades
 
 ```python
-client.list_trades()                          # → list[dict] of recent fills
+client.list_trades(limit=500, cursor=None)    # → dict: `trades`, `pagination.next_cursor`, …
 ```
 
 ### Helpers

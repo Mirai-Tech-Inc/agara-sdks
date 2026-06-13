@@ -46,8 +46,8 @@ def main() -> None:
             order = client.wait_for_terminal(order_id, timeout=10.0)
         print(f"final status: {order['status']}")
 
-        # 4. Print the last few fills.
-        trades = client.list_trades()[:5]
+        # 4. Print the last few fills (first page is newest-first).
+        trades = client.list_trades().get("trades", [])[:5]
         for t in trades:
             shares = int(t["shares_micro"]) / 1_000_000
             tprice = int(t["price_micro"]) / 1_000_000
