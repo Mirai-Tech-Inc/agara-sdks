@@ -181,6 +181,7 @@ client.place_order(
 
 client.list_orders(limit=500, cursor=None)    # → dict: `orders`, `pagination.next_cursor`, …
 client.get_order(order_id)                    # → dict with `order`
+client.get_order_trades(order_id)             # → dict: `trades` (unpaginated), `as_of`
 client.cancel_order(order_id)                 # → dict
 client.cancel_all_orders()                    # → dict
 ```

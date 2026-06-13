@@ -427,6 +427,16 @@ class AgaraClient:
         """Look up one order by its internal UUID."""
         return self._request("GET", f"/trade/v1/orders/{order_id}")
 
+    def get_order_trades(self, order_id: str) -> dict[str, Any]:
+        """List the fills for one order, newest-first, from that order's
+        perspective. Returns the raw envelope `{"trades": [...],
+        "as_of": ...}`. Each trade carries `role` (`MAKER` or `TAKER`,
+        or `null` for Polymarket orders — an order can be the maker on
+        some fills and the taker on others), `side`, `price_micro`, and
+        `fees_micro` for this order's leg of the fill. Unpaginated: an
+        order's fills are returned in full. Scope: `orders:read`."""
+        return self._request("GET", f"/trade/v1/orders/{order_id}/trades")
+
     def cancel_order(self, order_id: str) -> dict[str, Any]:
         """Cancel one order. Async — poll `get_order` until the
         status becomes `CANCELLED` to confirm."""

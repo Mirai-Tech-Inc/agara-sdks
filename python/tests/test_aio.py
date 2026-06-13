@@ -70,6 +70,27 @@ async def test_authorization_header_is_set_on_every_request() -> None:
 
 
 @pytest.mark.asyncio
+async def test_get_order_trades_hits_subresource_path() -> None:
+    seen: dict[str, str] = {}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen["path"] = request.url.path
+        return httpx.Response(
+            200,
+            json={
+                "trades": [{"trade_id": "t1", "role": "TAKER", "side": "BUY"}],
+                "as_of": "2026-06-13T00:00:00Z",
+            },
+        )
+
+    async with _client(handler) as client:
+        result = await client.get_order_trades("abc")
+
+    assert seen["path"] == "/trade/v1/orders/abc/trades"
+    assert result["trades"][0]["role"] == "TAKER"
+
+
+@pytest.mark.asyncio
 async def test_get_orderbook_returns_typed_dataclass() -> None:
     def handler(request: httpx.Request) -> httpx.Response:
         assert request.url.path == f"/trade/v1/orderbook/{TOKEN_ID}"

@@ -52,6 +52,25 @@ def test_authorization_header_is_set_on_every_request(client: AgaraClient) -> No
 
 
 @responses.activate
+def test_get_order_trades_hits_subresource_path(client: AgaraClient) -> None:
+    responses.get(
+        f"{BASE_URL}/trade/v1/orders/abc/trades",
+        json={
+            "trades": [
+                {"trade_id": "t1", "role": "MAKER", "side": "BUY"},
+                {"trade_id": "t2", "role": "TAKER", "side": "SELL"},
+            ],
+            "as_of": "2026-06-13T00:00:00Z",
+        },
+    )
+
+    result = client.get_order_trades("abc")
+
+    assert len(responses.calls) == 1
+    assert [trade["role"] for trade in result["trades"]] == ["MAKER", "TAKER"]
+
+
+@responses.activate
 def test_get_orderbook_returns_typed_dataclass(client: AgaraClient) -> None:
     # The router's orderbook endpoint returns prices/sizes as floats
     # already (dollars and shares), not micro-encoded — see the
