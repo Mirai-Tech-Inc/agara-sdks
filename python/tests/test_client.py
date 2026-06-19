@@ -26,6 +26,7 @@ from agara_sdk import (
     TERMINAL_STATUSES,
     micro_to_float,
 )
+from agara_sdk.signing import SignedOrder, SignedOrderEntry
 
 
 BASE_URL = "https://api.example.test"
@@ -226,6 +227,40 @@ def test_place_order_gtd_includes_expiration(client: AgaraClient) -> None:
         time_in_force="GTD",
         expiration_unix_seconds=1_800_000_000,
     )
+
+
+@responses.activate
+def test_place_signed_orders_wraps_entries_under_orders(client: AgaraClient) -> None:
+    signed = SignedOrder(
+        order_hash="0xhash",
+        signature="0xsig",
+        salt=7,
+        maker="0xmaker",
+        signer="0xmaker",
+        token_id=int(TOKEN_ID),
+        maker_amount=600000,
+        taker_amount=1000000,
+        side=0,
+    )
+    entry = SignedOrderEntry(
+        signed_order=signed,
+        token_id=TOKEN_ID,
+        side="BUY",
+        price_micro=600000,
+        shares_micro=1000000,
+    )
+    expected = entry.to_request_body()
+
+    responses.post(
+        f"{BASE_URL}/trade/v1/orders/signed/batch",
+        json={"results": [], "as_of": "2026-06-19T00:00:00Z"},
+        status=202,
+        match=[json_params_matcher({"orders": [expected, expected]}, strict_match=True)],
+    )
+
+    client.place_signed_orders(orders=[entry, entry])
+
+    assert len(responses.calls) == 1
 
 
 def test_place_order_rejects_both_shares_and_collateral(client: AgaraClient) -> None:

@@ -135,6 +135,34 @@ class SignedOrder:
         return body
 
 
+@dataclass(frozen=True)
+class SignedOrderEntry:
+    """One order in a `place_signed_orders` batch: a `SignedOrder` plus the
+    same per-order arguments `place_signed_order` takes. `to_request_body`
+    reuses `SignedOrder.to_request_body`, so a batch element serialises
+    identically to a single submission."""
+
+    signed_order: SignedOrder
+    token_id: str
+    side: Literal["BUY", "SELL"]
+    price_micro: int
+    shares_micro: int
+    time_in_force: str = "GTC"
+    post_only: bool = False
+    expiration_unix_seconds: int | None = None
+
+    def to_request_body(self) -> dict:
+        return self.signed_order.to_request_body(
+            token_id_string=self.token_id,
+            side_string=self.side,
+            price_micro=self.price_micro,
+            shares_micro=self.shares_micro,
+            time_in_force=self.time_in_force,
+            post_only=self.post_only,
+            expiration_unix_seconds=self.expiration_unix_seconds,
+        )
+
+
 def sign_limit_order(
     *,
     private_key: str,

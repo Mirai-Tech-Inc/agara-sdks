@@ -13,7 +13,7 @@ from typing import TYPE_CHECKING, Any, NoReturn, Optional
 import requests
 
 if TYPE_CHECKING:
-    from agara_sdk.signing import SignedOrder
+    from agara_sdk.signing import SignedOrder, SignedOrderEntry
 
 
 __all__ = [
@@ -33,7 +33,7 @@ __all__ = [
     "micro_to_float",
 ]
 
-__version__ = "0.4.0"
+__version__ = "0.5.0"
 
 
 DEFAULT_BASE_URL = "https://d3r180aqvl5ynd.cloudfront.net"
@@ -370,6 +370,20 @@ class AgaraClient:
             expiration_unix_seconds=expiration_unix_seconds,
         )
         return self._request("POST", "/trade/v1/orders/signed", json=body)
+
+    def place_signed_orders(
+        self,
+        *,
+        orders: "list[SignedOrderEntry]",   # up to 32, from `agara_sdk.signing`
+    ) -> dict[str, Any]:
+        """Place up to 32 pre-signed LIMIT orders in one call. Each order is
+        validated and accepted independently: the response `results` array
+        carries one entry per submitted order, in request order, each either
+        `accepted` (with the same fields as `place_signed_order`) or `rejected`
+        (with a `code` and `message`). A duplicate `order_hash` is reported
+        `rejected` rather than failing the batch. Scope: `orders:place_signed`."""
+        body = {"orders": [entry.to_request_body() for entry in orders]}
+        return self._request("POST", "/trade/v1/orders/signed/batch", json=body)
 
     def place_market_order(
         self,
