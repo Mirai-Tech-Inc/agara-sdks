@@ -221,6 +221,7 @@ def test_fill_taker_decodes():
             "role": "taker",
             "fill_id": "fill-1",
             "order_id": "11111111-1111-1111-1111-111111111111",
+            "order_hash": "0xabc123",
             "token_id": "yes-token",
             "side": "buy",
             "price": 60,
@@ -234,6 +235,7 @@ def test_fill_taker_decodes():
     assert isinstance(frame, streaming.Fill)
     assert frame.role == "taker"
     assert frame.fill_id == "fill-1"
+    assert frame.order_hash == "0xabc123"
     assert frame.token_id == "yes-token"
     assert frame.price == 60
     assert frame.size == 1_000_000
@@ -254,6 +256,7 @@ def test_fill_maker_role_decodes():
             "role": "maker",
             "fill_id": "fill-2",
             "order_id": "22222222-2222-2222-2222-222222222222",
+            "order_hash": "0xdef456",
             "token_id": "no-token",
             "side": "sell",
             "price": 40,
@@ -278,6 +281,7 @@ def test_order_accepted_and_cancelled_decode():
         "data": {
             "kind": "order_accepted",
             "order_id": "11111111-1111-1111-1111-111111111111",
+            "order_hash": "0xabc123",
             "token_id": "yes-token",
             "side": "buy",
             "price": 60,
@@ -288,6 +292,7 @@ def test_order_accepted_and_cancelled_decode():
         },
     })
     assert isinstance(accepted, streaming.OrderAccepted)
+    assert accepted.order_hash == "0xabc123"
     assert accepted.tif == "gtc"
     assert accepted.price == 60
     assert accepted.remaining_size == 5_000_000
@@ -300,6 +305,7 @@ def test_order_accepted_and_cancelled_decode():
         "data": {
             "kind": "order_cancelled",
             "order_id": "11111111-1111-1111-1111-111111111111",
+            "order_hash": "0xabc123",
             "token_id": "yes-token",
             "side": "buy",
             "price": 60,
@@ -310,6 +316,7 @@ def test_order_accepted_and_cancelled_decode():
         },
     })
     assert isinstance(cancelled, streaming.OrderCancelled)
+    assert cancelled.order_hash == "0xabc123"
     assert cancelled.reason == "user"
     assert cancelled.remaining_size == 5_000_000
     assert cancelled.token_id == "yes-token"
@@ -569,6 +576,7 @@ async def test_fill_dispatch_routes_to_on_fill():
             "role": "taker",
             "fill_id": "f1",
             "order_id": "33333333-3333-3333-3333-333333333333",
+            "order_hash": "0x789abc",
             "token_id": "yes-token",
             "side": "buy",
             "price": 60,

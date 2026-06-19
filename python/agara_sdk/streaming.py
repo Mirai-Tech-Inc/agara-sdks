@@ -279,6 +279,9 @@ class Fill:
     # Agara UUID for the side this fill is rendered against (taker
     # order's UUID on `role="taker"`, maker order's on `role="maker"`).
     order_id: str
+    # EIP-712 hash of the order this leg belongs to. For signed orders
+    # it's the hash you computed before submitting — your correlation key.
+    order_hash: str
     # The outcome token traded — YES or NO. The role-relative side:
     # on NORMAL fills both roles trade the same token; on MINT / MERGE
     # the two roles touch different tokens.
@@ -298,6 +301,7 @@ class Fill:
 class OrderAccepted:
     sequence: int
     order_id: str
+    order_hash: str
     token_id: str
     side: Literal["buy", "sell", "unspecified"]
     price: int
@@ -311,6 +315,7 @@ class OrderAccepted:
 class OrderCancelled:
     sequence: int
     order_id: str
+    order_hash: str
     token_id: str
     side: Literal["buy", "sell", "unspecified"]
     price: int
@@ -509,6 +514,7 @@ def _decode_fill(seq: int, d: dict[str, Any]) -> Fill:
         role=d["role"],
         fill_id=str(d["fill_id"]),
         order_id=str(d["order_id"]),
+        order_hash=str(d["order_hash"]),
         token_id=str(d["token_id"]),
         side=d["side"],
         price=_int(d["price"]),
@@ -524,6 +530,7 @@ def _decode_order_accepted(seq: int, d: dict[str, Any]) -> OrderAccepted:
     return OrderAccepted(
         sequence=seq,
         order_id=str(d["order_id"]),
+        order_hash=str(d["order_hash"]),
         token_id=str(d["token_id"]),
         side=d["side"],
         price=_int(d["price"]),
@@ -538,6 +545,7 @@ def _decode_order_cancelled(seq: int, d: dict[str, Any]) -> OrderCancelled:
     return OrderCancelled(
         sequence=seq,
         order_id=str(d["order_id"]),
+        order_hash=str(d["order_hash"]),
         token_id=str(d["token_id"]),
         side=d["side"],
         price=_int(d["price"]),

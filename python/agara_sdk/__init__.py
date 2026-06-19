@@ -80,7 +80,8 @@ class NotFoundError(AgaraError):
 
 
 class ConflictError(AgaraError):
-    """409 — e.g. cancelling an order already in a terminal state."""
+    """409 — e.g. cancelling an order already in a terminal state, or
+    submitting a signed order whose `order_hash` already exists."""
 
 
 class RejectedError(AgaraError):
@@ -426,6 +427,15 @@ class AgaraClient:
     def get_order(self, order_id: str) -> dict[str, Any]:
         """Look up one order by its internal UUID."""
         return self._request("GET", f"/trade/v1/orders/{order_id}")
+
+    def get_order_by_hash(self, order_hash: str) -> dict[str, Any]:
+        """Look up one order by its EIP-712 `order_hash`. For signed orders
+        you know the hash before submitting, so this finds the order when
+        you have the hash but not the `order_id` — you missed the placement
+        response, got a `409` resubmitting, or are reconciling after a
+        reconnect. Raises `NotFoundError` if no such order is yours. Scope:
+        `orders:read`."""
+        return self._request("GET", f"/trade/v1/orders/by-hash/{order_hash}")
 
     def get_order_trades(self, order_id: str) -> dict[str, Any]:
         """List the fills for one order, newest-first, from that order's

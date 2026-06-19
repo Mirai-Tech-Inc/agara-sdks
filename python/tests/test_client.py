@@ -71,6 +71,19 @@ def test_get_order_trades_hits_subresource_path(client: AgaraClient) -> None:
 
 
 @responses.activate
+def test_get_order_by_hash_hits_by_hash_path(client: AgaraClient) -> None:
+    responses.get(
+        f"{BASE_URL}/trade/v1/orders/by-hash/0xabc123",
+        json={"order": {"id": "abc", "order_hash": "0xabc123", "status": "OPEN"}},
+    )
+
+    result = client.get_order_by_hash("0xabc123")
+
+    assert len(responses.calls) == 1
+    assert result["order"]["order_hash"] == "0xabc123"
+
+
+@responses.activate
 def test_get_orderbook_returns_typed_dataclass(client: AgaraClient) -> None:
     # The router's orderbook endpoint returns prices/sizes as floats
     # already (dollars and shares), not micro-encoded — see the
