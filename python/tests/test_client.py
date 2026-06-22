@@ -21,6 +21,7 @@ from agara_sdk import (
     BadRequestError,
     ConflictError,
     NotFoundError,
+    RateLimitedError,
     RejectedError,
     ServerError,
     TERMINAL_STATUSES,
@@ -460,6 +461,7 @@ def test_micro_to_float_round_trip() -> None:
         (404, NotFoundError),
         (409, ConflictError),
         (422, RejectedError),
+        (429, RateLimitedError),
         (500, ServerError),
         (502, ServerError),
         (503, ServerError),
@@ -482,6 +484,21 @@ def test_http_status_maps_to_typed_exception(
     assert info.value.message == "boom"
     # Every typed exception inherits from AgaraError.
     assert isinstance(info.value, AgaraError)
+
+
+@responses.activate
+def test_rate_limited_carries_retry_after(client: AgaraClient) -> None:
+    responses.get(
+        f"{BASE_URL}/trade/v1/orders/abc",
+        json={"error": "rate_limited"},
+        status=429,
+        headers={"Retry-After": "7"},
+    )
+
+    with pytest.raises(RateLimitedError) as info:
+        client.get_order("abc")
+
+    assert info.value.retry_after == 7.0
 
 
 @responses.activate

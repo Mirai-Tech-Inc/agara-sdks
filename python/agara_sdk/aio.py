@@ -105,7 +105,7 @@ class AsyncAgaraClient:
         except ValueError:
             err_msg = resp.text or resp.reason_phrase or ""
 
-        _raise_api_error(resp.status_code, err_msg)
+        _raise_api_error(resp.status_code, err_msg, resp.headers)
 
     async def get_orderbook(self, token_id: str) -> Orderbook:
         """Snapshot of bid/ask depth for one outcome."""

@@ -24,6 +24,7 @@ from agara_sdk import (
     ConflictError,
     ForbiddenError,
     NotFoundError,
+    RateLimitedError,
     RejectedError,
     ServerError,
     TERMINAL_STATUSES,
@@ -184,6 +185,7 @@ async def test_validation_errors_raise_before_dispatch() -> None:
         (404, NotFoundError),
         (409, ConflictError),
         (422, RejectedError),
+        (429, RateLimitedError),
         (500, ServerError),
         (503, ServerError),
     ],
@@ -200,6 +202,20 @@ async def test_http_status_maps_to_typed_exception(status: int, exc: type) -> No
     assert info.value.status_code == status
     assert info.value.message == "boom"
     assert isinstance(info.value, AgaraError)
+
+
+@pytest.mark.asyncio
+async def test_rate_limited_carries_retry_after() -> None:
+    def handler(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(
+            429, json={"error": "rate_limited"}, headers={"Retry-After": "7"}
+        )
+
+    async with _client(handler) as client:
+        with pytest.raises(RateLimitedError) as info:
+            await client.get_order("abc")
+
+    assert info.value.retry_after == 7.0
 
 
 @pytest.mark.asyncio

@@ -25,6 +25,7 @@ __all__ = [
     "NotFoundError",
     "ConflictError",
     "RejectedError",
+    "RateLimitedError",
     "ServerError",
     "Orderbook",
     "OrderbookLevel",
@@ -56,10 +57,13 @@ _LIST_PAGE_SIZE = 500
 class AgaraError(Exception):
     """Base for every error this SDK raises."""
 
-    def __init__(self, status_code: int, message: str):
+    def __init__(self, status_code: int, message: str, retry_after: Optional[float] = None):
         super().__init__(f"[{status_code}] {message}")
         self.status_code = status_code
         self.message = message
+        #: Seconds the server asked the caller to wait before retrying, from the
+        #: `Retry-After` (or `x-ratelimit-reset`) header. `None` when absent.
+        self.retry_after = retry_after
 
 
 class BadRequestError(AgaraError):
@@ -87,6 +91,11 @@ class ConflictError(AgaraError):
 class RejectedError(AgaraError):
     """422 — order rejected (insufficient balance / shares,
     FOK couldn't fill, post-only would cross, market halted)."""
+
+
+class RateLimitedError(AgaraError):
+    """429 — per-tier token bucket exhausted. `retry_after` carries the
+    server's `Retry-After` hint (seconds) when present; back off and retry."""
 
 
 class ServerError(AgaraError):
@@ -142,7 +151,26 @@ def micro_to_float(value: str | int | None) -> Optional[float]:
     return int(value) / MICRO
 
 
-def _raise_api_error(status_code: int, message: str) -> NoReturn:
+def _parse_retry_after(headers: Optional[Any]) -> Optional[float]:
+    """Read the retry hint (seconds) from response headers. Prefers
+    `Retry-After`, falls back to `x-ratelimit-reset`; both are emitted as
+    integer seconds by the router. Returns None when absent or unparseable."""
+    if headers is None:
+        return None
+    for key in ("retry-after", "x-ratelimit-reset"):
+        raw = headers.get(key)
+        if raw is None:
+            continue
+        try:
+            return float(raw)
+        except (TypeError, ValueError):
+            continue
+    return None
+
+
+def _raise_api_error(
+    status_code: int, message: str, headers: Optional[Any] = None
+) -> NoReturn:
     """Map an HTTP status to the matching typed exception and raise it.
     Shared by the sync and async clients so the mapping lives once."""
     if status_code == 400:
@@ -157,6 +185,8 @@ def _raise_api_error(status_code: int, message: str) -> NoReturn:
         raise ConflictError(status_code, message)
     if status_code == 422:
         raise RejectedError(status_code, message)
+    if status_code == 429:
+        raise RateLimitedError(status_code, message, _parse_retry_after(headers))
     if 500 <= status_code < 600:
         raise ServerError(status_code, message)
     raise AgaraError(status_code, message)
@@ -310,7 +340,7 @@ class AgaraClient:
         except ValueError:
             err_msg = resp.text or resp.reason or ""
 
-        _raise_api_error(resp.status_code, err_msg)
+        _raise_api_error(resp.status_code, err_msg, resp.headers)
 
     def get_orderbook(self, token_id: str) -> Orderbook:
         """Snapshot of bid/ask depth for one outcome."""
