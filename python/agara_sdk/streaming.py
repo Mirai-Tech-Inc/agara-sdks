@@ -294,7 +294,7 @@ class Fill:
     price_scale: int
     size_scale: int
     settlement_mode: Literal["normal", "mint", "merge", "unspecified"]
-    fee_micro_usdc: int
+    fee_micro: int
 
 
 @dataclass(frozen=True)
@@ -522,7 +522,7 @@ def _decode_fill(seq: int, d: dict[str, Any]) -> Fill:
         price_scale=_int(d["price_scale"]),
         size_scale=_int(d["size_scale"]),
         settlement_mode=d["settlement_mode"],
-        fee_micro_usdc=_int(d["fee_micro_usdc"]),
+        fee_micro=_int(d["fee_micro"]),
     )
 
 

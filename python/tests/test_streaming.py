@@ -229,7 +229,7 @@ def test_fill_taker_decodes():
             "price_scale": 100,
             "size_scale": 1_000_000,
             "settlement_mode": "normal",
-            "fee_micro_usdc": "1234",
+            "fee_micro": "1234",
         },
     })
     assert isinstance(frame, streaming.Fill)
@@ -241,7 +241,7 @@ def test_fill_taker_decodes():
     assert frame.size == 1_000_000
     assert frame.price_scale == 100
     assert frame.size_scale == 1_000_000
-    assert frame.fee_micro_usdc == 1234
+    assert frame.fee_micro == 1234
     assert frame.settlement_mode == "normal"
     assert frame.sequence == 42
 
@@ -264,7 +264,7 @@ def test_fill_maker_role_decodes():
             "price_scale": 100,
             "size_scale": 1_000_000,
             "settlement_mode": "normal",
-            "fee_micro_usdc": "0",
+            "fee_micro": "0",
         },
     })
     assert isinstance(frame, streaming.Fill)
@@ -584,7 +584,7 @@ async def test_fill_dispatch_routes_to_on_fill():
             "price_scale": 100,
             "size_scale": 1_000_000,
             "settlement_mode": "normal",
-            "fee_micro_usdc": "0",
+            "fee_micro": "0",
         },
     }))
     assert len(captured) == 1

@@ -234,7 +234,7 @@ async def test_list_trades_returns_envelope() -> None:
         return httpx.Response(
             200,
             json={
-                "trades": [{"id": "t1"}],
+                "trades": [{"trade_id": "t1"}],
                 "pagination": {"next_cursor": "c", "limit": 500},
                 "unavailable_exchanges": [],
             },
@@ -243,7 +243,7 @@ async def test_list_trades_returns_envelope() -> None:
     async with _client(handler) as client:
         resp = await client.list_trades()
 
-    assert resp["trades"][0]["id"] == "t1"
+    assert resp["trades"][0]["trade_id"] == "t1"
     assert resp["pagination"]["next_cursor"] == "c"
 
 

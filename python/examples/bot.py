@@ -62,7 +62,7 @@ async def run(token_id: str, condition_id: str, token: str, base_url: str) -> No
             f"market={fill.market_id} outcome={fill.outcome} "
             f"side={fill.side} px={fill.price}/{fill.price_scale} "
             f"sz={fill.size}/{fill.size_scale} mode={fill.settlement_mode} "
-            f"fee={fill.fee_micro_usdc}"
+            f"fee={fill.fee_micro}"
         )
 
     @client.on_order_accepted

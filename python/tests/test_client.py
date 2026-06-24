@@ -721,7 +721,7 @@ def test_list_trades_returns_envelope_with_pagination(
     responses.get(
         f"{BASE_URL}/trade/v1/portfolio/trades",
         json={
-            "trades": [{"id": "t1"}, {"id": "t2"}],
+            "trades": [{"trade_id": "t1"}, {"trade_id": "t2"}],
             "pagination": {"next_cursor": "c1", "limit": 500},
             "unavailable_exchanges": [],
         },
@@ -730,7 +730,7 @@ def test_list_trades_returns_envelope_with_pagination(
 
     resp = client.list_trades()
 
-    assert [t["id"] for t in resp["trades"]] == ["t1", "t2"]
+    assert [t["trade_id"] for t in resp["trades"]] == ["t1", "t2"]
     assert resp["pagination"]["next_cursor"] == "c1"
 
 
