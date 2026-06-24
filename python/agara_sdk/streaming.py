@@ -258,14 +258,14 @@ class Trade:
     # mint / merge need both to fully attribute the collateral split.
     taker_token_id: str
     maker_token_id: str
-    side: Literal["buy", "sell", "unspecified"]
+    side: Literal["BUY", "SELL", "UNSPECIFIED"]
     # Engine-native; convert with `price / price_scale`. Self-describing
     # — scales travel with the event.
     price: int
     size: int
     price_scale: int
     size_scale: int
-    settlement_mode: Literal["normal", "mint", "merge", "unspecified"]
+    settlement_mode: Literal["NORMAL", "MINT", "MERGE", "UNSPECIFIED"]
 
 
 @dataclass(frozen=True)
@@ -274,7 +274,7 @@ class Fill:
     # event log for the subscribing user. Use it to detect gaps after a
     # `sequence_reset`.
     sequence: int
-    role: Literal["taker", "maker"]
+    role: Literal["TAKER", "MAKER"]
     fill_id: str
     # Agara UUID for the side this fill is rendered against (taker
     # order's UUID on `role="taker"`, maker order's on `role="maker"`).
@@ -286,14 +286,14 @@ class Fill:
     # on NORMAL fills both roles trade the same token; on MINT / MERGE
     # the two roles touch different tokens.
     token_id: str
-    side: Literal["buy", "sell", "unspecified"]
+    side: Literal["BUY", "SELL", "UNSPECIFIED"]
     # Engine-native units; convert with `price / price_scale` and
     # `size / size_scale`.
     price: int
     size: int
     price_scale: int
     size_scale: int
-    settlement_mode: Literal["normal", "mint", "merge", "unspecified"]
+    settlement_mode: Literal["NORMAL", "MINT", "MERGE", "UNSPECIFIED"]
     fee_micro: int
 
 
@@ -303,12 +303,12 @@ class OrderAccepted:
     order_id: str
     order_hash: str
     token_id: str
-    side: Literal["buy", "sell", "unspecified"]
+    side: Literal["BUY", "SELL", "UNSPECIFIED"]
     price: int
     remaining_size: int
     price_scale: int
     size_scale: int
-    tif: Literal["gtc", "fak", "fok", "unspecified"]
+    tif: Literal["GTC", "FAK", "FOK", "UNSPECIFIED"]
 
 
 @dataclass(frozen=True)
@@ -317,12 +317,12 @@ class OrderCancelled:
     order_id: str
     order_hash: str
     token_id: str
-    side: Literal["buy", "sell", "unspecified"]
+    side: Literal["BUY", "SELL", "UNSPECIFIED"]
     price: int
     remaining_size: int
     price_scale: int
     size_scale: int
-    reason: Literal["user", "fak_remainder", "self_trade_prevention", "unspecified"]
+    reason: Literal["USER", "FAK_REMAINDER", "SELF_TRADE_PREVENTION", "MARKET_RESOLVED", "UNSPECIFIED"]
 
 
 @dataclass(frozen=True)

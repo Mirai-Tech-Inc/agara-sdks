@@ -138,12 +138,12 @@ def test_trade_decodes():
             "fill_id": "42",
             "taker_token_id": "yes-token",
             "maker_token_id": "yes-token",
-            "side": "buy",
+            "side": "BUY",
             "price": 60,
             "size": 120,
             "price_scale": 100,
             "size_scale": 1,
-            "settlement_mode": "normal",
+            "settlement_mode": "NORMAL",
         },
     })
     assert isinstance(frame, streaming.Trade)
@@ -152,12 +152,12 @@ def test_trade_decodes():
     assert frame.fill_id == "42"
     assert frame.taker_token_id == "yes-token"
     assert frame.maker_token_id == "yes-token"
-    assert frame.side == "buy"
+    assert frame.side == "BUY"
     assert frame.price == 60
     assert frame.size == 120
     assert frame.price_scale == 100
     assert frame.size_scale == 1
-    assert frame.settlement_mode == "normal"
+    assert frame.settlement_mode == "NORMAL"
 
 
 def test_trade_mint_settlement_decodes_with_split_tokens():
@@ -173,16 +173,16 @@ def test_trade_mint_settlement_decodes_with_split_tokens():
             "fill_id": "43",
             "taker_token_id": "yes-token",
             "maker_token_id": "no-token",
-            "side": "buy",
+            "side": "BUY",
             "price": 50,
             "size": 10,
             "price_scale": 100,
             "size_scale": 1,
-            "settlement_mode": "mint",
+            "settlement_mode": "MINT",
         },
     })
     assert isinstance(frame, streaming.Trade)
-    assert frame.settlement_mode == "mint"
+    assert frame.settlement_mode == "MINT"
     assert frame.taker_token_id != frame.maker_token_id
 
 
@@ -218,22 +218,22 @@ def test_fill_taker_decodes():
         "sequence": 42,
         "data": {
             "kind": "fill",
-            "role": "taker",
+            "role": "TAKER",
             "fill_id": "fill-1",
             "order_id": "11111111-1111-1111-1111-111111111111",
             "order_hash": "0xabc123",
             "token_id": "yes-token",
-            "side": "buy",
+            "side": "BUY",
             "price": 60,
             "size": 1_000_000,
             "price_scale": 100,
             "size_scale": 1_000_000,
-            "settlement_mode": "normal",
+            "settlement_mode": "NORMAL",
             "fee_micro": "1234",
         },
     })
     assert isinstance(frame, streaming.Fill)
-    assert frame.role == "taker"
+    assert frame.role == "TAKER"
     assert frame.fill_id == "fill-1"
     assert frame.order_hash == "0xabc123"
     assert frame.token_id == "yes-token"
@@ -242,7 +242,7 @@ def test_fill_taker_decodes():
     assert frame.price_scale == 100
     assert frame.size_scale == 1_000_000
     assert frame.fee_micro == 1234
-    assert frame.settlement_mode == "normal"
+    assert frame.settlement_mode == "NORMAL"
     assert frame.sequence == 42
 
 
@@ -253,23 +253,23 @@ def test_fill_maker_role_decodes():
         "sequence": 43,
         "data": {
             "kind": "fill",
-            "role": "maker",
+            "role": "MAKER",
             "fill_id": "fill-2",
             "order_id": "22222222-2222-2222-2222-222222222222",
             "order_hash": "0xdef456",
             "token_id": "no-token",
-            "side": "sell",
+            "side": "SELL",
             "price": 40,
             "size": 5_000_000,
             "price_scale": 100,
             "size_scale": 1_000_000,
-            "settlement_mode": "normal",
+            "settlement_mode": "NORMAL",
             "fee_micro": "0",
         },
     })
     assert isinstance(frame, streaming.Fill)
     assert frame.order_id == "22222222-2222-2222-2222-222222222222"
-    assert frame.role == "maker"
+    assert frame.role == "MAKER"
     assert frame.token_id == "no-token"
 
 
@@ -283,17 +283,17 @@ def test_order_accepted_and_cancelled_decode():
             "order_id": "11111111-1111-1111-1111-111111111111",
             "order_hash": "0xabc123",
             "token_id": "yes-token",
-            "side": "buy",
+            "side": "BUY",
             "price": 60,
             "remaining_size": 5_000_000,
             "price_scale": 100,
             "size_scale": 1_000_000,
-            "tif": "gtc",
+            "tif": "GTC",
         },
     })
     assert isinstance(accepted, streaming.OrderAccepted)
     assert accepted.order_hash == "0xabc123"
-    assert accepted.tif == "gtc"
+    assert accepted.tif == "GTC"
     assert accepted.price == 60
     assert accepted.remaining_size == 5_000_000
     assert accepted.token_id == "yes-token"
@@ -307,17 +307,17 @@ def test_order_accepted_and_cancelled_decode():
             "order_id": "11111111-1111-1111-1111-111111111111",
             "order_hash": "0xabc123",
             "token_id": "yes-token",
-            "side": "buy",
+            "side": "BUY",
             "price": 60,
             "remaining_size": 5_000_000,
             "price_scale": 100,
             "size_scale": 1_000_000,
-            "reason": "user",
+            "reason": "USER",
         },
     })
     assert isinstance(cancelled, streaming.OrderCancelled)
     assert cancelled.order_hash == "0xabc123"
-    assert cancelled.reason == "user"
+    assert cancelled.reason == "USER"
     assert cancelled.remaining_size == 5_000_000
     assert cancelled.token_id == "yes-token"
 
@@ -544,12 +544,12 @@ async def test_trade_dispatch_routes_to_on_trade():
             "fill_id": "42",
             "taker_token_id": "yes-token",
             "maker_token_id": "yes-token",
-            "side": "buy",
+            "side": "BUY",
             "price": 60,
             "size": 120,
             "price_scale": 100,
             "size_scale": 1,
-            "settlement_mode": "normal",
+            "settlement_mode": "NORMAL",
         },
     }))
     assert len(captured) == 1
@@ -573,17 +573,17 @@ async def test_fill_dispatch_routes_to_on_fill():
         "sequence": 1,
         "data": {
             "kind": "fill",
-            "role": "taker",
+            "role": "TAKER",
             "fill_id": "f1",
             "order_id": "33333333-3333-3333-3333-333333333333",
             "order_hash": "0x789abc",
             "token_id": "yes-token",
-            "side": "buy",
+            "side": "BUY",
             "price": 60,
             "size": 1_000_000,
             "price_scale": 100,
             "size_scale": 1_000_000,
-            "settlement_mode": "normal",
+            "settlement_mode": "NORMAL",
             "fee_micro": "0",
         },
     }))
@@ -691,12 +691,12 @@ async def test_handler_exception_routes_to_on_error():
             "fill_id": "f1",
             "taker_token_id": "yes-token",
             "maker_token_id": "yes-token",
-            "side": "buy",
+            "side": "BUY",
             "price": 60,
             "size": 1,
             "price_scale": 100,
             "size_scale": 1,
-            "settlement_mode": "normal",
+            "settlement_mode": "NORMAL",
         },
     }))
     assert len(errors) == 1
