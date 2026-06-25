@@ -1,10 +1,10 @@
 """EIP-712 order signing for the agara CLOB exchange.
 
-Mirrors `crates/chain-client/src/eip712.rs`. The on-chain
-`CTFExchange.hashOrder` view + alloy's `eip712_signing_hash` produce
-the same 32-byte digest as `_hash_typed_data` below; that digest is
-what the deposit wallet's EIP-1271 path verifies on-chain via
-`ecrecover(hash, sig) == owner`.
+Mirrors `crates/chain-client/src/eip712.rs` (domain `("Agara CTF Exchange","1")`,
+10-field Order with no `signatureType`). The on-chain `CTFExchange.hashOrder`
+view + alloy's `eip712_signing_hash` produce the same 32-byte digest as the
+typed data below; that digest is what the maker account's `AgaraAccount`
+`isValidSignature` verifies on-chain via flat `ecrecover(hash, sig) == holder`.
 
 LIMIT-only for now. MARKET orders involve orderbook-walking + fee
 carve-outs (see `crates/agara-wallet/src/shape.rs`); they continue to
@@ -21,15 +21,17 @@ from eth_account import Account
 from eth_account.messages import encode_typed_data
 
 
-DOMAIN_NAME = "Polymarket CTF Exchange"
-DOMAIN_VERSION = "2"
+DOMAIN_NAME = "Agara CTF Exchange"
+DOMAIN_VERSION = "1"
 
 SIDE_BUY = 0
 SIDE_SELL = 1
 
-# `SignatureKind::Poly1271` in `crates/chain-client/src/types.rs`. The
-# deposit wallet is the maker/signer on the order; the user's EOA
-# signature is verified via the wallet's `isValidSignature` (EIP-1271).
+# Off-chain wire sentinel only: `signatureType` was dropped from the on-chain
+# Order (the fork's 10-field ORDER_TYPEHASH omits it), but the request body still
+# carries `signature_type=3` in lockstep with the Rust `SignatureKind::Erc1271`
+# so the server routes the smart-account path. The account (maker == signer) is an
+# AgaraAccount whose `isValidSignature` flat-ECDSA-recovers the holder (ERC-1271).
 SIGNATURE_KIND_POLY1271 = 3
 
 MICRO = 1_000_000
@@ -51,7 +53,6 @@ _ORDER_TYPES = {
         {"name": "makerAmount", "type": "uint256"},
         {"name": "takerAmount", "type": "uint256"},
         {"name": "side", "type": "uint8"},
-        {"name": "signatureType", "type": "uint8"},
         {"name": "timestamp", "type": "uint256"},
         {"name": "metadata", "type": "bytes32"},
         {"name": "builder", "type": "bytes32"},
@@ -78,7 +79,7 @@ class SignedOrder:
     order_hash: str             # 0x-prefixed keccak256 of the typed-data digest
     signature: str              # 0x-prefixed 65-byte (r||s||v) hex
     salt: int                   # u256 — drawn once at sign time
-    maker: str                  # deposit wallet address (== signer for POLY_1271)
+    maker: str                  # account address (== signer; the AgaraAccount holds the position)
     signer: str
     token_id: int               # u256 — outcome token id on the CTF
     maker_amount: int           # μUSDC for BUY, μshares for SELL
@@ -175,9 +176,10 @@ def sign_limit_order(
     salt: int | None = None,
 ) -> SignedOrder:
     """Sign a LIMIT order. `deposit_wallet_address` is both the maker
-    and the signer on the chain envelope (POLY_1271 path); the user's
-    EOA signature recovers via `ecrecover(hash, sig) == owner` on the
-    deposit wallet's `isValidSignature`.
+    and the signer on the chain envelope (it carries the AgaraAccount
+    address); the holder's EOA signs the order hash flat, and
+    `AgaraAccount.isValidSignature` recovers it via `ecrecover(hash, sig)
+    == holder`.
 
     Args:
         private_key: 0x-prefixed hex of the user's EOA private key
@@ -219,7 +221,6 @@ def sign_limit_order(
         "makerAmount": maker_amount,
         "takerAmount": taker_amount,
         "side": side_u8,
-        "signatureType": SIGNATURE_KIND_POLY1271,
         "timestamp": 0,
         "metadata": _ZERO_BYTES32,
         "builder": _ZERO_BYTES32,
