@@ -34,7 +34,7 @@ __all__ = [
     "micro_to_float",
 ]
 
-__version__ = "0.5.0"
+__version__ = "0.6.0"
 
 
 DEFAULT_BASE_URL = "https://d3r180aqvl5ynd.cloudfront.net"
