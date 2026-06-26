@@ -34,14 +34,14 @@ __all__ = [
     "micro_to_float",
 ]
 
-__version__ = "0.6.0"
+__version__ = "0.7.0"
 
 
 DEFAULT_BASE_URL = "https://d3r180aqvl5ynd.cloudfront.net"
 
 MICRO = 1_000_000
 TERMINAL_STATUSES = frozenset(
-    {"CONFIRMED", "CANCELLED", "EXPIRED", "REJECTED", "FAILED"}
+    {"MATCHED", "CANCELLED", "EXPIRED", "REJECTED", "FAILED"}
 )
 
 #: Consecutive transient 5xx tolerated inside `wait_for_terminal` before
