@@ -71,7 +71,7 @@ from typing import (
 from urllib.parse import urlsplit, urlunsplit
 
 
-DEFAULT_BASE_URL = "https://d3r180aqvl5ynd.cloudfront.net"
+DEFAULT_BASE_URL = "https://app.sandbox.agara.xyz"
 
 _MARKET_PATH = "/trade/v1/market-stream"
 _ACCOUNT_PATH = "/trade/v1/account-stream"

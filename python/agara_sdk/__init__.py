@@ -1,6 +1,6 @@
 """Agara Trading API — minimal Python client.
 
-See https://d3r180aqvl5ynd.cloudfront.net/docs/sdks/python for usage.
+See https://app.sandbox.agara.xyz/docs/sdks/python for usage.
 Python 3.10+.
 """
 
@@ -37,7 +37,7 @@ __all__ = [
 __version__ = "0.7.0"
 
 
-DEFAULT_BASE_URL = "https://d3r180aqvl5ynd.cloudfront.net"
+DEFAULT_BASE_URL = "https://app.sandbox.agara.xyz"
 
 MICRO = 1_000_000
 TERMINAL_STATUSES = frozenset(
