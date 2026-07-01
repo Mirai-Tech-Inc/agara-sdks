@@ -147,7 +147,7 @@ class AsyncAgaraClient:
         price_micro: int,                   # μUSDC per share, in (0, 1_000_000)
         shares_micro: int,                  # μshares
         signed_order: "SignedOrder",        # from `agara_sdk.signing.sign_limit_order`
-        time_in_force: str = "GTC",         # "GTC" only for v1
+        time_in_force: str = "GTC",         # "GTC" | "GTD" | "FAK" | "FOK"
         post_only: bool = False,
         expiration_unix_seconds: Optional[int] = None,
     ) -> dict[str, Any]:
@@ -252,6 +252,38 @@ class AsyncAgaraClient:
     async def cancel_all_orders(self) -> dict[str, Any]:
         """Cancel every open order across all your wallets."""
         return await self._request("POST", "/trade/v1/orders/cancel-all")
+
+    async def split_position(
+        self,
+        *,
+        condition_id: str,
+        collateral_amount_micro: int,       # μUSDC of collateral to lock
+    ) -> dict[str, Any]:
+        """Split USDC collateral into a YES + NO outcome-token pair on-chain
+        (1 USDC locks into 1 YES + 1 NO). Blocks until the transaction confirms
+        and returns the operation receipt (`relayer_state` is `CONFIRMED` on
+        AGARA). Scope: `positions:split`."""
+        body = {
+            "condition_id": condition_id,
+            "collateral_amount_micro": collateral_amount_micro,
+        }
+        return await self._request("POST", "/trade/v1/portfolio/positions/split", json=body)
+
+    async def merge_position(
+        self,
+        *,
+        condition_id: str,
+        shares_micro: int,                  # μshares of each outcome to burn
+    ) -> dict[str, Any]:
+        """Merge a complete YES + NO pair back into USDC on-chain — the inverse
+        of split. Requires holding at least `shares_micro` of both outcomes.
+        Blocks until the transaction confirms and returns the operation receipt.
+        Scope: `positions:merge`."""
+        body = {
+            "condition_id": condition_id,
+            "shares_micro": shares_micro,
+        }
+        return await self._request("POST", "/trade/v1/portfolio/positions/merge", json=body)
 
     async def get_portfolio_summary(
         self,
