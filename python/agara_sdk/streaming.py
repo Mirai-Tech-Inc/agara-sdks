@@ -326,6 +326,18 @@ class OrderCancelled:
 
 
 @dataclass(frozen=True)
+class OrderRejected:
+    # An accepted order failed at submit time (no balance, no shares,
+    # post-only cross, unfillable, or a venue/infra failure). Router-originated,
+    # so `sequence` is 0 (out-of-band) — dedupe by `order_id`.
+    sequence: int
+    order_id: str
+    order_hash: str | None
+    token_id: str | None
+    reason: str
+
+
+@dataclass(frozen=True)
 class TokensMinted:
     sequence: int
     # Per-market identifier — mint affects both outcomes by
@@ -417,7 +429,7 @@ class UnknownFrame:
     raw: dict[str, Any]
 
 
-AccountEvent = Union[Fill, OrderAccepted, OrderCancelled, TokensMinted, TokensMerged]
+AccountEvent = Union[Fill, OrderAccepted, OrderCancelled, OrderRejected, TokensMinted, TokensMerged]
 
 
 Frame = Union[
@@ -435,6 +447,7 @@ Frame = Union[
     Fill,
     OrderAccepted,
     OrderCancelled,
+    OrderRejected,
     TokensMinted,
     TokensMerged,
     Subscribed,
@@ -556,6 +569,18 @@ def _decode_order_cancelled(seq: int, d: dict[str, Any]) -> OrderCancelled:
     )
 
 
+def _decode_order_rejected(seq: int, d: dict[str, Any]) -> OrderRejected:
+    order_hash = d.get("order_hash")
+    token_id = d.get("token_id")
+    return OrderRejected(
+        sequence=seq,
+        order_id=str(d["order_id"]),
+        order_hash=str(order_hash) if order_hash is not None else None,
+        token_id=str(token_id) if token_id is not None else None,
+        reason=str(d.get("reason", "")),
+    )
+
+
 def _decode_tokens_minted(seq: int, d: dict[str, Any]) -> TokensMinted:
     return TokensMinted(
         sequence=seq,
@@ -578,6 +603,7 @@ _ACCOUNT_EVENT_DECODERS: dict[str, Callable[[int, dict[str, Any]], AccountEvent]
     "fill": _decode_fill,
     "order_accepted": _decode_order_accepted,
     "order_cancelled": _decode_order_cancelled,
+    "order_rejected": _decode_order_rejected,
     "tokens_minted": _decode_tokens_minted,
     "tokens_merged": _decode_tokens_merged,
 }
@@ -1020,6 +1046,9 @@ class AgaraStreamClient:
     def on_order_cancelled(self, fn: Handler[OrderCancelled]) -> Handler[OrderCancelled]:
         return self._register(OrderCancelled, fn)
 
+    def on_order_rejected(self, fn: Handler[OrderRejected]) -> Handler[OrderRejected]:
+        return self._register(OrderRejected, fn)
+
     def on_tokens_minted(self, fn: Handler[TokensMinted]) -> Handler[TokensMinted]:
         return self._register(TokensMinted, fn)
 
@@ -1321,6 +1350,7 @@ __all__ = [
     "MarketResumed",
     "OrderAccepted",
     "OrderCancelled",
+    "OrderRejected",
     "OrderbookDelta",
     "OrderbookSnapshot",
     "OutcomeProposed",

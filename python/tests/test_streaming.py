@@ -322,6 +322,47 @@ def test_order_accepted_and_cancelled_decode():
     assert cancelled.token_id == "yes-token"
 
 
+def test_order_rejected_decode():
+    rejected = streaming.decode_frame({
+        "op": "update",
+        "channel": "account_events",
+        "sequence": 0,
+        "data": {
+            "kind": "order_rejected",
+            "order_id": "11111111-1111-1111-1111-111111111111",
+            "order_hash": "0xabc123",
+            "token_id": "yes-token",
+            "reason": "insufficient balance",
+        },
+    })
+    assert isinstance(rejected, streaming.OrderRejected)
+    assert rejected.sequence == 0
+    assert rejected.order_id == "11111111-1111-1111-1111-111111111111"
+    assert rejected.order_hash == "0xabc123"
+    assert rejected.token_id == "yes-token"
+    assert rejected.reason == "insufficient balance"
+
+
+def test_order_rejected_decode_null_hash_and_token():
+    # order_hash / token_id are best-effort at the router and may arrive null.
+    rejected = streaming.decode_frame({
+        "op": "update",
+        "channel": "account_events",
+        "sequence": 0,
+        "data": {
+            "kind": "order_rejected",
+            "order_id": "11111111-1111-1111-1111-111111111111",
+            "order_hash": None,
+            "token_id": None,
+            "reason": "engine rejected order",
+        },
+    })
+    assert isinstance(rejected, streaming.OrderRejected)
+    assert rejected.order_hash is None
+    assert rejected.token_id is None
+    assert rejected.reason == "engine rejected order"
+
+
 def test_tokens_minted_and_merged_decode():
     minted = streaming.decode_frame({
         "op": "update",
