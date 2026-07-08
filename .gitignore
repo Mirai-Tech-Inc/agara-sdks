@@ -6,6 +6,11 @@ __pycache__/
 .pytest_cache/
 .ruff_cache/
 
+# ── Rust ──
+# Cargo.lock stays tracked — these crates are publishable libraries.
+target/
+*.rs.bk
+
 # ── Build artifacts ──
 dist/
 build/
