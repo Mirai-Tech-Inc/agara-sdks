@@ -74,8 +74,9 @@ need one per worker.
   format outbound, parses them back inbound. You think in dollars
   and shares; the wire details stay hidden.
 - Maps HTTP status codes to a small exception hierarchy:
-  `AuthError` (401, 403), `NotFoundError`, `ConflictError`,
-  `RejectedError` (422), `ServerError` (5xx). All inherit from
+  `BadRequestError` (400), `AuthError` (401), `ForbiddenError` (403),
+  `NotFoundError` (404), `ConflictError` (409), `RejectedError` (422),
+  `RateLimitedError` (429), `ServerError` (5xx). All inherit from
   `AgaraError`.
 - Provides `wait_for_terminal` for the place-and-poll pattern.
 - Implements the context-manager protocol so `with AgaraClient(...) as c:`
@@ -117,7 +118,7 @@ asyncio.run(main())
 One client transparently handles both the public market stream
 (orderbook, best_quote, trades, market_status) and the private
 account_events stream. Full reference at
-[`/docs/sdks/python/reference#streaming`](https://d3r180aqvl5ynd.cloudfront.net/docs/sdks/python/reference#streaming).
+[`/docs/sdks/python/reference#streaming`](https://app.sandbox.agara.xyz/docs/sdks/python/reference#streaming).
 
 ## What it doesn't do (compose on top)
 
@@ -126,8 +127,8 @@ account_events stream. Full reference at
 
 ## Getting a token
 
-API tokens are issued from the web app's **Settings → API tokens**
-page. See [the authentication guide](https://d3r180aqvl5ynd.cloudfront.net/docs/authentication)
+API tokens are issued from the web app's **Profile → API tokens**
+page. See [the authentication guide](https://app.sandbox.agara.xyz/docs/authentication)
 for full details on scopes and revocation.
 
 The recommended trading-bot scope set:
@@ -140,11 +141,14 @@ orders:cancel
 orders:cancel_all
 ```
 
+Add `account:stream` for the account-events WebSocket,
+`orders:place_signed` for locally-signed orders, and
+`positions:split` / `positions:merge` for on-chain split/merge.
 Reading the orderbook is public — no scope needed.
 
 ## Reference
 
-### `AgaraClient(token, base_url="https://d3r180aqvl5ynd.cloudfront.net", timeout=10.0, session=None)`
+### `AgaraClient(token, base_url="https://app.sandbox.agara.xyz", timeout=10.0, session=None)`
 
 Constructor. `session` lets you inject a configured `requests.Session`
 (custom retries, connection pooling, etc.); a default one is created
@@ -212,15 +216,18 @@ micro_to_float(None)              # None — handy for nullable response fields
 from agara_sdk import (
     AgaraError,        # base — also catches uncategorized statuses
     BadRequestError,   # 400 — malformed body or invalid parameters
-    AuthError,         # 401 / 403
+    AuthError,         # 401 — missing / invalid / revoked / expired token
+    ForbiddenError,    # 403 — token valid but lacks the required scope
     NotFoundError,     # 404
     ConflictError,     # 409 — e.g. cancel of an already-terminal order
     RejectedError,     # 422 — engine rejected the order
+    RateLimitedError,  # 429 — per-tier bucket exhausted; see .retry_after
     ServerError,       # 5xx — retryable
 )
 ```
 
-Every exception has `.status_code` and `.message` attributes.
+Every exception has `.status_code` and `.message` attributes;
+`RateLimitedError` also carries `.retry_after` (seconds, or `None`).
 
 ## Development
 

@@ -2,8 +2,8 @@
 client and dispatch each frame via typed handlers. Auto-reconnects
 with backoff.
 
-    export AGARA_BASE_URL="https://d3r180aqvl5ynd.cloudfront.net"
-    export AGARA_TOKEN="agt_pat_..."
+    export AGARA_BASE_URL="https://app.sandbox.agara.xyz"
+    export AGARA_TOKEN="agt_..."
     pip install 'agara-sdk[streaming]'
     python examples/bot.py <token_id> <condition_id>
 
@@ -51,7 +51,7 @@ async def run(token_id: str, condition_id: str, token: str, base_url: str) -> No
     @client.on_trade
     async def _(t: streaming.Trade) -> None:
         print(
-            f"[trade] market={t.condition_id} outcome={t.outcome} "
+            f"[trade] market={t.condition_id} taker_token={t.taker_token_id} "
             f"{t.side} {t.size}@{t.price} mode={t.settlement_mode}"
         )
 
@@ -59,7 +59,7 @@ async def run(token_id: str, condition_id: str, token: str, base_url: str) -> No
     async def _(fill: streaming.Fill) -> None:
         print(
             f"[fill {fill.role}] id={fill.fill_id} order={fill.order_id} "
-            f"market={fill.market_id} outcome={fill.outcome} "
+            f"token={fill.token_id} "
             f"side={fill.side} px={fill.price}/{fill.price_scale} "
             f"sz={fill.size}/{fill.size_scale} mode={fill.settlement_mode} "
             f"fee={fill.fee_micro}"
@@ -68,16 +68,16 @@ async def run(token_id: str, condition_id: str, token: str, base_url: str) -> No
     @client.on_order_accepted
     async def _(o: streaming.OrderAccepted) -> None:
         print(
-            f"[accepted] order={o.order_id} market={o.market_id} "
-            f"outcome={o.outcome} side={o.side} px={o.price}/{o.price_scale} "
+            f"[accepted] order={o.order_id} token={o.token_id} "
+            f"side={o.side} px={o.price}/{o.price_scale} "
             f"remaining={o.remaining_size}/{o.size_scale} tif={o.tif}"
         )
 
     @client.on_order_cancelled
     async def _(o: streaming.OrderCancelled) -> None:
         print(
-            f"[cancelled] order={o.order_id} market={o.market_id} "
-            f"outcome={o.outcome} reason={o.reason}"
+            f"[cancelled] order={o.order_id} token={o.token_id} "
+            f"reason={o.reason}"
         )
 
     @client.on_sequence_reset
@@ -105,7 +105,7 @@ def main() -> None:
         sys.exit("usage: bot.py <token_id> <condition_id>")
     token = os.environ.get("AGARA_TOKEN")
     if not token:
-        sys.exit("set AGARA_TOKEN to a Privy JWT or PAT (agt_pat_...)")
+        sys.exit("set AGARA_TOKEN to a Privy JWT or PAT (agt_...)")
     base_url = os.environ.get("AGARA_BASE_URL", streaming.DEFAULT_BASE_URL)
     try:
         asyncio.run(run(sys.argv[1], sys.argv[2], token, base_url))

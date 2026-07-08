@@ -1,7 +1,7 @@
 """Iterator-mode demo: subscribe to one or more channels on the public
 market stream and print every frame as it arrives. Ctrl-C to exit.
 
-    export AGARA_BASE_URL="https://d3r180aqvl5ynd.cloudfront.net"
+    export AGARA_BASE_URL="https://app.sandbox.agara.xyz"
     pip install 'agara-sdk[streaming]'
     python examples/subscribe.py orderbook 21742…36455
     python examples/subscribe.py trades 0x2174…

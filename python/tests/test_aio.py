@@ -317,7 +317,7 @@ async def test_list_open_orders_walks_every_page() -> None:
 
 @pytest.mark.asyncio
 async def test_wait_for_terminal_polls_until_terminal(no_sleep: None) -> None:
-    statuses = ["OPEN", "OPEN", "CONFIRMED"]
+    statuses = ["OPEN", "OPEN", "MATCHED"]
     calls = 0
 
     def handler(request: httpx.Request) -> httpx.Response:
@@ -329,7 +329,7 @@ async def test_wait_for_terminal_polls_until_terminal(no_sleep: None) -> None:
     async with _client(handler) as client:
         result = await client.wait_for_terminal("abc", timeout=10.0, poll_interval=1.0)
 
-    assert result["status"] == "CONFIRMED"
+    assert result["status"] == "MATCHED"
     assert result["status"] in TERMINAL_STATUSES
     assert calls == 3
 

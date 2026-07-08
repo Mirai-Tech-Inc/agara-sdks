@@ -12,7 +12,7 @@ reconnect. Recommended for bots.
 
     from agara_sdk import streaming
 
-    client = streaming.AgaraStreamClient(token="agt_pat_...")
+    client = streaming.AgaraStreamClient(token="agt_...")
 
     @client.on_trade
     async def _(t: streaming.Trade) -> None:

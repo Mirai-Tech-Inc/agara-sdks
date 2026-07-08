@@ -7,16 +7,16 @@ registry.
 | Language | Path | Status | Registry |
 | --- | --- | --- | --- |
 | Python | [`python/`](./python/) | alpha | `agara-sdk` on PyPI (when published) |
+| Rust | [`rust/`](./rust/) | alpha | `agara-sdk` on crates.io (when published) |
 | TypeScript | — | planned | `@agara/sdk` on npm |
-| Rust | — | planned | `agara-sdk` on crates.io |
 
 All SDKs target the same HTTP API. The canonical reference for what
 each endpoint does — request shape, response shape, errors — lives at
-[`https://d3r180aqvl5ynd.cloudfront.net/docs`](https://d3r180aqvl5ynd.cloudfront.net/docs).
+[`https://app.sandbox.agara.xyz/docs`](https://app.sandbox.agara.xyz/docs).
 When in doubt, the API docs win; SDKs are a thin convenience layer
 over them.
 
-The auto-generated OpenAPI 3 spec at `https://d3r180aqvl5ynd.cloudfront.net/trade/v1/openapi.json`
+The auto-generated OpenAPI 3 spec at `https://app.sandbox.agara.xyz/trade/v1/openapi.json`
 drives any future generated clients we publish alongside the
 hand-written ones.
 

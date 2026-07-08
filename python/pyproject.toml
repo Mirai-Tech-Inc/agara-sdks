@@ -58,7 +58,7 @@ dev = [
 ]
 
 [project.urls]
-Documentation = "https://d3r180aqvl5ynd.cloudfront.net/docs"
+Documentation = "https://app.sandbox.agara.xyz/docs"
 Repository = "https://github.com/Mirai-Tech-Inc/prediction-markets"
 
 [build-system]

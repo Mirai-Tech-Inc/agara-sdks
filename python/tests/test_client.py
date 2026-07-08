@@ -545,12 +545,12 @@ def test_wait_for_terminal_returns_immediately_when_already_terminal(
 ) -> None:
     responses.get(
         f"{BASE_URL}/trade/v1/orders/abc",
-        json={"order": {"id": "abc", "status": "CONFIRMED"}},
+        json={"order": {"id": "abc", "status": "MATCHED"}},
     )
 
     result = client.wait_for_terminal("abc", timeout=5.0, poll_interval=0.01)
 
-    assert result["status"] == "CONFIRMED"
+    assert result["status"] == "MATCHED"
     assert result["status"] in TERMINAL_STATUSES
     assert len(responses.calls) == 1
 
@@ -559,7 +559,7 @@ def test_wait_for_terminal_returns_immediately_when_already_terminal(
 def test_wait_for_terminal_polls_until_terminal(
     client: AgaraClient, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    # First two polls: still OPEN. Third: CONFIRMED.
+    # First two polls: still OPEN. Third: MATCHED.
     responses.get(
         f"{BASE_URL}/trade/v1/orders/abc",
         json={"order": {"id": "abc", "status": "OPEN"}},
@@ -570,7 +570,7 @@ def test_wait_for_terminal_polls_until_terminal(
     )
     responses.get(
         f"{BASE_URL}/trade/v1/orders/abc",
-        json={"order": {"id": "abc", "status": "CONFIRMED"}},
+        json={"order": {"id": "abc", "status": "MATCHED"}},
     )
 
     # Skip the real sleep so the test isn't slow.
@@ -578,7 +578,7 @@ def test_wait_for_terminal_polls_until_terminal(
 
     result = client.wait_for_terminal("abc", timeout=10.0, poll_interval=1.0)
 
-    assert result["status"] == "CONFIRMED"
+    assert result["status"] == "MATCHED"
     assert len(responses.calls) == 3
 
 
@@ -630,14 +630,14 @@ def test_wait_for_terminal_retries_through_transient_server_errors(
     )
     responses.get(
         f"{BASE_URL}/trade/v1/orders/abc",
-        json={"order": {"id": "abc", "status": "CONFIRMED"}},
+        json={"order": {"id": "abc", "status": "MATCHED"}},
     )
 
     monkeypatch.setattr("agara_sdk.time.sleep", lambda _: None)
 
     result = client.wait_for_terminal("abc", timeout=10.0, poll_interval=0.1)
 
-    assert result["status"] == "CONFIRMED"
+    assert result["status"] == "MATCHED"
     assert len(responses.calls) == 3
 
 

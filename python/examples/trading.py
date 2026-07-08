@@ -1,6 +1,6 @@
 """Place an order, wait for it to settle, print fills.
 
-    export AGARA_BASE_URL="https://d3r180aqvl5ynd.cloudfront.net"
+    export AGARA_BASE_URL="https://app.sandbox.agara.xyz"
     export AGARA_TOKEN="agt_..."
     export AGARA_TOKEN_ID="21742633143463906290569050155826241533067272736897614950488156847949938836455"
     python examples/trading.py
@@ -8,11 +8,11 @@
 
 import os
 
-from agara_sdk import AgaraClient, RejectedError, TERMINAL_STATUSES
+from agara_sdk import DEFAULT_BASE_URL, AgaraClient, RejectedError, TERMINAL_STATUSES
 
 
 def main() -> None:
-    base_url = os.environ.get("AGARA_BASE_URL", "https://d3r180aqvl5ynd.cloudfront.net")
+    base_url = os.environ.get("AGARA_BASE_URL", DEFAULT_BASE_URL)
     token = os.environ["AGARA_TOKEN"]
     token_id = os.environ["AGARA_TOKEN_ID"]
 
