@@ -146,6 +146,12 @@ Add `account:stream` for the account-events WebSocket,
 `positions:split` / `positions:merge` for on-chain split/merge.
 Reading the orderbook is public — no scope needed.
 
+Locally-signed orders: from 0.9.0 `agara_sdk.signing` signs the
+nine-field maker-guard `Order` (no `signer`, no `signatureType`).
+Earlier releases sign the retired ten-field order, which the
+maker-guard router rejects with a 400 hash mismatch. Upgrading
+requires no call-site changes.
+
 ## Reference
 
 ### `AgaraClient(token, base_url="https://app.sandbox.agara.xyz", timeout=10.0, session=None)`

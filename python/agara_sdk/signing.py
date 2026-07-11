@@ -6,9 +6,8 @@ view + alloy's `eip712_signing_hash` produce the same 32-byte digest as the
 typed data below; that digest is what the maker account's `AgaraAccount`
 `isValidSignature` verifies on-chain via flat `ecrecover(hash, sig) == holder`.
 
-LIMIT-only for now. MARKET orders involve orderbook-walking + fee
-carve-outs (see `crates/agara-wallet/src/shape.rs`); they continue to
-flow through the Privy-signed path until the SDK mirrors that logic.
+LIMIT only. MARKET orders need the server's live orderbook walk, so
+send them through the regular place-order endpoint.
 """
 
 from __future__ import annotations

@@ -5,8 +5,8 @@
 //! no `signatureType`). The digest produced here is byte-for-byte the one
 //! the on-chain `CTFExchange.hashOrder` view and the maker
 //! `AgaraAccount.isValidSignature` verify, so a bot's pre-signed order
-//! validates on-chain. LIMIT orders only — MARKET orders continue
-//! through the Privy-signed path.
+//! validates on-chain. LIMIT orders only; MARKET orders go through the
+//! regular place-order endpoint.
 
 use alloy::hex;
 use alloy::primitives::{Address, B256, U256};
