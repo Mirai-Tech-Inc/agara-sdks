@@ -72,9 +72,14 @@ async fn main() -> agara_sdk::Result<()> {
 
 ## Signing (feature `signing`)
 
-Bots that hold their own EOA key sign orders locally and skip the Privy
-round-trip. The digest matches `crates/chain-client`'s golden byte-for-byte,
-so a pre-signed order validates on-chain.
+Bots that hold their own EOA key sign orders locally and skip the
+server-side signing round-trip. The digest matches the exchange's
+`hashOrder` byte-for-byte, so a pre-signed order validates on-chain.
+
+From 0.2.0 the signed struct is the nine-field maker-guard `Order`
+(no `signer`, no `signatureType`). Earlier releases sign the retired
+ten-field order, which the maker-guard router rejects with a 400 hash
+mismatch. Upgrading requires no call-site changes.
 
 ```rust
 use agara_sdk::{EngineDomain, sign_limit_order, ids::{Side, TokenId, TimeInForce}, Micro};

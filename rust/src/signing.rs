@@ -1,12 +1,12 @@
 //! EIP-712 order signing for the agara CTF exchange (feature `signing`).
 //!
 //! Mirrors `crates/chain-client/src/eip712.rs`: domain
-//! `("Agara CTF Exchange", "1")` and a 10-field `Order` (no
-//! `signatureType`). The digest produced here is byte-for-byte the one
+//! `("Agara CTF Exchange", "1")` and a nine-field `Order` (no `signer`,
+//! no `signatureType`). The digest produced here is byte-for-byte the one
 //! the on-chain `CTFExchange.hashOrder` view and the maker
 //! `AgaraAccount.isValidSignature` verify, so a bot's pre-signed order
-//! validates on-chain. LIMIT orders only — MARKET orders continue
-//! through the Privy-signed path.
+//! validates on-chain. LIMIT orders only; MARKET orders go through the
+//! regular place-order endpoint.
 
 use alloy::hex;
 use alloy::primitives::{Address, B256, U256};
@@ -23,11 +23,6 @@ use crate::units::{MICRO, Micro};
 const DOMAIN_NAME: &str = "Agara CTF Exchange";
 const DOMAIN_VERSION: &str = "1";
 
-/// Off-chain wire sentinel: the on-chain Order dropped `signatureType`,
-/// but the request still carries `signature_type = 3` so the router
-/// routes the ERC-1271 smart-account path.
-const SIGNATURE_KIND_ERC1271: u8 = 3;
-
 const SIDE_BUY: u8 = 0;
 const SIDE_SELL: u8 = 1;
 
@@ -39,7 +34,6 @@ sol! {
 	struct Order {
 		uint256 salt;
 		address maker;
-		address signer;
 		uint256 tokenId;
 		uint256 makerAmount;
 		uint256 takerAmount;
@@ -68,7 +62,6 @@ pub struct SignedOrder {
 	signature: String,
 	salt: U256,
 	maker: Address,
-	signer: Address,
 	token_id: U256,
 	maker_amount: U256,
 	taker_amount: U256,
@@ -109,12 +102,10 @@ impl SignedOrder {
 			signature: self.signature.clone(),
 			salt: self.salt.to_string(),
 			maker: hex::encode_prefixed(self.maker),
-			signer: hex::encode_prefixed(self.signer),
 			chain_token_id: self.token_id.to_string(),
 			maker_amount: self.maker_amount.to_string(),
 			taker_amount: self.taker_amount.to_string(),
 			side_u8: self.side,
-			signature_type: SIGNATURE_KIND_ERC1271,
 			timestamp: "0".to_owned(),
 			metadata: ZERO_BYTES32.to_owned(),
 			builder: ZERO_BYTES32.to_owned(),
@@ -122,8 +113,8 @@ impl SignedOrder {
 	}
 }
 
-/// Sign a LIMIT order. `deposit_wallet_address` is both maker and signer
-/// on the envelope (the AgaraAccount address); the holder EOA behind
+/// Sign a LIMIT order. `deposit_wallet_address` is the maker on the
+/// envelope (the AgaraAccount address); the holder EOA behind
 /// `private_key` signs the order hash flat, and `isValidSignature`
 /// recovers it on-chain.
 #[bon::builder]
@@ -175,7 +166,6 @@ pub fn sign_limit_order(
 	let order = Order {
 		salt,
 		maker: deposit_wallet_address,
-		signer: deposit_wallet_address,
 		tokenId: token_id,
 		makerAmount: maker_amount,
 		takerAmount: taker_amount,
@@ -210,7 +200,6 @@ pub fn sign_limit_order(
 		signature: hex::encode_prefixed(bytes),
 		salt,
 		maker: deposit_wallet_address,
-		signer: deposit_wallet_address,
 		token_id,
 		maker_amount,
 		taker_amount,
@@ -230,7 +219,7 @@ mod tests {
 	const EXCHANGE: Address = address!("1b42FF8DdB251074637d3A9872D72f51e3AbB23d");
 	const CHAIN_ID: u64 = 84532;
 	const GOLDEN_HASH: B256 =
-		b256!("ac2e7042ba6818b2d031497def0160b752d3e8c08954df173681685a777891b3");
+		b256!("f5cbbd057896816a0be9a705a90bf1f094b01af05f977658791b3e65c862c961");
 
 	#[test]
 	fn order_hash_matches_cross_repo_golden() {
@@ -238,7 +227,6 @@ mod tests {
 		let order = Order {
 			salt: U256::from(1u64),
 			maker: ACCOUNT,
-			signer: ACCOUNT,
 			tokenId: U256::from(2u64),
 			makerAmount: U256::from(100u64),
 			takerAmount: U256::from(100u64),

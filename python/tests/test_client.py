@@ -237,7 +237,6 @@ def test_place_signed_orders_wraps_entries_under_orders(client: AgaraClient) -> 
         signature="0xsig",
         salt=7,
         maker="0xmaker",
-        signer="0xmaker",
         token_id=int(TOKEN_ID),
         maker_amount=600000,
         taker_amount=1000000,

@@ -1,14 +1,13 @@
 """EIP-712 order signing for the agara CLOB exchange.
 
 Mirrors `crates/chain-client/src/eip712.rs` (domain `("Agara CTF Exchange","1")`,
-10-field Order with no `signatureType`). The on-chain `CTFExchange.hashOrder`
+nine-field Order: no `signer`, no `signatureType`). The on-chain `CTFExchange.hashOrder`
 view + alloy's `eip712_signing_hash` produce the same 32-byte digest as the
 typed data below; that digest is what the maker account's `AgaraAccount`
 `isValidSignature` verifies on-chain via flat `ecrecover(hash, sig) == holder`.
 
-LIMIT-only for now. MARKET orders involve orderbook-walking + fee
-carve-outs (see `crates/agara-wallet/src/shape.rs`); they continue to
-flow through the Privy-signed path until the SDK mirrors that logic.
+LIMIT only. MARKET orders need the server's live orderbook walk, so
+send them through the regular place-order endpoint.
 """
 
 from __future__ import annotations
@@ -27,13 +26,6 @@ DOMAIN_VERSION = "1"
 SIDE_BUY = 0
 SIDE_SELL = 1
 
-# Off-chain wire sentinel only: `signatureType` was dropped from the on-chain
-# Order (the fork's 10-field ORDER_TYPEHASH omits it), but the request body still
-# carries `signature_type=3` in lockstep with the Rust `SignatureKind::Erc1271`
-# so the server routes the smart-account path. The account (maker == signer) is an
-# AgaraAccount whose `isValidSignature` flat-ECDSA-recovers the holder (ERC-1271).
-SIGNATURE_KIND_ERC1271 = 3
-
 MICRO = 1_000_000
 
 _ZERO_BYTES32 = "0x" + "00" * 32
@@ -48,7 +40,6 @@ _ORDER_TYPES = {
     "Order": [
         {"name": "salt", "type": "uint256"},
         {"name": "maker", "type": "address"},
-        {"name": "signer", "type": "address"},
         {"name": "tokenId", "type": "uint256"},
         {"name": "makerAmount", "type": "uint256"},
         {"name": "takerAmount", "type": "uint256"},
@@ -79,13 +70,11 @@ class SignedOrder:
     order_hash: str             # 0x-prefixed keccak256 of the typed-data digest
     signature: str              # 0x-prefixed 65-byte (r||s||v) hex
     salt: int                   # u256 — drawn once at sign time
-    maker: str                  # account address (== signer; the AgaraAccount holds the position)
-    signer: str
+    maker: str                  # deposit-wallet address; the AgaraAccount holds the position
     token_id: int               # u256 — outcome token id on the CTF
     maker_amount: int           # μUSDC for BUY, μshares for SELL
     taker_amount: int           # μshares for BUY, μUSDC for SELL
     side: int                   # 0 = BUY, 1 = SELL
-    signature_type: int = SIGNATURE_KIND_ERC1271
     timestamp: int = 0
     metadata: str = _ZERO_BYTES32
     builder: str = _ZERO_BYTES32
@@ -121,12 +110,10 @@ class SignedOrder:
             "signature": self.signature,
             "salt": str(self.salt),
             "maker": self.maker,
-            "signer": self.signer,
             "chain_token_id": str(self.token_id),
             "maker_amount": str(self.maker_amount),
             "taker_amount": str(self.taker_amount),
             "side_u8": self.side,
-            "signature_type": self.signature_type,
             "timestamp": str(self.timestamp),
             "metadata": self.metadata,
             "builder": self.builder,
@@ -175,11 +162,10 @@ def sign_limit_order(
     shares_micro: int,
     salt: int | None = None,
 ) -> SignedOrder:
-    """Sign a LIMIT order. `deposit_wallet_address` is both the maker
-    and the signer on the chain envelope (it carries the AgaraAccount
-    address); the holder's EOA signs the order hash flat, and
-    `AgaraAccount.isValidSignature` recovers it via `ecrecover(hash, sig)
-    == holder`.
+    """Sign a LIMIT order. `deposit_wallet_address` is the maker on the
+    chain envelope (it carries the AgaraAccount address); the holder's
+    EOA signs the order hash flat, and `AgaraAccount.isValidSignature`
+    recovers it via `ecrecover(hash, sig) == holder`.
 
     Args:
         private_key: 0x-prefixed hex of the user's EOA private key
@@ -216,7 +202,6 @@ def sign_limit_order(
     message = {
         "salt": salt_value,
         "maker": deposit_wallet_address,
-        "signer": deposit_wallet_address,
         "tokenId": token_id,
         "makerAmount": maker_amount,
         "takerAmount": taker_amount,
@@ -244,7 +229,6 @@ def sign_limit_order(
         signature="0x" + signed.signature.hex(),
         salt=salt_value,
         maker=deposit_wallet_address,
-        signer=deposit_wallet_address,
         token_id=token_id,
         maker_amount=maker_amount,
         taker_amount=taker_amount,
