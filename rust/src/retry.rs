@@ -1,4 +1,4 @@
-//! Opt-in retry policy for transient failures (429 / 5xx / transport).
+//! Opt-in retry policy for explicit retry recovery, legacy 429s, and transport.
 //! Off by default — construct one and pass it to the client builder.
 
 use core::time::Duration;

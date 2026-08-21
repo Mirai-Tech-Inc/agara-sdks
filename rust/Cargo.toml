@@ -2,7 +2,7 @@
 
 [package]
 name = "agara-sdk"
-version = "0.2.0"
+version = "0.3.0"
 edition = "2024"
 rust-version = "1.95"
 license = "MIT"
@@ -17,6 +17,10 @@ streaming = ["dep:tokio-tungstenite", "dep:futures-util"]
 
 [lib]
 name = "agara_sdk"
+
+[[example]]
+name = "subscribe"
+required-features = ["streaming"]
 
 [dependencies]
 reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls", "http2"] }

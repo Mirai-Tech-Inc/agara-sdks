@@ -80,6 +80,13 @@ async def run(token_id: str, condition_id: str, token: str, base_url: str) -> No
             f"reason={o.reason}"
         )
 
+    @client.on_order_rejected
+    async def _(o: streaming.OrderRejected) -> None:
+        print(
+            f"[rejected] order={o.order_id} code={o.failure.code} "
+            f"detail={o.failure.detail or o.failure.title}"
+        )
+
     @client.on_sequence_reset
     async def _(r: streaming.SequenceReset) -> None:
         print(
@@ -89,7 +96,7 @@ async def run(token_id: str, condition_id: str, token: str, base_url: str) -> No
 
     @client.on_error
     async def _(err: streaming.StreamError) -> None:
-        print(f"[error] {err.code}: {err.message}")
+        print(f"[error] {err.code}: {err.message} action={err.action}")
 
     await client.subscribe([
         streaming.orderbook(token_id),

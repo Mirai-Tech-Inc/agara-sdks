@@ -73,11 +73,16 @@ need one per worker.
 - Translates dollar / share amounts to the API's micro-encoded string
   format outbound, parses them back inbound. You think in dollars
   and shares; the wire details stay hidden.
-- Maps HTTP status codes to a small exception hierarchy:
+- Parses the API's Problem Details (`code`, `title`, optional `detail`,
+  `request_id`, `recovery`, and `field_errors`) and maps statuses to an
+  exception hierarchy:
   `BadRequestError` (400), `AuthError` (401), `ForbiddenError` (403),
-  `NotFoundError` (404), `ConflictError` (409), `RejectedError` (422),
-  `RateLimitedError` (429), `ServerError` (5xx). All inherit from
-  `AgaraError`.
+  `NotFoundError` (404), `MethodNotAllowedError` (405),
+  `ConflictError` (409), `GoneError` (410), `PayloadTooLargeError` (413),
+  `UnsupportedMediaTypeError` (415), `RejectedError` (422),
+  `FailedDependencyError` (424), `TooEarlyError` (425),
+  `UpgradeRequiredError` (426), `RateLimitedError` (429), and
+  `ServerError` (5xx). All inherit from `AgaraError`.
 - Provides `wait_for_terminal` for the place-and-poll pattern.
 - Implements the context-manager protocol so `with AgaraClient(...) as c:`
   closes the underlying connection cleanly.
@@ -120,10 +125,20 @@ One client transparently handles both the public market stream
 account_events stream. Full reference at
 [`/docs/sdks/python/reference#streaming`](https://app.sandbox.agara.xyz/docs/sdks/python/reference#streaming).
 
+Stream failures carry `failure.code`, `failure.title`, optional
+`failure.detail`, and `failure.recovery`, plus a required `action` of
+`"none"`, `"resubscribe"`, or `"reconnect"`. Callback mode performs the
+last two actions automatically. Unknown actions and recovery strategies
+are exposed for diagnostics but never acted on. An `OrderRejected` event
+uses the same typed `failure`; route market-maker behavior on
+`event.failure.code`, not a text reason.
+
 ## What it doesn't do (compose on top)
 
-- Automatic retries on REST. 5xx surfaces as `ServerError`; pick your
-  backoff.
+- Automatic retries on general REST calls. Check `error.is_retryable` and
+  honor `error.retry_after` before repeating a request. A 5xx status alone
+  is not permission to retry: for example, `dependency_unavailable` is
+  retryable, while `internal_error` and `feature_not_configured` are not.
 
 ## Getting a token
 
@@ -196,6 +211,23 @@ client.cancel_order(order_id)                 # → dict
 client.cancel_all_orders()                    # → dict
 ```
 
+Terminal order records now carry `order["failure"]` instead of
+`order["error"]`. Signed-batch rejected entries likewise carry
+`result["failure"]` instead of free-form `code` / `message` fields:
+
+```python
+result = client.place_signed_orders(orders=quotes)["results"][0]
+if result["outcome"] == "rejected":
+    failure = result["failure"]
+    if failure["code"] == "post_only_would_cross":
+        # Reprice this quote; repeating it unchanged cannot succeed.
+        ...
+```
+
+For a safe transition, this SDK reads legacy order and batch failures,
+maps known legacy batch codes, and converts every free-form diagnostic to
+an `internal_error` without retaining the diagnostic.
+
 ### Trades
 
 ```python
@@ -228,12 +260,16 @@ from agara_sdk import (
     ConflictError,     # 409 — e.g. cancel of an already-terminal order
     RejectedError,     # 422 — engine rejected the order
     RateLimitedError,  # 429 — per-tier bucket exhausted; see .retry_after
-    ServerError,       # 5xx — retryable
+    ServerError,       # 5xx — inspect .is_retryable
 )
 ```
 
-Every exception has `.status_code` and `.message` attributes;
-`RateLimitedError` also carries `.retry_after` (seconds, or `None`).
+Every exception has `.status_code`, `.message`, `.problem`, `.code`,
+`.title`, `.detail`, `.request_id`, `.recovery`, `.field_errors`,
+`.retry_after`, and `.is_retryable`. `problem` and contract fields are
+`None` only when reading a legacy non-Problem response. `Retry-After`
+headers take precedence over the body delay. Unknown or malformed
+recovery strategies have `recovery.known == False` and are inert.
 
 ## Development
 

@@ -21,6 +21,7 @@ use crate::models::{
 	SignedOrderBatchRequest, SignedOrderBatchResponse, SignedOrderRequest, SplitRequest,
 	StatusResponse, TradesResponse,
 };
+use crate::problem::ProblemDetails;
 use crate::retry::RetryPolicy;
 use crate::units::Micro;
 
@@ -31,8 +32,8 @@ pub const DEFAULT_BASE_URL: &str = "https://app.sandbox.agara.xyz";
 /// server's max page size so a full set comes back in the fewest calls.
 const LIST_PAGE_SIZE: u32 = 500;
 
-/// Consecutive transient 5xx tolerated inside `wait_for_terminal` before
-/// it gives up.
+/// Consecutive explicitly retryable failures tolerated inside
+/// `wait_for_terminal` before it gives up.
 const MAX_CONSECUTIVE_SERVER_ERRORS: u32 = 3;
 
 /// Async client for the agara trading API.
@@ -315,6 +316,7 @@ impl AgaraClient {
 					"positions unavailable for requested exchange(s): {}",
 					names.join(", ")
 				),
+				problem: None,
 			});
 		}
 
@@ -383,8 +385,8 @@ impl AgaraClient {
 
 	/// Poll until the order reaches a terminal status or `timeout`
 	/// elapses; returns the final order either way (check
-	/// [`OrderStatus::is_terminal`]). Transient 5xx is retried up to 3
-	/// consecutive times.
+	/// [`OrderStatus::is_terminal`]). Failures carrying explicit `retry` or
+	/// `retry_after` recovery are retried up to 3 consecutive times.
 	pub async fn wait_for_terminal(
 		&self,
 		order_id: &OrderId,
@@ -394,6 +396,7 @@ impl AgaraClient {
 		let deadline = tokio::time::Instant::now() + timeout;
 		let mut consecutive_server_errors = 0u32;
 		loop {
+			let mut delay = poll_interval;
 			match self.get_order(order_id).await {
 				Ok(resp) => {
 					consecutive_server_errors = 0;
@@ -402,8 +405,11 @@ impl AgaraClient {
 						return Ok(resp.order);
 					}
 				},
-				Err(e) if matches!(e, AgaraError::Server { .. }) => {
+				Err(e) if e.is_retryable() => {
 					consecutive_server_errors += 1;
+					if let Some(retry_after) = e.retry_after() {
+						delay = delay.max(retry_after);
+					}
 					if consecutive_server_errors >= MAX_CONSECUTIVE_SERVER_ERRORS
 						|| tokio::time::Instant::now() >= deadline
 					{
@@ -413,7 +419,7 @@ impl AgaraClient {
 				Err(e) => return Err(e),
 			}
 
-			tokio::time::sleep(poll_interval).await;
+			tokio::time::sleep(delay).await;
 		}
 	}
 }
@@ -481,15 +487,30 @@ impl AgaraClient {
 
 		let retry_after = parse_retry_after(&resp);
 		let bytes = resp.bytes().await.unwrap_or_default();
-		let message = serde_json::from_slice::<serde_json::Value>(&bytes)
-			.ok()
-			.and_then(|v| v.get("error").and_then(|e| e.as_str()).map(str::to_owned))
-			.unwrap_or_else(|| String::from_utf8_lossy(&bytes).trim().chars().take(300).collect());
+		let value = serde_json::from_slice::<serde_json::Value>(&bytes).ok();
+		let problem = value
+			.as_ref()
+			.and_then(|value| serde_json::from_value::<ProblemDetails>(value.clone()).ok())
+			.filter(|problem| problem.status == status.as_u16());
+		let message = problem.as_ref().map_or_else(
+			|| {
+				value
+					.as_ref()
+					.and_then(|value| value.get("error"))
+					.and_then(serde_json::Value::as_str)
+					.map(str::to_owned)
+					.unwrap_or_else(|| {
+						String::from_utf8_lossy(&bytes).trim().chars().take(300).collect()
+					})
+			},
+			|problem| problem.message().to_owned(),
+		);
 
 		Err(AgaraError::from_status(
 			status.as_u16(),
 			message,
 			retry_after,
+			problem,
 		))
 	}
 }

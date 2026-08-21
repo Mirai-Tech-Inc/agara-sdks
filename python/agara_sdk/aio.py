@@ -39,6 +39,7 @@ except ImportError as exc:
     ) from exc
 
 from agara_sdk import (
+    AgaraError,
     DEFAULT_BASE_URL,
     TERMINAL_STATUSES,
     Orderbook,
@@ -47,6 +48,7 @@ from agara_sdk import (
     _MAX_CONSECUTIVE_SERVER_ERRORS,
     _build_limit_order_body,
     _build_market_order_body,
+    _normalize_response_contracts,
     _parse_orderbook,
     _raise_api_error,
 )
@@ -97,15 +99,16 @@ class AsyncAgaraClient:
         )
 
         if resp.is_success:
-            return resp.json() if resp.content else None
+            return _normalize_response_contracts(resp.json()) if resp.content else None
 
-        # Body should be { "error": "..." }; fall back to status text if not.
+        # New servers return Problem Details; keep the legacy {"error": ...}
+        # fallback during the rolling SDK/server transition.
         try:
-            err_msg = resp.json().get("error", resp.reason_phrase or "")
+            error_body: Any = resp.json()
         except ValueError:
-            err_msg = resp.text or resp.reason_phrase or ""
+            error_body = resp.text or resp.reason_phrase or ""
 
-        _raise_api_error(resp.status_code, err_msg, resp.headers)
+        _raise_api_error(resp.status_code, error_body, resp.headers)
 
     async def get_orderbook(self, token_id: str) -> Orderbook:
         """Snapshot of bid/ask depth for one outcome."""
@@ -175,7 +178,7 @@ class AsyncAgaraClient:
         validated and accepted independently: the response `results` array
         carries one entry per submitted order, in request order, each either
         `accepted` (with the same fields as `place_signed_order`) or `rejected`
-        (with a `code` and `message`). A duplicate `order_hash` is reported
+        (with a typed `failure`). A duplicate `order_hash` is reported
         `rejected` rather than failing the batch. Scope: `orders:place_signed`."""
         body = {"orders": [entry.to_request_body() for entry in orders]}
         return await self._request("POST", "/trade/v1/orders/signed/batch", json=body)
@@ -426,8 +429,9 @@ class AsyncAgaraClient:
         elapses. Returns the final order detail either way — callers
         should check `order["status"] in TERMINAL_STATUSES`.
 
-        Transient 5xx during polling is retried up to 3 consecutive
-        times before giving up; other exceptions propagate immediately."""
+        Failures with explicit retry recovery are retried up to 3
+        consecutive times, honoring Retry-After. Other exceptions propagate
+        immediately."""
         loop = asyncio.get_running_loop()
         deadline = loop.time() + timeout
         consecutive_server_errors = 0
@@ -435,13 +439,15 @@ class AsyncAgaraClient:
             try:
                 order = (await self.get_order(order_id))["order"]
                 consecutive_server_errors = 0
-            except ServerError:
+            except AgaraError as exc:
+                if not exc.is_retryable:
+                    raise
                 consecutive_server_errors += 1
                 if consecutive_server_errors >= _MAX_CONSECUTIVE_SERVER_ERRORS:
                     raise
                 if loop.time() >= deadline:
                     raise
-                await asyncio.sleep(poll_interval)
+                await asyncio.sleep(max(poll_interval, exc.retry_after or 0.0))
                 continue
             if order["status"] in TERMINAL_STATUSES:
                 return order

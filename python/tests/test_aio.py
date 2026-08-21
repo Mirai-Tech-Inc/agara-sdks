@@ -28,6 +28,7 @@ from agara_sdk import (
     RejectedError,
     ServerError,
     TERMINAL_STATUSES,
+    TooEarlyError,
 )
 from agara_sdk.aio import AsyncAgaraClient
 
@@ -37,6 +38,23 @@ TOKEN = "agt_test_token"
 TOKEN_ID = "21742633143463906290569050155826241533067272736897614950488156847949938836455"
 
 Handler = Callable[[httpx.Request], httpx.Response]
+
+
+def problem(
+    status: int,
+    code: str,
+    title: str,
+    strategy: str = "none",
+    **recovery: object,
+) -> dict:
+    return {
+        "type": f"urn:agara:problem:{code.replace('_', '-')}",
+        "title": title,
+        "status": status,
+        "code": code,
+        "request_id": "00000000-0000-0000-0000-000000000000",
+        "recovery": {"strategy": strategy, **recovery},
+    }
 
 
 def _client(handler: Handler) -> AsyncAgaraClient:
@@ -219,6 +237,22 @@ async def test_rate_limited_carries_retry_after() -> None:
 
 
 @pytest.mark.asyncio
+async def test_problem_details_drive_retryability() -> None:
+    def handler(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(
+            425,
+            json=problem(425, "pnl_not_ready", "PnL not ready", "retry"),
+        )
+
+    async with _client(handler) as client:
+        with pytest.raises(TooEarlyError) as info:
+            await client.get_order("abc")
+
+    assert info.value.code == "pnl_not_ready"
+    assert info.value.is_retryable is True
+
+
+@pytest.mark.asyncio
 async def test_list_trades_returns_empty_dict_when_body_is_empty() -> None:
     def handler(request: httpx.Request) -> httpx.Response:
         return httpx.Response(204)
@@ -339,7 +373,15 @@ async def test_wait_for_terminal_raises_after_three_consecutive_server_errors(
     no_sleep: None,
 ) -> None:
     def handler(request: httpx.Request) -> httpx.Response:
-        return httpx.Response(502, json={"error": "boom"})
+        return httpx.Response(
+            502,
+            json=problem(
+                502,
+                "dependency_unavailable",
+                "Dependency temporarily unavailable",
+                "retry",
+            ),
+        )
 
     async with _client(handler) as client:
         with pytest.raises(ServerError) as info:

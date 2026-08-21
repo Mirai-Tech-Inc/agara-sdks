@@ -28,8 +28,9 @@ hand-written ones.
 - **Amounts.** Take dollars / shares in arguments, convert to micro
   units internally; parse response micro strings back to floats for
   consumers. Users think in dollars; the wire format stays hidden.
-- **Errors.** A small hierarchy keyed by HTTP status — `AuthError`,
-  `NotFoundError`, `ConflictError`, `RejectedError`, `ServerError`,
-  with a common base for catch-all handling.
+- **Errors.** A hierarchy keyed by HTTP status with typed Problem Details
+  (`code`, `title`, optional `detail`, request id, and recovery). Retry
+  behavior follows recovery guidance; SDKs never assume every 5xx is
+  retryable, and future recovery/action values are inert.
 - **Auth.** Personal access tokens (`agt_…`) only; no Privy JWTs
   through the SDKs (those are browser-side).

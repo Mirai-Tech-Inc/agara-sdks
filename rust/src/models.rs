@@ -4,12 +4,14 @@
 
 use std::collections::HashMap;
 
-use serde::{Deserialize, Serialize};
+use serde::{Deserialize, Deserializer, Serialize};
+use serde_json::Value;
 
 use crate::ids::{
 	ConditionId, Exchange, FillRole, OrderHash, OrderId, OrderStatus, OrderType, PendingOperation,
 	PositionOperation, RelayerState, Side, TimeInForce, TokenId, WalletId,
 };
+use crate::problem::PublicFailure;
 use crate::units::Micro;
 
 /// Per-token display metadata returned alongside orders / positions.
@@ -48,19 +50,51 @@ pub struct CreateClobOrderResponse {
 
 /// One entry in a signed-order batch response — accepted or rejected,
 /// independently of the other entries.
-#[derive(Clone, Debug, Deserialize)]
-#[serde(tag = "outcome", rename_all = "snake_case")]
+#[derive(Clone, Debug)]
 pub enum SignedOrderResult {
 	Accepted {
 		index: u32,
-		#[serde(flatten)]
 		ack: CreateClobOrderResponse,
 	},
 	Rejected {
 		index: u32,
-		code: String,
-		message: String,
+		failure: PublicFailure,
 	},
+}
+
+impl<'de> Deserialize<'de> for SignedOrderResult {
+	fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+	where
+		D: Deserializer<'de>,
+	{
+		#[derive(Deserialize)]
+		#[serde(tag = "outcome", rename_all = "snake_case")]
+		enum Wire {
+			Accepted {
+				index: u32,
+				#[serde(flatten)]
+				ack: CreateClobOrderResponse,
+			},
+			Rejected {
+				index: u32,
+				#[serde(default)]
+				failure: Option<PublicFailure>,
+				#[serde(default)]
+				code: Option<String>,
+				#[serde(default, rename = "message")]
+				_message: Option<String>,
+			},
+		}
+
+		match Wire::deserialize(deserializer)? {
+			Wire::Accepted { index, ack } => Ok(Self::Accepted { index, ack }),
+			Wire::Rejected { index, failure, code, _message: _ } => Ok(Self::Rejected {
+				index,
+				failure: failure
+					.unwrap_or_else(|| PublicFailure::from_legacy_batch_code(code.as_deref())),
+			}),
+		}
+	}
 }
 
 /// Response to a signed-order batch submission.
@@ -86,10 +120,30 @@ pub struct Order {
 	pub size_matched_micro: Micro,
 	pub avg_fill_price_micro: Option<Micro>,
 	pub status: OrderStatus,
-	pub error: Option<String>,
+	#[serde(
+		default,
+		alias = "error",
+		deserialize_with = "deserialize_optional_failure"
+	)]
+	pub failure: Option<PublicFailure>,
 	pub expiration: String,
 	pub created_at: String,
 	pub cancel_requested_at: Option<String>,
+}
+
+fn deserialize_optional_failure<'de, D>(deserializer: D) -> Result<Option<PublicFailure>, D::Error>
+where
+	D: Deserializer<'de>,
+{
+	let value = Option::<Value>::deserialize(deserializer)?;
+	match value {
+		None | Some(Value::Null) => Ok(None),
+		Some(Value::Object(object)) => serde_json::from_value(Value::Object(object))
+			.map(Some)
+			.map_err(serde::de::Error::custom),
+		Some(Value::String(_)) => Ok(Some(PublicFailure::internal())),
+		Some(_) => Ok(Some(PublicFailure::internal())),
+	}
 }
 
 /// A single order plus its display metadata.

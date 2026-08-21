@@ -70,6 +70,8 @@ from typing import (
 )
 from urllib.parse import urlsplit, urlunsplit
 
+from agara_sdk import PublicFailure, Recovery, _internal_failure
+
 
 DEFAULT_BASE_URL = "https://app.sandbox.agara.xyz"
 
@@ -78,6 +80,14 @@ _ACCOUNT_PATH = "/trade/v1/account-stream"
 
 _PUBLIC_CHANNELS = frozenset({"orderbook", "best_quote", "market_status", "trades"})
 _ACCOUNT_CHANNEL = "account_events"
+_ACTIVE_ACTION_BY_CODE = {
+    "dependency_unavailable": ("reconnect", "retry"),
+    "identity_token_expired": ("reconnect", "refresh_identity_token"),
+    "internal_error": ("reconnect", "none"),
+    "server_restarting": ("reconnect", "retry"),
+    "slow_consumer": ("reconnect", "none"),
+    "stream_subject_unavailable": ("resubscribe", "none"),
+}
 
 #: Per-connection cap the server enforces; the SDK validates per-call so
 #: callers get a clear `ValueError` instead of an async per-channel
@@ -334,7 +344,13 @@ class OrderRejected:
     order_id: str
     order_hash: str | None
     token_id: str | None
-    reason: str
+    failure: PublicFailure
+
+    @property
+    def reason(self) -> str:
+        """Deprecated compatibility summary. Match on ``failure.code`` for
+        behavior; this never returns the old private provider diagnostic."""
+        return self.failure.detail or self.failure.title
 
 
 @dataclass(frozen=True)
@@ -394,11 +410,11 @@ class Pong:
 class StreamError:
     code: str
     message: str
-    # "resubscribe" (one feed stopped; resubscribe the subject),
-    # "reconnect" (reopen the socket with fresh credentials), or None
-    # (terminal — the request was rejected and retrying won't help).
-    # In callback mode the client acts on this automatically.
-    action: Optional[str] = None
+    failure: Optional[PublicFailure] = None
+    # Required on server frames: "none", "resubscribe", or "reconnect".
+    # Future values are retained here but are inert. Transport errors created
+    # locally use "none" and have no `failure`.
+    action: str = "none"
     channel: Optional[str] = None
     token_id: Optional[str] = None
     condition_id: Optional[str] = None
@@ -572,12 +588,17 @@ def _decode_order_cancelled(seq: int, d: dict[str, Any]) -> OrderCancelled:
 def _decode_order_rejected(seq: int, d: dict[str, Any]) -> OrderRejected:
     order_hash = d.get("order_hash")
     token_id = d.get("token_id")
+    failure = (
+        PublicFailure.from_wire(d["failure"])
+        if "failure" in d
+        else _internal_failure()
+    )
     return OrderRejected(
         sequence=seq,
         order_id=str(d["order_id"]),
         order_hash=str(order_hash) if order_hash is not None else None,
         token_id=str(token_id) if token_id is not None else None,
-        reason=str(d.get("reason", "")),
+        failure=failure,
     )
 
 
@@ -640,10 +661,23 @@ def decode_frame(raw: dict[str, Any]) -> Frame:
     if op == "pong":
         return Pong(server_time=raw["server_time"])
     if op == "error":
+        raw_failure = raw.get("failure")
+        if raw_failure is not None:
+            failure = PublicFailure.from_wire(raw_failure)
+            code = failure.code
+            message = failure.detail or failure.title
+        else:
+            # Flat code/message was the pre-contract frame. Its action is safe
+            # to honor, but its free-form message is not promoted into recovery
+            # metadata.
+            failure = None
+            code = str(raw.get("code", "stream_error"))
+            message = str(raw.get("message", "Stream error"))
         return StreamError(
-            code=raw["code"],
-            message=raw["message"],
-            action=raw.get("action"),
+            code=code,
+            message=message,
+            failure=failure,
+            action=str(raw.get("action", "none")),
             channel=raw.get("channel"),
             token_id=raw.get("token_id"),
             condition_id=raw.get("condition_id"),
@@ -1285,7 +1319,7 @@ class AgaraStreamClient:
                 remaining.discard(item.endpoint)
                 continue
             await self._dispatch(item)
-            if isinstance(item, StreamError) and item.action:
+            if isinstance(item, StreamError) and item.action != "none":
                 await self._handle_error_action(item)
 
     async def _handle_error_action(self, err: StreamError) -> None:
@@ -1299,6 +1333,17 @@ class AgaraStreamClient:
           it with backoff (and whatever token is now set).
         """
         kind = _endpoint_kind_for_name(err.channel)
+        if (
+            err.failure is not None
+            and _ACTIVE_ACTION_BY_CODE.get(err.failure.code)
+            != (
+                err.action,
+                err.failure.recovery.strategy
+                if err.failure.recovery.known
+                else "unknown",
+            )
+        ):
+            return
         if err.action == "resubscribe":
             await self._replay_subscriptions(kind)
         elif err.action == "reconnect":

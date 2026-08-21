@@ -6,6 +6,7 @@ pub mod error;
 pub mod frames;
 pub mod ids;
 pub mod models;
+pub mod problem;
 pub mod retry;
 #[cfg(feature = "signing")]
 pub mod signing;
@@ -15,6 +16,7 @@ pub mod units;
 
 pub use client::{AgaraClient, DEFAULT_BASE_URL};
 pub use error::{AgaraError, Result};
+pub use problem::{ProblemDetails, PublicFailure, Recovery};
 pub use retry::RetryPolicy;
 pub use units::{MICRO, Micro};
 

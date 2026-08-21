@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import time
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any, NoReturn, Optional
+from typing import TYPE_CHECKING, Any, Mapping, NoReturn, Optional
 
 import requests
 
@@ -24,9 +24,19 @@ __all__ = [
     "ForbiddenError",
     "NotFoundError",
     "ConflictError",
+    "FailedDependencyError",
+    "GoneError",
+    "MethodNotAllowedError",
+    "PayloadTooLargeError",
+    "ProblemDetails",
+    "PublicFailure",
+    "Recovery",
     "RejectedError",
     "RateLimitedError",
     "ServerError",
+    "TooEarlyError",
+    "UnsupportedMediaTypeError",
+    "UpgradeRequiredError",
     "Orderbook",
     "OrderbookLevel",
     "DEFAULT_BASE_URL",
@@ -34,7 +44,7 @@ __all__ = [
     "micro_to_float",
 ]
 
-__version__ = "0.9.0"
+__version__ = "0.10.0"
 
 
 DEFAULT_BASE_URL = "https://app.sandbox.agara.xyz"
@@ -44,8 +54,8 @@ TERMINAL_STATUSES = frozenset(
     {"MATCHED", "CANCELLED", "EXPIRED", "REJECTED", "FAILED"}
 )
 
-#: Consecutive transient 5xx tolerated inside `wait_for_terminal` before
-#: it gives up. Shared by the sync and async clients.
+#: Consecutive explicitly retryable failures tolerated inside
+#: `wait_for_terminal` before it gives up. Shared by both clients.
 _MAX_CONSECUTIVE_SERVER_ERRORS = 3
 
 #: Page size the list-all helpers request per round-trip while walking the
@@ -54,16 +64,269 @@ _MAX_CONSECUTIVE_SERVER_ERRORS = 3
 _LIST_PAGE_SIZE = 500
 
 
+_KNOWN_RECOVERY_STRATEGIES = frozenset(
+    {"none", "retry", "retry_after", "refresh_identity_token", "check_status"}
+)
+_RETRYABLE_PROBLEM_CODES = frozenset(
+    {
+        "dependency_unavailable",
+        "pnl_not_ready",
+        "price_stream_capacity_exceeded",
+        "price_temporarily_unavailable",
+        "rate_limited",
+        "server_restarting",
+    }
+)
+
+
+def _is_recovery_uuid(value: Any) -> bool:
+    if not isinstance(value, str) or len(value) != 36:
+        return False
+    for index, character in enumerate(value):
+        if index in {8, 13, 18, 23}:
+            if character != "-":
+                return False
+        elif character not in "0123456789abcdefABCDEF":
+            return False
+    compact = value.replace("-", "")
+    if compact in {"0" * 32, "f" * 32, "F" * 32}:
+        return True
+    return compact[12] in "12345678" and compact[16] in "89abAB"
+
+
+def _is_recovery_resource(value: Any) -> bool:
+    if not isinstance(value, Mapping) or not isinstance(value.get("kind"), str):
+        return False
+    kind = value["kind"]
+    if kind == "order":
+        return set(value) == {"kind", "order_id"} and _is_recovery_uuid(
+            value.get("order_id")
+        )
+    if kind == "batch":
+        batch_hash = value.get("batch_hash")
+        return (
+            set(value) == {"kind", "batch_hash"}
+            and isinstance(batch_hash, str)
+            and len(batch_hash) == 66
+            and batch_hash.startswith("0x")
+            and all(character in "0123456789abcdefABCDEF" for character in batch_hash[2:])
+        )
+    if kind == "group":
+        return set(value) == {"kind", "group_id"} and _is_recovery_uuid(
+            value.get("group_id")
+        )
+    return kind == "wallet_status" and set(value) == {"kind"}
+
+
+@dataclass(frozen=True)
+class Recovery:
+    """Sanitized recovery guidance. Future or malformed strategies are retained
+    for diagnostics but are inert: the SDK never retries or refreshes because of
+    a strategy it does not understand."""
+
+    strategy: str
+    after_seconds: Optional[float] = None
+    resource: Optional[dict[str, Any]] = None
+    known: bool = True
+
+    @property
+    def is_retryable(self) -> bool:
+        return self.known and self.strategy in {"retry", "retry_after"}
+
+    @classmethod
+    def from_wire(cls, value: Any) -> "Recovery":
+        if not isinstance(value, Mapping) or not isinstance(value.get("strategy"), str):
+            return cls(strategy="unknown", known=False)
+
+        strategy = value["strategy"]
+        if strategy not in _KNOWN_RECOVERY_STRATEGIES:
+            return cls(strategy=strategy, known=False)
+        if strategy in {"none", "retry", "refresh_identity_token"}:
+            return cls(strategy=strategy, known=set(value) == {"strategy"})
+        if strategy == "retry_after":
+            after = value.get("after_seconds")
+            valid = (
+                set(value) == {"strategy", "after_seconds"}
+                and isinstance(after, int)
+                and not isinstance(after, bool)
+                and 0 <= float(after) <= 86_400
+            )
+            return cls(
+                strategy=strategy,
+                after_seconds=float(after) if valid else None,
+                known=valid,
+            )
+
+        resource = value.get("resource")
+        valid = set(value) == {"strategy", "resource"} and _is_recovery_resource(
+            resource
+        )
+        return cls(
+            strategy=strategy,
+            resource=dict(resource) if valid else None,
+            known=valid,
+        )
+
+
+@dataclass(frozen=True)
+class PublicFailure:
+    """Protocol-neutral failure used by async order and stream responses."""
+
+    code: str
+    title: str
+    detail: Optional[str]
+    recovery: Recovery
+
+    @classmethod
+    def from_wire(cls, value: Any) -> "PublicFailure":
+        if not isinstance(value, Mapping):
+            return _internal_failure()
+        code = value.get("code")
+        title = value.get("title")
+        if not isinstance(code, str) or not isinstance(title, str):
+            return _internal_failure()
+        detail = value.get("detail")
+        recovery = Recovery.from_wire(value.get("recovery"))
+        if recovery.is_retryable and code not in _RETRYABLE_PROBLEM_CODES:
+            recovery = Recovery(strategy=recovery.strategy, known=False)
+        return cls(
+            code=code,
+            title=title,
+            detail=detail if isinstance(detail, str) else None,
+            recovery=recovery,
+        )
+
+
+@dataclass(frozen=True)
+class ProblemDetails(PublicFailure):
+    """Origin HTTP Problem Details returned for every API failure."""
+
+    type_uri: str
+    status: int
+    request_id: Optional[str]
+    field_errors: tuple[dict[str, Any], ...] = ()
+
+    @classmethod
+    def from_wire(cls, value: Any) -> Optional["ProblemDetails"]:
+        if not isinstance(value, Mapping):
+            return None
+        required = ("type", "title", "status", "code", "recovery")
+        if any(key not in value for key in required):
+            return None
+        if not isinstance(value.get("type"), str) or not isinstance(value.get("status"), int):
+            return None
+        failure = PublicFailure.from_wire(value)
+        request_id = value.get("request_id")
+        raw_field_errors = value.get("field_errors")
+        field_errors = (
+            tuple(item for item in raw_field_errors if isinstance(item, dict))
+            if isinstance(raw_field_errors, list)
+            else ()
+        )
+        return cls(
+            code=failure.code,
+            title=failure.title,
+            detail=failure.detail,
+            recovery=failure.recovery,
+            type_uri=value["type"],
+            status=value["status"],
+            request_id=request_id if isinstance(request_id, str) else None,
+            field_errors=field_errors,
+        )
+
+
+def _internal_failure() -> PublicFailure:
+    return PublicFailure(
+        code="internal_error",
+        title="Internal server error",
+        detail=None,
+        recovery=Recovery(strategy="none"),
+    )
+
+
+def _failure_wire(failure: PublicFailure) -> dict[str, Any]:
+    value: dict[str, Any] = {
+        "code": failure.code,
+        "title": failure.title,
+        "recovery": {"strategy": failure.recovery.strategy},
+    }
+    if failure.detail is not None:
+        value["detail"] = failure.detail
+    return value
+
+
+_LEGACY_BATCH_FAILURES = {
+    "DUPLICATE": ("duplicate_order", "Duplicate order"),
+    "DUPLICATE_ORDER": ("duplicate_order", "Duplicate order"),
+    "INVALID_SIGNATURE": ("invalid_signature", "Invalid signature"),
+    "INSUFFICIENT_BALANCE": ("insufficient_balance", "Insufficient balance"),
+    "INSUFFICIENT_SHARES": ("insufficient_shares", "Insufficient shares"),
+    "MARKET_CLOSED": ("market_closed", "Market closed"),
+    "ORDER_NOT_FILLABLE": ("order_not_fillable", "Order cannot be filled"),
+    "POST_ONLY_WOULD_CROSS": ("post_only_would_cross", "Post-only order would cross"),
+}
+
+
+def _normalize_response_contracts(value: Any) -> Any:
+    """Upgrade the two safe legacy response shapes without retaining raw
+    provider diagnostics. Other values remain ordinary JSON containers."""
+    if isinstance(value, list):
+        return [_normalize_response_contracts(item) for item in value]
+    if not isinstance(value, dict):
+        return value
+
+    normalized = {
+        key: _normalize_response_contracts(item) for key, item in value.items()
+    }
+    if {"internal_id", "exchange", "status"}.issubset(normalized):
+        legacy_error = normalized.pop("error", None)
+        if "failure" not in normalized and legacy_error is not None:
+            normalized["failure"] = _failure_wire(_internal_failure())
+
+    if normalized.get("outcome") == "rejected" and "failure" not in normalized:
+        raw_code = normalized.pop("code", "")
+        normalized.pop("message", None)
+        code, title = _LEGACY_BATCH_FAILURES.get(
+            str(raw_code).upper(), ("internal_error", "Internal server error")
+        )
+        normalized["failure"] = {
+            "code": code,
+            "title": title,
+            "recovery": {"strategy": "none"},
+        }
+    return normalized
+
+
 class AgaraError(Exception):
     """Base for every error this SDK raises."""
 
-    def __init__(self, status_code: int, message: str, retry_after: Optional[float] = None):
+    def __init__(
+        self,
+        status_code: int,
+        message: str,
+        retry_after: Optional[float] = None,
+        problem: Optional[ProblemDetails] = None,
+    ):
         super().__init__(f"[{status_code}] {message}")
         self.status_code = status_code
         self.message = message
+        self.problem = problem
+        self.code = problem.code if problem else None
+        self.title = problem.title if problem else None
+        self.detail = problem.detail if problem else None
+        self.request_id = problem.request_id if problem else None
+        self.recovery = problem.recovery if problem else None
+        self.field_errors = problem.field_errors if problem else ()
         #: Seconds the server asked the caller to wait before retrying, from the
         #: `Retry-After` (or `x-ratelimit-reset`) header. `None` when absent.
         self.retry_after = retry_after
+
+    @property
+    def is_retryable(self) -> bool:
+        """Whether the server explicitly permits repeating the same request."""
+        if self.problem is not None:
+            return self.problem.recovery.is_retryable
+        return isinstance(self, RateLimitedError)
 
 
 class BadRequestError(AgaraError):
@@ -88,6 +351,34 @@ class ConflictError(AgaraError):
     submitting a signed order whose `order_hash` already exists."""
 
 
+class MethodNotAllowedError(AgaraError):
+    """405 — the route exists but does not support this method."""
+
+
+class GoneError(AgaraError):
+    """410 — the endpoint was retired."""
+
+
+class PayloadTooLargeError(AgaraError):
+    """413 — the request body exceeded the server limit."""
+
+
+class UnsupportedMediaTypeError(AgaraError):
+    """415 — the request was not sent as supported JSON."""
+
+
+class FailedDependencyError(AgaraError):
+    """424 — a prerequisite such as wallet setup is incomplete."""
+
+
+class TooEarlyError(AgaraError):
+    """425 — the requested derived result is not ready yet."""
+
+
+class UpgradeRequiredError(AgaraError):
+    """426 — the route requires a WebSocket upgrade."""
+
+
 class RejectedError(AgaraError):
     """422 — order rejected (insufficient balance / shares,
     FOK couldn't fill, post-only would cross, market halted)."""
@@ -99,7 +390,8 @@ class RateLimitedError(AgaraError):
 
 
 class ServerError(AgaraError):
-    """5xx — temporary platform problem. Safe to retry with backoff."""
+    """5xx — platform or dependency failure. Retry only when
+    ``is_retryable`` is true; status alone is not a retry signal."""
 
 
 @dataclass
@@ -169,27 +461,46 @@ def _parse_retry_after(headers: Optional[Any]) -> Optional[float]:
 
 
 def _raise_api_error(
-    status_code: int, message: str, headers: Optional[Any] = None
+    status_code: int, body: Any, headers: Optional[Any] = None
 ) -> NoReturn:
     """Map an HTTP status to the matching typed exception and raise it.
     Shared by the sync and async clients so the mapping lives once."""
-    if status_code == 400:
-        raise BadRequestError(status_code, message)
-    if status_code == 401:
-        raise AuthError(status_code, message)
-    if status_code == 403:
-        raise ForbiddenError(status_code, message)
-    if status_code == 404:
-        raise NotFoundError(status_code, message)
-    if status_code == 409:
-        raise ConflictError(status_code, message)
-    if status_code == 422:
-        raise RejectedError(status_code, message)
-    if status_code == 429:
-        raise RateLimitedError(status_code, message, _parse_retry_after(headers))
+    problem = ProblemDetails.from_wire(body)
+    if problem is not None and problem.status != status_code:
+        problem = None
+    if problem is not None:
+        message = problem.detail or problem.title
+    elif isinstance(body, Mapping) and isinstance(body.get("error"), str):
+        message = body["error"]
+    else:
+        message = str(body or "")
+
+    retry_after = _parse_retry_after(headers)
+    if retry_after is None and problem and problem.recovery.known:
+        retry_after = problem.recovery.after_seconds
+
+    error_types = {
+        400: BadRequestError,
+        401: AuthError,
+        403: ForbiddenError,
+        404: NotFoundError,
+        405: MethodNotAllowedError,
+        409: ConflictError,
+        410: GoneError,
+        413: PayloadTooLargeError,
+        415: UnsupportedMediaTypeError,
+        422: RejectedError,
+        424: FailedDependencyError,
+        425: TooEarlyError,
+        426: UpgradeRequiredError,
+        429: RateLimitedError,
+    }
+    error_type = error_types.get(status_code)
+    if error_type is not None:
+        raise error_type(status_code, message, retry_after, problem)
     if 500 <= status_code < 600:
-        raise ServerError(status_code, message)
-    raise AgaraError(status_code, message)
+        raise ServerError(status_code, message, retry_after, problem)
+    raise AgaraError(status_code, message, retry_after, problem)
 
 
 def _parse_orderbook(data: dict[str, Any]) -> Orderbook:
@@ -332,15 +643,16 @@ class AgaraClient:
         )
 
         if resp.ok:
-            return resp.json() if resp.content else None
+            return _normalize_response_contracts(resp.json()) if resp.content else None
 
-        # Body should be { "error": "..." }; fall back to status text if not.
+        # New servers return Problem Details; keep the legacy {"error": ...}
+        # fallback during the rolling SDK/server transition.
         try:
-            err_msg = resp.json().get("error", resp.reason or "")
+            error_body: Any = resp.json()
         except ValueError:
-            err_msg = resp.text or resp.reason or ""
+            error_body = resp.text or resp.reason or ""
 
-        _raise_api_error(resp.status_code, err_msg, resp.headers)
+        _raise_api_error(resp.status_code, error_body, resp.headers)
 
     def get_orderbook(self, token_id: str) -> Orderbook:
         """Snapshot of bid/ask depth for one outcome."""
@@ -410,7 +722,7 @@ class AgaraClient:
         validated and accepted independently: the response `results` array
         carries one entry per submitted order, in request order, each either
         `accepted` (with the same fields as `place_signed_order`) or `rejected`
-        (with a `code` and `message`). A duplicate `order_hash` is reported
+        (with a typed `failure`). A duplicate `order_hash` is reported
         `rejected` rather than failing the batch. Scope: `orders:place_signed`."""
         body = {"orders": [entry.to_request_body() for entry in orders]}
         return self._request("POST", "/trade/v1/orders/signed/batch", json=body)
@@ -688,23 +1000,24 @@ class AgaraClient:
         elapses. Returns the final order detail either way — callers
         should check `order["status"] in TERMINAL_STATUSES`.
 
-        Transient 5xx during polling is retried up to 3 consecutive
-        times before giving up — `wait_for_terminal` is meant to
-        absorb routine flakes, not surface them. Other exception
-        types still propagate immediately."""
+        Failures with explicit retry recovery are retried up to 3
+        consecutive times, honoring Retry-After. Other exception types
+        propagate immediately."""
         deadline = time.monotonic() + timeout
         consecutive_server_errors = 0
         while True:
             try:
                 order = self.get_order(order_id)["order"]
                 consecutive_server_errors = 0
-            except ServerError:
+            except AgaraError as exc:
+                if not exc.is_retryable:
+                    raise
                 consecutive_server_errors += 1
                 if consecutive_server_errors >= _MAX_CONSECUTIVE_SERVER_ERRORS:
                     raise
                 if time.monotonic() >= deadline:
                     raise
-                time.sleep(poll_interval)
+                time.sleep(max(poll_interval, exc.retry_after or 0.0))
                 continue
             if order["status"] in TERMINAL_STATUSES:
                 return order

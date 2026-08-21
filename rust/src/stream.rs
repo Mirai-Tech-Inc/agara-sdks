@@ -19,7 +19,7 @@ use tokio_tungstenite::tungstenite::Message;
 
 use crate::client::DEFAULT_BASE_URL;
 use crate::error::{AgaraError, Result};
-use crate::frames::{Channel, Frame, StreamError, decode_frame};
+use crate::frames::{Channel, Frame, StreamError, WebSocketAction, decode_frame};
 use crate::retry::{
 	DEFAULT_INITIAL_BACKOFF, DEFAULT_JITTER, DEFAULT_MAX_BACKOFF, jittered_backoff,
 };
@@ -277,9 +277,10 @@ async fn run_endpoint(
 			},
 			Err(e) => {
 				let _ = frames.send(Frame::Error(StreamError {
+					failure: None,
 					code: "transport".to_owned(),
 					message: e.to_string(),
-					action: None,
+					action: WebSocketAction::None,
 					channel: None,
 					token_id: None,
 					condition_id: None,
@@ -331,11 +332,11 @@ async fn pump(
 					let Ok(value) = serde_json::from_str(&text) else { continue };
 					let frame = decode_frame(value);
 					if let Frame::Error(err) = &frame {
-						match err.action.as_deref() {
-							Some("resubscribe") => {
+						match err.automatic_action() {
+							Some(WebSocketAction::Resubscribe) => {
 								let _ = send_op(&mut write, "subscribe", subs, token).await;
 							}
-							Some("reconnect") => {
+							Some(WebSocketAction::Reconnect) => {
 								let _ = frames.send(frame);
 								return false;
 							}

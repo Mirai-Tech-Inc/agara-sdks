@@ -52,14 +52,16 @@ fn signed_batch_result_decodes_both_arms() {
 	}
 
 	let rejected: SignedOrderResult = serde_json::from_str(
-		r#"{"index":1,"outcome":"rejected","code":"DUPLICATE","message":"dup hash"}"#,
+		r#"{"index":1,"outcome":"rejected","failure":{"code":"duplicate_order",
+            "title":"Duplicate order","detail":"An order with this identity already exists.",
+            "recovery":{"strategy":"none"}}}"#,
 	)
 	.unwrap();
 	match rejected {
-		SignedOrderResult::Rejected { index, code, message } => {
+		SignedOrderResult::Rejected { index, failure } => {
 			assert_eq!(index, 1);
-			assert_eq!(code, "DUPLICATE");
-			assert_eq!(message, "dup hash");
+			assert_eq!(failure.code, "duplicate_order");
+			assert_eq!(failure.recovery.strategy(), "none");
 		},
 		_ => panic!("expected rejected"),
 	}
@@ -71,7 +73,7 @@ fn order_decodes_with_nullable_fields() {
 		r#"{"internal_id":"id","exchange":"AGARA","token_id":"tok","condition_id":null,
             "side":"BUY","type":"LIMIT","price_micro":"600000","original_size_micro":"1000000",
             "collateral_amount_micro":null,"size_matched_micro":"0","avg_fill_price_micro":null,
-            "status":"PARTIALLY_FILLED","error":null,"expiration":"t","created_at":"t",
+			"status":"PARTIALLY_FILLED","failure":null,"expiration":"t","created_at":"t",
             "cancel_requested_at":null}"#,
 	)
 	.unwrap();
@@ -80,6 +82,37 @@ fn order_decodes_with_nullable_fields() {
 	assert_eq!(order.price_micro.unwrap().raw(), 600_000);
 	assert!(order.condition_id.is_none());
 	assert!(order.avg_fill_price_micro.is_none());
+	assert!(order.failure.is_none());
+}
+
+#[test]
+fn legacy_order_error_becomes_safe_internal_failure() {
+	let order: Order = serde_json::from_str(
+		r#"{"internal_id":"id","exchange":"AGARA","token_id":"tok","condition_id":null,
+            "side":"BUY","type":"LIMIT","price_micro":"600000","original_size_micro":"1000000",
+            "collateral_amount_micro":null,"size_matched_micro":"0","avg_fill_price_micro":null,
+            "status":"REJECTED","error":"private provider diagnostic","expiration":"t","created_at":"t",
+            "cancel_requested_at":null}"#,
+	)
+	.unwrap();
+	let failure = order.failure.unwrap();
+	assert_eq!(failure.code, "internal_error");
+	assert!(failure.detail.is_none());
+}
+
+#[test]
+fn legacy_signed_batch_rejection_discards_message() {
+	let rejected: SignedOrderResult = serde_json::from_str(
+		r#"{"index":1,"outcome":"rejected","code":"DUPLICATE","message":"private"}"#,
+	)
+	.unwrap();
+	match rejected {
+		SignedOrderResult::Rejected { failure, .. } => {
+			assert_eq!(failure.code, "duplicate_order");
+			assert!(failure.detail.is_none());
+		},
+		_ => panic!("expected rejected"),
+	}
 }
 
 #[test]
@@ -122,7 +155,7 @@ fn unknown_response_enum_values_decode_to_unknown_not_error() {
 		r#"{"internal_id":"id","exchange":"KALSHI","token_id":"tok","condition_id":null,
             "side":"BUY","type":"SPREAD","price_micro":null,"original_size_micro":null,
             "collateral_amount_micro":null,"size_matched_micro":"0","avg_fill_price_micro":null,
-            "status":"SETTLING","error":null,"expiration":"t","created_at":"t",
+			"status":"SETTLING","failure":null,"expiration":"t","created_at":"t",
             "cancel_requested_at":null}"#,
 	)
 	.unwrap();
@@ -191,14 +224,20 @@ mod stream {
 		let frame = decode(
 			r#"{"op":"update","channel":"account_events","sequence":0,
                 "data":{"kind":"order_rejected","order_id":"o1","order_hash":null,
-                "token_id":null,"reason":"INSUFFICIENT_SHARES"}}"#,
+				"token_id":null,"failure":{"code":"insufficient_shares",
+                "title":"Insufficient shares","detail":"Available shares are lower than the requested amount.",
+                "recovery":{"strategy":"none"}}}}"#,
 		);
 		match frame {
 			Frame::OrderRejected(r) => {
 				assert_eq!(r.order_id, "o1");
 				assert!(r.order_hash.is_none());
 				assert!(r.token_id.is_none());
-				assert_eq!(r.reason, "INSUFFICIENT_SHARES");
+				assert_eq!(r.failure.code, "insufficient_shares");
+				assert_eq!(
+					r.reason(),
+					"Available shares are lower than the requested amount."
+				);
 			},
 			other => panic!("expected order_rejected, got {other:?}"),
 		}
@@ -207,12 +246,44 @@ mod stream {
 	#[test]
 	fn error_frame_carries_action() {
 		let frame = decode(
-			r#"{"op":"error","code":"slow_consumer","message":"lagged","action":"reconnect"}"#,
+			r#"{"op":"error","failure":{"code":"slow_consumer",
+                "title":"Client is reading too slowly","detail":"Reconnect after draining messages.",
+                "recovery":{"strategy":"none"}},"action":"reconnect"}"#,
 		);
 		match frame {
 			Frame::Error(e) => {
 				assert_eq!(e.code, "slow_consumer");
-				assert_eq!(e.action.as_deref(), Some("reconnect"));
+				assert_eq!(e.action, agara_sdk::frames::WebSocketAction::Reconnect);
+				assert_eq!(e.failure.unwrap().code, "slow_consumer");
+			},
+			other => panic!("expected error, got {other:?}"),
+		}
+	}
+
+	#[test]
+	fn unknown_error_action_is_inert() {
+		let frame = decode(
+			r#"{"op":"error","failure":{"code":"future_code","title":"Future",
+                "recovery":{"strategy":"future_recovery"}},"action":"future_action"}"#,
+		);
+		match frame {
+			Frame::Error(e) => assert!(matches!(
+				e.action,
+				agara_sdk::frames::WebSocketAction::Unknown(ref action) if action == "future_action"
+			)),
+			other => panic!("expected error, got {other:?}"),
+		}
+	}
+
+	#[test]
+	fn future_failure_cannot_activate_known_reconnect_action() {
+		let frame = decode(
+			r#"{"op":"error","failure":{"code":"future_code","title":"Future",
+                "recovery":{"strategy":"none"}},"action":"reconnect"}"#,
+		);
+		match frame {
+			Frame::Error(e) => {
+				assert_eq!(e.action, agara_sdk::frames::WebSocketAction::Reconnect);
 			},
 			other => panic!("expected error, got {other:?}"),
 		}

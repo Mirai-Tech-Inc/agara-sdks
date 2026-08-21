@@ -8,6 +8,7 @@
 use serde_json::Value;
 
 use crate::ids::{ConditionId, FillRole, SettlementMode, Side, TimeInForce, TokenId};
+use crate::problem::{PublicFailure, Recovery};
 use crate::units::Micro;
 
 /// Stand-in for a missing `data` payload, so decoders can borrow rather
@@ -220,7 +221,15 @@ pub struct OrderRejected {
 	pub order_id: String,
 	pub order_hash: Option<String>,
 	pub token_id: Option<TokenId>,
-	pub reason: String,
+	pub failure: PublicFailure,
+}
+
+impl OrderRejected {
+	/// Deprecated compatibility summary. Match on `failure.code` for behavior;
+	/// this never returns the old private provider diagnostic.
+	pub fn reason(&self) -> &str {
+		self.failure.detail.as_deref().unwrap_or(&self.failure.title)
+	}
 }
 
 #[derive(Clone, Debug)]
@@ -275,14 +284,66 @@ pub struct Pong {
 
 #[derive(Clone, Debug)]
 pub struct StreamError {
+	/// Nested server failure. `None` only for locally-created transport errors
+	/// and legacy flat frames.
+	pub failure: Option<PublicFailure>,
+	/// Compatibility shortcut for `failure.code` (or the legacy flat code).
 	pub code: String,
+	/// Compatibility summary for `failure.detail` / `failure.title`.
 	pub message: String,
-	/// `resubscribe`, `reconnect`, or `None` (terminal). In callback mode
-	/// the client acts on this automatically.
-	pub action: Option<String>,
+	/// Required server action. Future values are retained but inert.
+	pub action: WebSocketAction,
 	pub channel: Option<String>,
 	pub token_id: Option<String>,
 	pub condition_id: Option<String>,
+}
+
+/// Required recovery action on a WebSocket error frame.
+#[derive(Clone, Debug, PartialEq, Eq)]
+#[non_exhaustive]
+pub enum WebSocketAction {
+	None,
+	Resubscribe,
+	Reconnect,
+	Unknown(String),
+}
+
+impl WebSocketAction {
+	fn from_wire(value: Option<&str>) -> Self {
+		match value {
+			Some("none") | None => Self::None,
+			Some("resubscribe") => Self::Resubscribe,
+			Some("reconnect") => Self::Reconnect,
+			Some(value) => Self::Unknown(value.to_owned()),
+		}
+	}
+}
+
+impl StreamError {
+	pub(crate) fn automatic_action(&self) -> Option<&WebSocketAction> {
+		match (&self.failure, &self.action) {
+			(None, WebSocketAction::Resubscribe | WebSocketAction::Reconnect) => Some(&self.action),
+			(Some(failure), WebSocketAction::Resubscribe)
+				if failure.code == "stream_subject_unavailable"
+					&& matches!(&failure.recovery, Recovery::None) =>
+			{
+				Some(&self.action)
+			},
+			(Some(failure), WebSocketAction::Reconnect)
+				if matches!(
+					(failure.code.as_str(), &failure.recovery),
+					(
+						"dependency_unavailable" | "server_restarting",
+						Recovery::Retry
+					) | ("identity_token_expired", Recovery::RefreshIdentityToken)
+						| ("internal_error" | "slow_consumer", Recovery::None)
+				) =>
+			{
+				Some(&self.action)
+			},
+			_ => None,
+		}
+	}
 }
 
 #[derive(Clone, Debug)]
@@ -349,19 +410,43 @@ pub fn decode_frame(raw: Value) -> Frame {
 		Some("pong") => {
 			Frame::Pong(Pong { server_time: str_at(&raw, "server_time").unwrap_or_default() })
 		},
-		Some("error") => Frame::Error(StreamError {
-			code: str_at(&raw, "code").unwrap_or_default(),
-			message: str_at(&raw, "message").unwrap_or_default(),
-			action: str_at(&raw, "action"),
-			channel: str_at(&raw, "channel"),
-			token_id: str_at(&raw, "token_id"),
-			condition_id: str_at(&raw, "condition_id"),
-		}),
+		Some("error") => decode_error(&raw),
 		Some("subscription_list") => Frame::SubscriptionList(SubscriptionList {
 			channels: raw.get("channels").and_then(Value::as_array).cloned().unwrap_or_default(),
 		}),
 		_ => Frame::Unknown(raw),
 	}
+}
+
+fn decode_error(raw: &Value) -> Frame {
+	let failure = raw
+		.get("failure")
+		.cloned()
+		.and_then(|failure| serde_json::from_value::<PublicFailure>(failure).ok());
+	let (code, message) = failure.as_ref().map_or_else(
+		|| {
+			(
+				str_at(raw, "code").unwrap_or_else(|| "stream_error".to_owned()),
+				str_at(raw, "message").unwrap_or_else(|| "Stream error".to_owned()),
+			)
+		},
+		|failure| {
+			(
+				failure.code.clone(),
+				failure.detail.clone().unwrap_or_else(|| failure.title.clone()),
+			)
+		},
+	);
+
+	Frame::Error(StreamError {
+		failure,
+		code,
+		message,
+		action: WebSocketAction::from_wire(str_at(raw, "action").as_deref()),
+		channel: str_at(raw, "channel"),
+		token_id: str_at(raw, "token_id"),
+		condition_id: str_at(raw, "condition_id"),
+	})
 }
 
 fn decode_update(raw: Value) -> Frame {
@@ -522,7 +607,11 @@ fn decode_account_event(raw: &Value, sequence: u64, data: &Value) -> Frame {
 			order_id: str_at(data, "order_id").unwrap_or_default(),
 			order_hash: str_at(data, "order_hash"),
 			token_id: str_at(data, "token_id").map(TokenId::new),
-			reason: str_at(data, "reason").unwrap_or_default(),
+			failure: data
+				.get("failure")
+				.cloned()
+				.and_then(|failure| serde_json::from_value(failure).ok())
+				.unwrap_or_else(PublicFailure::internal),
 		}),
 		Some("tokens_minted") => Frame::TokensMinted(TokensMinted {
 			sequence,
@@ -585,4 +674,54 @@ fn optional_level(v: Option<&Value>) -> Option<Level> {
 	}
 
 	Some(Level { price: i64_at(obj, "price"), size: i64_at(obj, "size") })
+}
+
+#[cfg(test)]
+mod tests {
+	use super::*;
+
+	fn error(code: &str, recovery: Recovery, action: WebSocketAction) -> StreamError {
+		StreamError {
+			failure: Some(PublicFailure {
+				code: code.to_owned(),
+				title: "Test".to_owned(),
+				detail: None,
+				recovery,
+			}),
+			code: code.to_owned(),
+			message: "Test".to_owned(),
+			action,
+			channel: None,
+			token_id: None,
+			condition_id: None,
+		}
+	}
+
+	#[test]
+	fn future_failure_cannot_activate_known_action() {
+		// Arrange
+		let error = error("future_failure", Recovery::None, WebSocketAction::Reconnect);
+
+		// Act
+		let action = error.automatic_action();
+
+		// Assert
+		assert!(action.is_none());
+	}
+
+	#[test]
+	fn malformed_recovery_cannot_activate_known_action() {
+		// Arrange
+		let error = error(
+			"stream_subject_unavailable",
+			Recovery::Unknown { strategy: "retry_someday".to_owned() },
+			WebSocketAction::Resubscribe,
+		);
+
+		// Act
+		let action = error.automatic_action();
+
+		// Assert
+		assert!(action.is_none());
+	}
 }

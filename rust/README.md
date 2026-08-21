@@ -63,11 +63,13 @@ async fn main() -> agara_sdk::Result<()> {
 - **Micro-units hidden.** Prices/sizes are `rust_decimal::Decimal` at the
   boundary; the wire's integer micro-encoding is handled for you
   (`Micro`).
-- **Typed errors keyed by status.** `AgaraError::{BadRequest, Auth,
-  Forbidden, NotFound, Conflict, Rejected, RateLimited, Server, …}`;
-  `RateLimited` carries `retry_after`.
+- **Typed Problem Details.** `AgaraError` has status variants for 400,
+  401, 403, 404, 405, 409, 410, 413, 415, 422, 424, 425, 426, 429, and
+  5xx responses, while `error.problem()` exposes `code`, `title`,
+  optional `detail`, `request_id`, `recovery`, and `field_errors`.
 - **Opt-in retries.** Pass a `RetryPolicy` (exponential backoff + jitter,
-  honors `Retry-After`) to the builder; off by default.
+  honors `Retry-After`) to the builder; off by default. Typed recovery,
+  not a 5xx status by itself, determines whether a request is retryable.
 - **`wait_for_terminal`** for the place-and-poll pattern.
 
 ## Signing (feature `signing`)
@@ -103,11 +105,18 @@ client.place_signed_order(&body).await?;
 ```
 
 Batch up to 32 with `client.place_signed_orders(vec![...])`.
+Rejected batch entries are `SignedOrderResult::Rejected { failure, .. }`.
+For example, a market maker should reprice a
+`failure.code == "post_only_would_cross"` quote rather than resubmit it
+unchanged. Terminal `Order` values use `order.failure`; free-form
+`order.error` is retired. During a transition the SDK reads both legacy
+shapes, maps known batch codes, and discards legacy diagnostic text.
 
 ## Streaming (feature `streaming`)
 
 ```rust
 use agara_sdk::{AgaraStreamClient, Channel, Frame, ids::{ConditionId, TokenId}};
+use agara_sdk::frames::WebSocketAction;
 
 let mut client = AgaraStreamClient::builder()
     .token(std::env::var("AGARA_TOKEN").unwrap())
@@ -123,6 +132,13 @@ while let Some(frame) = stream.next().await {
     match frame {
         Frame::Trade(t) => println!("trade {:?} {}@{}", t.side, t.size, t.price),
         Frame::Fill(f) => println!("my fill {}", f.fill_id),
+        Frame::OrderRejected(r) => eprintln!("quote rejected: {}", r.failure.code),
+        Frame::Error(e) => match e.action {
+            WebSocketAction::None => eprintln!("stream request rejected: {}", e.code),
+            WebSocketAction::Resubscribe => eprintln!("SDK is resubscribing"),
+            WebSocketAction::Reconnect => eprintln!("SDK is reconnecting"),
+            WebSocketAction::Unknown(_) => eprintln!("unknown action left inert"),
+        },
         Frame::SequenceReset(r) => eprintln!("reset on {} — rebuild local state", r.channel),
         _ => {}
     }
@@ -133,6 +149,32 @@ Or push-style: `stream.run(|frame| async move { … }).await`. Both
 auto-reconnect with backoff, replay subscriptions on reconnect, and act
 on server `error` frames. One client transparently manages the public
 market stream and the private account stream.
+
+Server error frames have a nested `failure` and required action. Unknown
+actions and unknown or malformed recovery strategies are retained for
+diagnostics but never acted on. Locally-created transport errors are the
+only `StreamError` values whose `failure` is `None`.
+
+## Error handling
+
+```rust
+match client.get_order(&order_id).await {
+    Ok(order) => { /* ... */ }
+    Err(error) if error.is_retryable() => {
+        // Back off; `error.retry_after()` includes Retry-After/body guidance.
+    }
+    Err(error) => {
+        if let Some(problem) = error.problem() {
+            eprintln!("{} (request {})", problem.code,
+                problem.request_id.as_deref().unwrap_or("edge"));
+        }
+    }
+}
+```
+
+Do not retry every `Server` variant. `dependency_unavailable` explicitly
+uses `retry`; `internal_error`, `feature_not_configured`, and malformed or
+future recovery strategies are inert.
 
 ## Getting a token
 

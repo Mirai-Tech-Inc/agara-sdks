@@ -20,10 +20,18 @@ from agara_sdk import (
     ForbiddenError,
     BadRequestError,
     ConflictError,
+    FailedDependencyError,
+    GoneError,
+    MethodNotAllowedError,
     NotFoundError,
+    PayloadTooLargeError,
     RateLimitedError,
+    Recovery,
     RejectedError,
     ServerError,
+    TooEarlyError,
+    UnsupportedMediaTypeError,
+    UpgradeRequiredError,
     TERMINAL_STATUSES,
     micro_to_float,
 )
@@ -33,6 +41,23 @@ from agara_sdk.signing import SignedOrder, SignedOrderEntry
 BASE_URL = "https://api.example.test"
 TOKEN = "agt_test_token"
 TOKEN_ID = "21742633143463906290569050155826241533067272736897614950488156847949938836455"
+
+
+def problem(
+    status: int,
+    code: str,
+    title: str,
+    strategy: str = "none",
+    **recovery: object,
+) -> dict:
+    return {
+        "type": f"urn:agara:problem:{code.replace('_', '-')}",
+        "title": title,
+        "status": status,
+        "code": code,
+        "request_id": "00000000-0000-0000-0000-000000000000",
+        "recovery": {"strategy": strategy, **recovery},
+    }
 
 
 @pytest.fixture
@@ -263,6 +288,69 @@ def test_place_signed_orders_wraps_entries_under_orders(client: AgaraClient) -> 
     assert len(responses.calls) == 1
 
 
+@responses.activate
+def test_legacy_signed_batch_rejection_becomes_safe_failure(
+    client: AgaraClient,
+) -> None:
+    responses.post(
+        f"{BASE_URL}/trade/v1/orders/signed/batch",
+        json={
+            "results": [
+                {
+                    "index": 0,
+                    "outcome": "rejected",
+                    "code": "DUPLICATE",
+                    "message": "private provider diagnostic",
+                }
+            ],
+            "as_of": "2026-06-19T00:00:00Z",
+        },
+        status=202,
+    )
+    signed = SignedOrder(
+        order_hash="0xhash",
+        signature="0xsig",
+        salt=7,
+        maker="0xmaker",
+        token_id=int(TOKEN_ID),
+        maker_amount=600000,
+        taker_amount=1000000,
+        side=0,
+    )
+    entry = SignedOrderEntry(
+        signed_order=signed,
+        token_id=TOKEN_ID,
+        side="BUY",
+        price_micro=600000,
+        shares_micro=1000000,
+    )
+
+    result = client.place_signed_orders(orders=[entry])["results"][0]
+
+    assert result["failure"]["code"] == "duplicate_order"
+    assert "message" not in result
+
+
+@responses.activate
+def test_legacy_order_error_becomes_safe_failure(client: AgaraClient) -> None:
+    responses.get(
+        f"{BASE_URL}/trade/v1/orders/abc",
+        json={
+            "order": {
+                "internal_id": "abc",
+                "exchange": "AGARA",
+                "status": "REJECTED",
+                "error": "private provider diagnostic",
+            }
+        },
+    )
+
+    order = client.get_order("abc")["order"]
+
+    assert order["failure"]["code"] == "internal_error"
+    assert "error" not in order
+
+
 def test_place_order_rejects_both_shares_and_collateral(client: AgaraClient) -> None:
     with pytest.raises(ValueError, match="exactly one"):
         client.place_order(
@@ -458,8 +546,15 @@ def test_micro_to_float_round_trip() -> None:
         (401, AuthError),
         (403, ForbiddenError),
         (404, NotFoundError),
+        (405, MethodNotAllowedError),
         (409, ConflictError),
+        (410, GoneError),
+        (413, PayloadTooLargeError),
+        (415, UnsupportedMediaTypeError),
         (422, RejectedError),
+        (424, FailedDependencyError),
+        (425, TooEarlyError),
+        (426, UpgradeRequiredError),
         (429, RateLimitedError),
         (500, ServerError),
         (502, ServerError),
@@ -498,6 +593,75 @@ def test_rate_limited_carries_retry_after(client: AgaraClient) -> None:
         client.get_order("abc")
 
     assert info.value.retry_after == 7.0
+
+
+@responses.activate
+def test_problem_details_are_available_to_callers(client: AgaraClient) -> None:
+    body = problem(425, "pnl_not_ready", "PnL not ready", "retry")
+    body["detail"] = "PnL is not available yet."
+    body["field_errors"] = [{"path": ["wallet_id"], "code": "invalid"}]
+    responses.get(f"{BASE_URL}/trade/v1/orders/abc", json=body, status=425)
+
+    with pytest.raises(TooEarlyError) as info:
+        client.get_order("abc")
+
+    assert info.value.code == "pnl_not_ready"
+    assert info.value.title == "PnL not ready"
+    assert info.value.detail == "PnL is not available yet."
+    assert info.value.request_id == "00000000-0000-0000-0000-000000000000"
+    assert info.value.recovery.strategy == "retry"
+    assert info.value.is_retryable is True
+    assert info.value.field_errors[0]["path"] == ["wallet_id"]
+
+
+@responses.activate
+def test_unknown_recovery_is_inert_even_on_503(client: AgaraClient) -> None:
+    responses.get(
+        f"{BASE_URL}/trade/v1/orders/abc",
+        json=problem(503, "future_failure", "Future", "retry_later"),
+        status=503,
+    )
+
+    with pytest.raises(ServerError) as info:
+        client.get_order("abc")
+
+    assert info.value.recovery.strategy == "retry_later"
+    assert info.value.recovery.known is False
+    assert info.value.is_retryable is False
+
+
+@responses.activate
+def test_unknown_code_cannot_activate_known_retry_strategy(
+    client: AgaraClient,
+) -> None:
+    responses.get(
+        f"{BASE_URL}/trade/v1/orders/abc",
+        json=problem(503, "future_failure", "Future", "retry"),
+        status=503,
+    )
+
+    with pytest.raises(ServerError) as info:
+        client.get_order("abc")
+
+    assert info.value.recovery.strategy == "retry"
+    assert info.value.recovery.known is False
+    assert info.value.is_retryable is False
+
+
+@pytest.mark.parametrize(
+    "resource",
+    [
+        {"kind": "order", "order_id": "not-a-uuid"},
+        {"kind": "batch", "batch_hash": "0x1234"},
+        {"kind": "wallet_status", "unexpected": True},
+        {"kind": "future_resource", "id": "abc"},
+    ],
+)
+def test_malformed_check_status_recovery_is_inert(resource: dict[str, object]) -> None:
+    recovery = Recovery.from_wire({"strategy": "check_status", "resource": resource})
+
+    assert recovery.strategy == "check_status"
+    assert recovery.known is False
 
 
 @responses.activate
@@ -619,12 +783,12 @@ def test_wait_for_terminal_retries_through_transient_server_errors(
     # transient failures and return the final order.
     responses.get(
         f"{BASE_URL}/trade/v1/orders/abc",
-        json={"error": "upstream timeout"},
+        json=problem(503, "dependency_unavailable", "Dependency temporarily unavailable", "retry"),
         status=503,
     )
     responses.get(
         f"{BASE_URL}/trade/v1/orders/abc",
-        json={"error": "upstream timeout"},
+        json=problem(503, "dependency_unavailable", "Dependency temporarily unavailable", "retry"),
         status=503,
     )
     responses.get(
@@ -647,7 +811,7 @@ def test_wait_for_terminal_raises_after_three_consecutive_server_errors(
     for _ in range(3):
         responses.get(
             f"{BASE_URL}/trade/v1/orders/abc",
-            json={"error": "boom"},
+            json=problem(502, "dependency_unavailable", "Dependency temporarily unavailable", "retry"),
             status=502,
         )
 

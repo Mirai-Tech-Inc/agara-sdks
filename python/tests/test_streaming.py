@@ -332,7 +332,12 @@ def test_order_rejected_decode():
             "order_id": "11111111-1111-1111-1111-111111111111",
             "order_hash": "0xabc123",
             "token_id": "yes-token",
-            "reason": "insufficient balance",
+            "failure": {
+                "code": "insufficient_balance",
+                "title": "Insufficient balance",
+                "detail": "Available collateral is lower than the order total.",
+                "recovery": {"strategy": "none"},
+            },
         },
     })
     assert isinstance(rejected, streaming.OrderRejected)
@@ -340,7 +345,8 @@ def test_order_rejected_decode():
     assert rejected.order_id == "11111111-1111-1111-1111-111111111111"
     assert rejected.order_hash == "0xabc123"
     assert rejected.token_id == "yes-token"
-    assert rejected.reason == "insufficient balance"
+    assert rejected.failure.code == "insufficient_balance"
+    assert rejected.reason == "Available collateral is lower than the order total."
 
 
 def test_order_rejected_decode_null_hash_and_token():
@@ -360,7 +366,8 @@ def test_order_rejected_decode_null_hash_and_token():
     assert isinstance(rejected, streaming.OrderRejected)
     assert rejected.order_hash is None
     assert rejected.token_id is None
-    assert rejected.reason == "engine rejected order"
+    assert rejected.failure.code == "internal_error"
+    assert rejected.failure.detail is None
 
 
 def test_tokens_minted_and_merged_decode():
@@ -447,27 +454,53 @@ def test_heartbeat_and_pong():
 def test_error_frame():
     frame = streaming.decode_frame({
         "op": "error",
-        "code": "unknown_token",
-        "message": "no agara market+outcome for token_id 123",
+        "failure": {
+            "code": "stream_subject_not_found",
+            "title": "Stream subject not found",
+            "recovery": {"strategy": "none"},
+        },
+        "action": "none",
         "channel": "orderbook",
         "token_id": "123",
     })
     assert isinstance(frame, streaming.StreamError)
-    assert frame.code == "unknown_token"
-    assert frame.action is None
+    assert frame.code == "stream_subject_not_found"
+    assert frame.failure is not None
+    assert frame.action == "none"
 
 
 def test_error_frame_carries_action():
     frame = streaming.decode_frame({
         "op": "error",
-        "code": "subject_unavailable",
-        "message": "subject feed ended; resubscribe to resume",
+        "failure": {
+            "code": "stream_subject_unavailable",
+            "title": "Stream subject temporarily unavailable",
+            "detail": "This stream subject is temporarily unavailable.",
+            "recovery": {"strategy": "none"},
+        },
         "action": "resubscribe",
         "channel": "orderbook",
         "token_id": "123",
     })
     assert isinstance(frame, streaming.StreamError)
     assert frame.action == "resubscribe"
+
+
+def test_unknown_error_action_and_recovery_are_inert():
+    frame = streaming.decode_frame({
+        "op": "error",
+        "failure": {
+            "code": "future_failure",
+            "title": "Future failure",
+            "recovery": {"strategy": "retry_someday", "token": "ignored"},
+        },
+        "action": "reconnect_someday",
+    })
+    assert isinstance(frame, streaming.StreamError)
+    assert frame.failure is not None
+    assert frame.failure.recovery.known is False
+    assert frame.failure.recovery.is_retryable is False
+    assert frame.action == "reconnect_someday"
 
 
 def test_unknown_op_yields_unknown_frame():
@@ -841,3 +874,47 @@ async def test_reconnect_action_closes_affected_endpoint():
     assert fake_account.closed
     assert not fake_market.closed
     assert fake_account.sent == []
+
+
+@pytest.mark.asyncio
+async def test_future_failure_cannot_activate_known_reconnect_action():
+    client = streaming.AgaraStreamClient()
+    fake = _FakeEndpoint()
+    client._market = fake  # type: ignore[assignment]
+    frame = streaming.decode_frame({
+        "op": "error",
+        "failure": {
+            "code": "future_failure",
+            "title": "Future failure",
+            "recovery": {"strategy": "none"},
+        },
+        "action": "reconnect",
+        "channel": "orderbook",
+    })
+    assert isinstance(frame, streaming.StreamError)
+
+    await client._handle_error_action(frame)
+
+    assert not fake.closed
+
+
+@pytest.mark.asyncio
+async def test_unknown_recovery_cannot_activate_known_resubscribe_action():
+    client = streaming.AgaraStreamClient()
+    fake = _FakeEndpoint()
+    client._market = fake  # type: ignore[assignment]
+    frame = streaming.decode_frame({
+        "op": "error",
+        "failure": {
+            "code": "stream_subject_unavailable",
+            "title": "Stream subject temporarily unavailable",
+            "recovery": {"strategy": "retry_someday"},
+        },
+        "action": "resubscribe",
+        "channel": "orderbook",
+    })
+    assert isinstance(frame, streaming.StreamError)
+
+    await client._handle_error_action(frame)
+
+    assert fake.sent == []

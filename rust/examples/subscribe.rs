@@ -38,8 +38,13 @@ async fn main() -> agara_sdk::Result<()> {
 				t.side, t.size, t.price, t.settlement_mode
 			),
 			Frame::Fill(f) => println!("[fill {:?}] {} order={}", f.role, f.fill_id, f.order_id),
+			Frame::OrderRejected(r) => {
+				eprintln!("[rejected] order={} code={}", r.order_id, r.failure.code);
+			},
 			Frame::SequenceReset(r) => eprintln!("[reset] {} — discard local state", r.channel),
-			Frame::Error(e) => eprintln!("[error] {}: {}", e.code, e.message),
+			Frame::Error(e) => {
+				eprintln!("[error] {}: {} action={:?}", e.code, e.message, e.action);
+			},
 			_ => {},
 		}
 	}
