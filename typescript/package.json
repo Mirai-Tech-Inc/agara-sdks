@@ -1,0 +1,82 @@
+{
+  "name": "@agara/sdk",
+  "version": "0.1.0",
+  "description": "Exact-amount TypeScript client for Agara trading, discovery, and streaming",
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22"
+  },
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "docs",
+    "examples",
+    "contracts/README.md",
+    "contracts/manifest.json",
+    "contracts/endpoints.json"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./types": {
+      "types": "./dist/types.d.ts",
+      "import": "./dist/types.js"
+    },
+    "./signing": {
+      "types": "./dist/signing.d.ts",
+      "import": "./dist/signing.js"
+    },
+    "./streaming": {
+      "types": "./dist/streaming.d.ts",
+      "import": "./dist/streaming.js"
+    }
+  },
+  "scripts": {
+    "generate": "node scripts/generate.mjs && node scripts/generate-client.mjs && biome check --write src/endpoints.ts",
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "lint": "biome check src test scripts examples",
+    "format": "biome check --write src test scripts examples",
+    "check": "npm run typecheck && npm run lint && npm test && npm run build",
+    "test:pack": "npm run build && node scripts/pack-smoke.mjs"
+  },
+  "dependencies": {
+    "lossless-json": "^4.3.1"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3",
+    "@types/node": "22.20.3",
+    "@biomejs/biome": "2.5.14",
+    "openapi-typescript": "7.13.0",
+    "vitest": "5.0.1",
+    "viem": "^2.56.7"
+  },
+  "peerDependencies": {
+    "viem": "^2.56.7"
+  },
+  "peerDependenciesMeta": {
+    "viem": {
+      "optional": true
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mirai-Tech-Inc/agara-sdks.git",
+    "directory": "typescript"
+  },
+  "bugs": {
+    "url": "https://github.com/Mirai-Tech-Inc/agara-sdks/issues"
+  },
+  "keywords": [
+    "agara",
+    "prediction-markets",
+    "trading",
+    "typescript"
+  ]
+}
