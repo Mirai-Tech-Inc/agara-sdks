@@ -70,7 +70,9 @@ serializes them as exact JSON numbers, not floating-point numbers or quoted stri
 Order acceptance is asynchronous. `waitForOrder` uses `is_terminal`, including final
 PARTIALLY_FILLED FAK orders and interim MATCHED states that are not terminal. It does
 not wait for trade settlement: inspect `getOrderTrades` / `listTrades` separately.
-Timeout throws `WaitTimeoutError` carrying `.latest`, never a false terminal result.
+When the polling loop expires, `WaitTimeoutError` carries `.latest`. An in-flight read that
+times out can instead throw `TransportError`; inspect its cause. A timeout does not establish
+that the order failed or that a submitted mutation was cancelled.
 
 AGARA split/merge returns 201 `{ batch_hash, status: 'PENDING', as_of }`; POLYMARKET
 returns its 202 operation receipt. `waitForPositionOperation` handles that union.
@@ -166,6 +168,19 @@ npm run generate
 npm run check
 npm run test:pack
 ```
+
+`npm run docs:check` validates public TSDoc as part of `npm run check` and CI. The check follows
+all four package exports, including public members and handwritten request/option properties.
+Use a meaningful `/** ... */` summary, `@param name - description` for public callable parameters,
+and relevant `@returns`, `@throws`, `@remarks`, `@defaultValue` or `@example` sections. Explain units,
+defaults and asynchronous completion when callers need them; private implementation helpers do
+not need API doc comments. Generated OpenAPI schema declarations retain their upstream JSDoc
+and are exempt from the curated public-documentation gate.
+
+REST method documentation lives in `scripts/endpoint-docs.mjs`. Update that metadata and run
+`npm run generate`; editing `src/endpoints.ts` alone will be overwritten. The generator rejects
+missing method/parameter documentation. The package smoke check verifies that public comments
+survive declaration emission and packing, so installed consumers receive IntelliSense guidance.
 
 Generation is offline from committed snapshots. Tests use mock transports, canonical
 problem fixtures, current wire payloads and signing goldens; no live trades are sent.
