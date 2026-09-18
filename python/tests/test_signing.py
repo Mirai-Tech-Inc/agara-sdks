@@ -13,10 +13,10 @@ from eth_account import Account
 from eth_account.messages import encode_typed_data
 
 from agara_sdk.signing import (
+    _ORDER_TYPES,
     DOMAIN_NAME,
     DOMAIN_VERSION,
     EngineDomain,
-    _ORDER_TYPES,
     sign_limit_order,
 )
 
@@ -24,9 +24,7 @@ from agara_sdk.signing import (
 _ACCOUNT = "0x279640887C3806d4FBd424bb0B58F0430CE661C1"
 _EXCHANGE = "0x1b42FF8DdB251074637d3A9872D72f51e3AbB23d"
 _CHAIN_ID = 84532
-_ORDER_HASH_GOLDEN = (
-    "0xf5cbbd057896816a0be9a705a90bf1f094b01af05f977658791b3e65c862c961"
-)
+_ORDER_HASH_GOLDEN = "0xf5cbbd057896816a0be9a705a90bf1f094b01af05f977658791b3e65c862c961"
 _ZERO_BYTES32 = "0x" + "00" * 32
 
 
@@ -97,3 +95,114 @@ def test_sign_limit_order_output_shape():
     assert signed.order_hash.startswith("0x") and len(signed.order_hash) == 66
     assert signed.signature.startswith("0x") and len(signed.signature) == 132
     assert signed.maker == _ACCOUNT
+
+
+def test_signed_order_economics_are_bound():
+    import pytest
+
+    signed = sign_limit_order(
+        private_key="0x" + "11" * 32,
+        domain=EngineDomain(_CHAIN_ID, _EXCHANGE),
+        deposit_wallet_address=_ACCOUNT,
+        token_id=2,
+        side="BUY",
+        price_micro=500000,
+        shares_micro=2000000,
+        salt=1,
+    )
+    original = dict(
+        token_id_string="2", side_string="BUY", price_micro=500000, shares_micro=2000000
+    )
+    assert signed.to_request_body(**original)["maker_amount"] == "1000000"
+    for change in [
+        {"token_id_string": "3"},
+        {"side_string": "SELL"},
+        {"price_micro": 500001},
+        {"shares_micro": 2000001},
+    ]:
+        with pytest.raises(ValueError):
+            signed.to_request_body(**{**original, **change})
+    for salt in [0, -1, 2**256, True]:
+        with pytest.raises(ValueError):
+            sign_limit_order(
+                private_key="0x" + "11" * 32,
+                domain=EngineDomain(_CHAIN_ID, _EXCHANGE),
+                deposit_wallet_address=_ACCOUNT,
+                token_id=2,
+                side="BUY",
+                price_micro=500000,
+                shares_micro=2000000,
+                salt=salt,
+            )
+
+
+def test_canonical_batch_composition_and_both_published_digests():
+    import re
+    from pathlib import Path
+
+    from agara_sdk.batch_signing import (
+        BatchContracts,
+        BatchDomain,
+        RoutedOperation,
+        batch_digest,
+        compose_batch,
+        sign_batch,
+    )
+
+    golden = (Path(__file__).parent / "fixtures/account-batch-golden-vectors.rs").read_text()
+    constants = dict(re.findall(r'const (\w+): &str =\s*"([^"]+)";', golden))
+    contracts = BatchContracts("0x" + "22" * 20, "0x" + "33" * 20, "0x" + "44" * 20)
+    domain = BatchDomain("0x" + "11" * 20, 8453)
+    operations = [
+        RoutedOperation(
+            {
+                "kind": "SPLIT",
+                "market_id": "00000000-0000-0000-0000-000000000001",
+                "condition_id": constants["CONDITION_1"],
+                "shares_micro": 5000000,
+            }
+        ),
+        RoutedOperation(
+            {
+                "kind": "MERGE",
+                "market_id": "00000000-0000-0000-0000-000000000002",
+                "condition_id": constants["CONDITION_2"],
+                "shares_micro": 2000000,
+            }
+        ),
+        RoutedOperation(
+            {"kind": "WITHDRAW", "destination": constants["DESTINATION"], "amount_micro": 1000000}
+        ),
+    ]
+    calls = compose_batch(operations, contracts)
+    assert [c.data for c in calls] == [
+        constants["SPLIT_CALLDATA"],
+        constants["MERGE_CALLDATA"],
+        constants["TRANSFER_CALLDATA"],
+    ]
+    assert batch_digest(domain, 4, 1784022000, calls[:1]) == constants["SINGLE_CALL_BATCH_HASH"]
+    assert batch_digest(domain, 4, 1784022000, calls) == constants["MULTI_CALL_BATCH_HASH"]
+    signed = sign_batch(
+        private_key="0x" + "11" * 32,
+        domain=domain,
+        contracts=contracts,
+        operations=operations,
+        seq=4,
+        deadline_unix_seconds=1784022000,
+    )
+    assert signed.batch_hash == constants["MULTI_CALL_BATCH_HASH"]
+    wire = signed.to_request_body()
+    wire["ops"][0]["shares_micro"] = 1
+    assert signed.to_request_body()["ops"][0]["shares_micro"] == 5000000
+    assert "seq" not in signed.to_supersede_body()
+
+
+def test_batch_signer_rejects_unsupported_presigned_operations():
+    import pytest
+
+    from agara_sdk.batch_signing import BatchContracts, RoutedOperation, compose_batch
+
+    contracts = BatchContracts("0x" + "22" * 20, "0x" + "33" * 20, "0x" + "44" * 20)
+    for kind in ["REDEEM", "ACROSS_SWAP_APPROVE", "WITHDRAW_ACROSS_SWAP_CCTP"]:
+        with pytest.raises(ValueError):
+            compose_batch([RoutedOperation({"kind": kind})], contracts)

@@ -1,60 +1,34 @@
-"""Place an order, wait for it to settle, print fills.
+"""Place a post-only order and observe order completion separately from trade settlement.
 
-    export AGARA_BASE_URL="https://app.sandbox.agara.xyz"
-    export AGARA_TOKEN="agt_..."
-    export AGARA_TOKEN_ID="21742633143463906290569050155826241533067272736897614950488156847949938836455"
-    python examples/trading.py
+Set AGARA_TOKEN, AGARA_TOKEN_ID and optionally AGARA_BASE_URL before running.
+This example submits and cancels real orders on the configured deployment.
 """
 
 import os
 
-from agara_sdk import DEFAULT_BASE_URL, AgaraClient, RejectedError, TERMINAL_STATUSES
+from agara_sdk import DEFAULT_BASE_URL, AgaraClient, micro_to_decimal
 
 
 def main() -> None:
-    base_url = os.environ.get("AGARA_BASE_URL", DEFAULT_BASE_URL)
-    token = os.environ["AGARA_TOKEN"]
-    token_id = os.environ["AGARA_TOKEN_ID"]
-
-    with AgaraClient(token=token, base_url=base_url) as client:
-        # 1. Snapshot the book.
-        book = client.get_orderbook(token_id)
-        print(f"best bid {book.best_bid} / ask {book.best_ask} / spread {book.spread}")
-
-        # 2. Place a BUY at the current best bid for 1 share. If the
-        #    book is empty, fall back to $0.50.
-        price = book.best_bid if book.best_bid is not None else 0.50
+    with AgaraClient(
+        os.environ["AGARA_TOKEN"], os.getenv("AGARA_BASE_URL", DEFAULT_BASE_URL)
+    ) as client:
+        accepted = client.place_order(
+            token_id=os.environ["AGARA_TOKEN_ID"],
+            side="BUY",
+            price="0.50",
+            shares="1",
+            post_only=True,
+        )
         try:
-            resp = client.place_order(
-                token_id=token_id,
-                side="BUY",
-                price=price,
-                shares=1.0,
-            )
-        except RejectedError as err:
-            print(f"order rejected: {err.message}")
-            return
-
-        order_id = resp["order_id"]
-        print(f"placed {order_id}, status {resp['status']}")
-
-        # 3. Wait up to 30 seconds for it to fill or settle.
-        order = client.wait_for_terminal(order_id, timeout=30.0)
-        if order["status"] not in TERMINAL_STATUSES:
-            print(f"not terminal after 30s ({order['status']}); cancelling")
-            client.cancel_order(order_id)
-            order = client.wait_for_terminal(order_id, timeout=10.0)
-        print(f"final status: {order['status']}")
-
-        # 4. Print the last few fills (first page is newest-first).
-        trades = client.list_trades().get("trades", [])[:5]
-        for t in trades:
-            shares = int(t["shares_micro"]) / 1_000_000
-            tprice = int(t["price_micro"]) / 1_000_000
-            fee = int(t["fee_micro"]) / 1_000_000
+            order = client.wait_for_terminal(accepted["order_id"], timeout=30)
+        except TimeoutError:
+            client.cancel_order(accepted["order_id"])
+            order = client.wait_for_terminal(accepted["order_id"], timeout=30)
+        print(order["status"], order["is_terminal"])
+        for trade in client.get_order_trades(accepted["order_id"])["trades"]:
             print(
-                f"  {t['executed_at']}  {t['side']}  {shares:.2f}sh "
-                f"@ ${tprice:.4f}  fee=${fee:.6f}"
+                trade["status"], micro_to_decimal(trade["shares_micro"]), trade["transaction_hash"]
             )
 
 

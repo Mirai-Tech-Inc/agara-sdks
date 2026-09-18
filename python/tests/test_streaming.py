@@ -14,32 +14,32 @@ exercised by the smoke-test example, not here.
 from __future__ import annotations
 
 import asyncio
-import json
 from typing import Any
 
 import pytest
 
 from agara_sdk import streaming
 
-
 # ── decoder: public channels ─────────────────────────────────────────
 
 
 def test_orderbook_snapshot_decodes():
-    frame = streaming.decode_frame({
-        "op": "update",
-        "channel": "orderbook",
-        "token_id": "21742",
-        "sequence": 12345,
-        "data": {
-            "kind": "snapshot",
-            "bids": [[60, 100], [59, 50]],
-            "asks": [[62, 80]],
-            "tick_size": 1,
-            "price_scale": 100,
-            "size_scale": 1,
-        },
-    })
+    frame = streaming.decode_frame(
+        {
+            "op": "update",
+            "channel": "orderbook",
+            "token_id": "21742",
+            "sequence": 12345,
+            "data": {
+                "kind": "snapshot",
+                "bids": [[60, 100], [59, 50]],
+                "asks": [[62, 80]],
+                "tick_size": 1,
+                "price_scale": 100,
+                "size_scale": 1,
+            },
+        }
+    )
     assert isinstance(frame, streaming.OrderbookSnapshot)
     assert frame.token_id == "21742"
     assert frame.sequence == 12345
@@ -51,19 +51,21 @@ def test_orderbook_snapshot_decodes():
 
 
 def test_orderbook_delta_decodes():
-    frame = streaming.decode_frame({
-        "op": "update",
-        "channel": "orderbook",
-        "token_id": "21742",
-        "sequence": 12346,
-        "data": {
-            "kind": "delta",
-            "bids": [[60, 120]],
-            "asks": [[62, 0]],
-            "price_scale": 100,
-            "size_scale": 1,
-        },
-    })
+    frame = streaming.decode_frame(
+        {
+            "op": "update",
+            "channel": "orderbook",
+            "token_id": "21742",
+            "sequence": 12346,
+            "data": {
+                "kind": "delta",
+                "bids": [[60, 120]],
+                "asks": [[62, 0]],
+                "price_scale": 100,
+                "size_scale": 1,
+            },
+        }
+    )
     assert isinstance(frame, streaming.OrderbookDelta)
     assert frame.bids == [streaming.Level(60, 120)]
     assert frame.asks == [streaming.Level(62, 0)]
@@ -72,18 +74,20 @@ def test_orderbook_delta_decodes():
 
 
 def test_best_quote_handles_empty_side():
-    frame = streaming.decode_frame({
-        "op": "update",
-        "channel": "best_quote",
-        "token_id": "21742",
-        "sequence": 99,
-        "data": {
-            "bid": {"price": 60, "size": 120},
-            "ask": None,
-            "price_scale": 100,
-            "size_scale": 1,
-        },
-    })
+    frame = streaming.decode_frame(
+        {
+            "op": "update",
+            "channel": "best_quote",
+            "token_id": "21742",
+            "sequence": 99,
+            "data": {
+                "bid": {"price": 60, "size": 120},
+                "ask": None,
+                "price_scale": 100,
+                "size_scale": 1,
+            },
+        }
+    )
     assert isinstance(frame, streaming.BestQuote)
     assert frame.bid == streaming.Level(60, 120)
     assert frame.ask is None
@@ -92,60 +96,68 @@ def test_best_quote_handles_empty_side():
 
 
 def test_market_resolved_decodes():
-    frame = streaming.decode_frame({
-        "op": "update",
-        "channel": "market_status",
-        "condition_id": "0x21",
-        "sequence": 12349,
-        "data": {"kind": "market_resolved", "winning_token_id": "yes-token"},
-    })
+    frame = streaming.decode_frame(
+        {
+            "op": "update",
+            "channel": "market_status",
+            "condition_id": "0x21",
+            "sequence": 12349,
+            "data": {"kind": "market_resolved", "winning_token_id": "yes-token"},
+        }
+    )
     assert isinstance(frame, streaming.MarketResolved)
     assert frame.condition_id == "0x21"
     assert frame.winning_token_id == "yes-token"
 
 
 def test_outcome_proposed_decodes():
-    frame = streaming.decode_frame({
-        "op": "update",
-        "channel": "market_status",
-        "condition_id": "0x21",
-        "sequence": 12350,
-        "data": {"kind": "outcome_proposed", "proposed_token_id": "yes-token"},
-    })
+    frame = streaming.decode_frame(
+        {
+            "op": "update",
+            "channel": "market_status",
+            "condition_id": "0x21",
+            "sequence": 12350,
+            "data": {"kind": "outcome_proposed", "proposed_token_id": "yes-token"},
+        }
+    )
     assert isinstance(frame, streaming.OutcomeProposed)
     assert frame.proposed_token_id == "yes-token"
 
 
 def test_market_halted_decodes_without_data_fields():
-    frame = streaming.decode_frame({
-        "op": "update",
-        "channel": "market_status",
-        "condition_id": "0x21",
-        "sequence": 12350,
-        "data": {"kind": "market_halted"},
-    })
+    frame = streaming.decode_frame(
+        {
+            "op": "update",
+            "channel": "market_status",
+            "condition_id": "0x21",
+            "sequence": 12350,
+            "data": {"kind": "market_halted"},
+        }
+    )
     assert isinstance(frame, streaming.MarketHalted)
 
 
 def test_trade_decodes():
-    frame = streaming.decode_frame({
-        "op": "update",
-        "channel": "trades",
-        "condition_id": "0x21",
-        "sequence": 12351,
-        "data": {
-            "kind": "trade",
-            "fill_id": "42",
-            "taker_token_id": "yes-token",
-            "maker_token_id": "yes-token",
-            "side": "BUY",
-            "price": 60,
-            "size": 120,
-            "price_scale": 100,
-            "size_scale": 1,
-            "settlement_mode": "NORMAL",
-        },
-    })
+    frame = streaming.decode_frame(
+        {
+            "op": "update",
+            "channel": "trades",
+            "condition_id": "0x21",
+            "sequence": 12351,
+            "data": {
+                "kind": "trade",
+                "fill_id": "42",
+                "taker_token_id": "yes-token",
+                "maker_token_id": "yes-token",
+                "side": "BUY",
+                "price": 60,
+                "size": 120,
+                "price_scale": 100,
+                "size_scale": 1,
+                "settlement_mode": "NORMAL",
+            },
+        }
+    )
     assert isinstance(frame, streaming.Trade)
     assert frame.condition_id == "0x21"
     assert frame.sequence == 12351
@@ -163,48 +175,54 @@ def test_trade_decodes():
 def test_trade_mint_settlement_decodes_with_split_tokens():
     # MINT fills touch two outcomes — taker buys YES, maker effectively
     # buys NO via the collateral split. The two token_ids differ.
-    frame = streaming.decode_frame({
-        "op": "update",
-        "channel": "trades",
-        "condition_id": "0x21",
-        "sequence": 12352,
-        "data": {
-            "kind": "trade",
-            "fill_id": "43",
-            "taker_token_id": "yes-token",
-            "maker_token_id": "no-token",
-            "side": "BUY",
-            "price": 50,
-            "size": 10,
-            "price_scale": 100,
-            "size_scale": 1,
-            "settlement_mode": "MINT",
-        },
-    })
+    frame = streaming.decode_frame(
+        {
+            "op": "update",
+            "channel": "trades",
+            "condition_id": "0x21",
+            "sequence": 12352,
+            "data": {
+                "kind": "trade",
+                "fill_id": "43",
+                "taker_token_id": "yes-token",
+                "maker_token_id": "no-token",
+                "side": "BUY",
+                "price": 50,
+                "size": 10,
+                "price_scale": 100,
+                "size_scale": 1,
+                "settlement_mode": "MINT",
+            },
+        }
+    )
     assert isinstance(frame, streaming.Trade)
     assert frame.settlement_mode == "MINT"
     assert frame.taker_token_id != frame.maker_token_id
 
 
 def test_unknown_trade_kind_falls_through():
-    frame = streaming.decode_frame({
-        "op": "update",
-        "channel": "trades",
-        "condition_id": "0x21",
-        "sequence": 12353,
-        "data": {"kind": "frobnicated"},
-    })
+    frame = streaming.decode_frame(
+        {
+            "op": "update",
+            "channel": "trades",
+            "condition_id": "0x21",
+            "sequence": 12353,
+            "data": {"kind": "frobnicated"},
+        }
+    )
     assert isinstance(frame, streaming.UnknownFrame)
 
 
 def test_unknown_market_status_kind_falls_through():
-    frame = streaming.decode_frame({
-        "op": "update",
-        "channel": "market_status",
-        "condition_id": "0x21",
-        "sequence": 12350,
-        "data": {"kind": "frobnicated"},
-    })
+    frame = streaming.decode_frame(
+        {
+            "op": "update",
+            "channel": "market_status",
+            "condition_id": "0x21",
+            "sequence": 12350,
+            "data": {"kind": "frobnicated"},
+        }
+    )
     assert isinstance(frame, streaming.UnknownFrame)
 
 
@@ -212,26 +230,28 @@ def test_unknown_market_status_kind_falls_through():
 
 
 def test_fill_taker_decodes():
-    frame = streaming.decode_frame({
-        "op": "update",
-        "channel": "account_events",
-        "sequence": 42,
-        "data": {
-            "kind": "fill",
-            "role": "TAKER",
-            "fill_id": "fill-1",
-            "order_id": "11111111-1111-1111-1111-111111111111",
-            "order_hash": "0xabc123",
-            "token_id": "yes-token",
-            "side": "BUY",
-            "price": 60,
-            "size": 1_000_000,
-            "price_scale": 100,
-            "size_scale": 1_000_000,
-            "settlement_mode": "NORMAL",
-            "fee_micro": "1234",
-        },
-    })
+    frame = streaming.decode_frame(
+        {
+            "op": "update",
+            "channel": "account_events",
+            "sequence": 42,
+            "data": {
+                "kind": "fill",
+                "role": "TAKER",
+                "fill_id": "fill-1",
+                "order_id": "11111111-1111-1111-1111-111111111111",
+                "order_hash": "0xabc123",
+                "token_id": "yes-token",
+                "side": "BUY",
+                "price": 60,
+                "size": 1_000_000,
+                "price_scale": 100,
+                "size_scale": 1_000_000,
+                "settlement_mode": "NORMAL",
+                "fee_micro": "1234",
+            },
+        }
+    )
     assert isinstance(frame, streaming.Fill)
     assert frame.role == "TAKER"
     assert frame.fill_id == "fill-1"
@@ -247,26 +267,28 @@ def test_fill_taker_decodes():
 
 
 def test_fill_maker_role_decodes():
-    frame = streaming.decode_frame({
-        "op": "update",
-        "channel": "account_events",
-        "sequence": 43,
-        "data": {
-            "kind": "fill",
-            "role": "MAKER",
-            "fill_id": "fill-2",
-            "order_id": "22222222-2222-2222-2222-222222222222",
-            "order_hash": "0xdef456",
-            "token_id": "no-token",
-            "side": "SELL",
-            "price": 40,
-            "size": 5_000_000,
-            "price_scale": 100,
-            "size_scale": 1_000_000,
-            "settlement_mode": "NORMAL",
-            "fee_micro": "0",
-        },
-    })
+    frame = streaming.decode_frame(
+        {
+            "op": "update",
+            "channel": "account_events",
+            "sequence": 43,
+            "data": {
+                "kind": "fill",
+                "role": "MAKER",
+                "fill_id": "fill-2",
+                "order_id": "22222222-2222-2222-2222-222222222222",
+                "order_hash": "0xdef456",
+                "token_id": "no-token",
+                "side": "SELL",
+                "price": 40,
+                "size": 5_000_000,
+                "price_scale": 100,
+                "size_scale": 1_000_000,
+                "settlement_mode": "NORMAL",
+                "fee_micro": "0",
+            },
+        }
+    )
     assert isinstance(frame, streaming.Fill)
     assert frame.order_id == "22222222-2222-2222-2222-222222222222"
     assert frame.role == "MAKER"
@@ -274,23 +296,26 @@ def test_fill_maker_role_decodes():
 
 
 def test_order_accepted_and_cancelled_decode():
-    accepted = streaming.decode_frame({
-        "op": "update",
-        "channel": "account_events",
-        "sequence": 50,
-        "data": {
-            "kind": "order_accepted",
-            "order_id": "11111111-1111-1111-1111-111111111111",
-            "order_hash": "0xabc123",
-            "token_id": "yes-token",
-            "side": "BUY",
-            "price": 60,
-            "remaining_size": 5_000_000,
-            "price_scale": 100,
-            "size_scale": 1_000_000,
-            "tif": "GTC",
-        },
-    })
+    accepted = streaming.decode_frame(
+        {
+            "op": "update",
+            "channel": "account_events",
+            "sequence": 50,
+            "data": {
+                "kind": "order_accepted",
+                "order_id": "11111111-1111-1111-1111-111111111111",
+                "order_hash": "0xabc123",
+                "token_id": "yes-token",
+                "side": "BUY",
+                "price": 60,
+                "remaining_size": 5_000_000,
+                "price_scale": 100,
+                "size_scale": 1_000_000,
+                "tif": "GTC",
+                "original_size": 5_000_000,
+            },
+        }
+    )
     assert isinstance(accepted, streaming.OrderAccepted)
     assert accepted.order_hash == "0xabc123"
     assert accepted.tif == "GTC"
@@ -298,23 +323,25 @@ def test_order_accepted_and_cancelled_decode():
     assert accepted.remaining_size == 5_000_000
     assert accepted.token_id == "yes-token"
 
-    cancelled = streaming.decode_frame({
-        "op": "update",
-        "channel": "account_events",
-        "sequence": 51,
-        "data": {
-            "kind": "order_cancelled",
-            "order_id": "11111111-1111-1111-1111-111111111111",
-            "order_hash": "0xabc123",
-            "token_id": "yes-token",
-            "side": "BUY",
-            "price": 60,
-            "remaining_size": 5_000_000,
-            "price_scale": 100,
-            "size_scale": 1_000_000,
-            "reason": "USER",
-        },
-    })
+    cancelled = streaming.decode_frame(
+        {
+            "op": "update",
+            "channel": "account_events",
+            "sequence": 51,
+            "data": {
+                "kind": "order_cancelled",
+                "order_id": "11111111-1111-1111-1111-111111111111",
+                "order_hash": "0xabc123",
+                "token_id": "yes-token",
+                "side": "BUY",
+                "price": 60,
+                "remaining_size": 5_000_000,
+                "price_scale": 100,
+                "size_scale": 1_000_000,
+                "reason": "USER",
+            },
+        }
+    )
     assert isinstance(cancelled, streaming.OrderCancelled)
     assert cancelled.order_hash == "0xabc123"
     assert cancelled.reason == "USER"
@@ -323,86 +350,103 @@ def test_order_accepted_and_cancelled_decode():
 
 
 def test_order_rejected_decode():
-    rejected = streaming.decode_frame({
-        "op": "update",
-        "channel": "account_events",
-        "sequence": 0,
-        "data": {
-            "kind": "order_rejected",
-            "order_id": "11111111-1111-1111-1111-111111111111",
-            "order_hash": "0xabc123",
-            "token_id": "yes-token",
-            "reason": "insufficient balance",
-        },
-    })
+    rejected = streaming.decode_frame(
+        {
+            "op": "update",
+            "channel": "account_events",
+            "sequence": 0,
+            "data": {
+                "kind": "order_rejected",
+                "order_id": "11111111-1111-1111-1111-111111111111",
+                "order_hash": "0xabc123",
+                "token_id": "yes-token",
+                "failure": {
+                    "code": "insufficient_balance",
+                    "title": "Insufficient balance",
+                    "detail": "Available collateral is lower than the order total.",
+                    "recovery": {"strategy": "none"},
+                },
+            },
+        }
+    )
     assert isinstance(rejected, streaming.OrderRejected)
     assert rejected.sequence == 0
     assert rejected.order_id == "11111111-1111-1111-1111-111111111111"
     assert rejected.order_hash == "0xabc123"
     assert rejected.token_id == "yes-token"
-    assert rejected.reason == "insufficient balance"
+    assert rejected.failure.code == "insufficient_balance"
+    assert rejected.reason == "Available collateral is lower than the order total."
 
 
 def test_order_rejected_decode_null_hash_and_token():
     # order_hash / token_id are best-effort at the router and may arrive null.
-    rejected = streaming.decode_frame({
-        "op": "update",
-        "channel": "account_events",
-        "sequence": 0,
-        "data": {
-            "kind": "order_rejected",
-            "order_id": "11111111-1111-1111-1111-111111111111",
-            "order_hash": None,
-            "token_id": None,
-            "reason": "engine rejected order",
-        },
-    })
+    rejected = streaming.decode_frame(
+        {
+            "op": "update",
+            "channel": "account_events",
+            "sequence": 0,
+            "data": {
+                "kind": "order_rejected",
+                "order_id": "11111111-1111-1111-1111-111111111111",
+                "order_hash": None,
+                "token_id": None,
+                "reason": "engine rejected order",
+            },
+        }
+    )
     assert isinstance(rejected, streaming.OrderRejected)
     assert rejected.order_hash is None
     assert rejected.token_id is None
-    assert rejected.reason == "engine rejected order"
+    assert rejected.failure.code == "internal_error"
+    assert rejected.failure.detail is None
 
 
 def test_tokens_minted_and_merged_decode():
-    minted = streaming.decode_frame({
-        "op": "update",
-        "channel": "account_events",
-        "sequence": 60,
-        "data": {
-            "kind": "tokens_minted",
-            "condition_id": "0xcond",
-            "size": 10_000_000,
-            "size_scale": 1_000_000,
-        },
-    })
+    minted = streaming.decode_frame(
+        {
+            "op": "update",
+            "channel": "account_events",
+            "sequence": 60,
+            "data": {
+                "kind": "tokens_minted",
+                "condition_id": "0xcond",
+                "size": 10_000_000,
+                "size_scale": 1_000_000,
+            },
+        }
+    )
     assert isinstance(minted, streaming.TokensMinted)
     assert minted.size == 10_000_000
     assert minted.size_scale == 1_000_000
     assert minted.condition_id == "0xcond"
 
-    merged = streaming.decode_frame({
-        "op": "update",
-        "channel": "account_events",
-        "sequence": 61,
-        "data": {
-            "kind": "tokens_merged",
-            "condition_id": "0xcond",
-            "size": 5_000_000,
-            "size_scale": 1_000_000,
-        },
-    })
+    merged = streaming.decode_frame(
+        {
+            "op": "update",
+            "channel": "account_events",
+            "sequence": 61,
+            "data": {
+                "kind": "tokens_merged",
+                "condition_id": "0xcond",
+                "size": 5_000_000,
+                "size_scale": 1_000_000,
+            },
+        }
+    )
     assert isinstance(merged, streaming.TokensMerged)
     assert merged.size == 5_000_000
     assert merged.condition_id == "0xcond"
 
 
 def test_unknown_account_event_kind_falls_through():
-    frame = streaming.decode_frame({
-        "op": "update",
-        "channel": "account_events",
-        "sequence": 70,
-        "data": {"kind": "frobnicated"},
-    })
+    frame = streaming.decode_frame(
+        {
+            "op": "update",
+            "channel": "account_events",
+            "sequence": 70,
+            "data": {"kind": "frobnicated"},
+        }
+    )
     assert isinstance(frame, streaming.UnknownFrame)
 
 
@@ -410,23 +454,27 @@ def test_unknown_account_event_kind_falls_through():
 
 
 def test_subscribed_ack():
-    frame = streaming.decode_frame({
-        "op": "subscribed",
-        "channel": "orderbook",
-        "token_id": "21742",
-    })
+    frame = streaming.decode_frame(
+        {
+            "op": "subscribed",
+            "channel": "orderbook",
+            "token_id": "21742",
+        }
+    )
     assert isinstance(frame, streaming.Subscribed)
     assert frame.token_id == "21742"
     assert frame.condition_id is None
 
 
 def test_sequence_reset():
-    frame = streaming.decode_frame({
-        "op": "sequence_reset",
-        "channel": "orderbook",
-        "token_id": "21742",
-        "reason": "lagged",
-    })
+    frame = streaming.decode_frame(
+        {
+            "op": "sequence_reset",
+            "channel": "orderbook",
+            "token_id": "21742",
+            "reason": "lagged",
+        }
+    )
     assert isinstance(frame, streaming.SequenceReset)
     assert frame.reason == "lagged"
 
@@ -445,29 +493,61 @@ def test_heartbeat_and_pong():
 
 
 def test_error_frame():
-    frame = streaming.decode_frame({
-        "op": "error",
-        "code": "unknown_token",
-        "message": "no agara market+outcome for token_id 123",
-        "channel": "orderbook",
-        "token_id": "123",
-    })
+    frame = streaming.decode_frame(
+        {
+            "op": "error",
+            "failure": {
+                "code": "stream_subject_not_found",
+                "title": "Stream subject not found",
+                "recovery": {"strategy": "none"},
+            },
+            "action": "none",
+            "channel": "orderbook",
+            "token_id": "123",
+        }
+    )
     assert isinstance(frame, streaming.StreamError)
-    assert frame.code == "unknown_token"
-    assert frame.action is None
+    assert frame.code == "stream_subject_not_found"
+    assert frame.failure is not None
+    assert frame.action == "none"
 
 
 def test_error_frame_carries_action():
-    frame = streaming.decode_frame({
-        "op": "error",
-        "code": "subject_unavailable",
-        "message": "subject feed ended; resubscribe to resume",
-        "action": "resubscribe",
-        "channel": "orderbook",
-        "token_id": "123",
-    })
+    frame = streaming.decode_frame(
+        {
+            "op": "error",
+            "failure": {
+                "code": "stream_subject_unavailable",
+                "title": "Stream subject temporarily unavailable",
+                "detail": "This stream subject is temporarily unavailable.",
+                "recovery": {"strategy": "none"},
+            },
+            "action": "resubscribe",
+            "channel": "orderbook",
+            "token_id": "123",
+        }
+    )
     assert isinstance(frame, streaming.StreamError)
     assert frame.action == "resubscribe"
+
+
+def test_unknown_error_action_and_recovery_are_inert():
+    frame = streaming.decode_frame(
+        {
+            "op": "error",
+            "failure": {
+                "code": "future_failure",
+                "title": "Future failure",
+                "recovery": {"strategy": "retry_someday", "token": "ignored"},
+            },
+            "action": "reconnect_someday",
+        }
+    )
+    assert isinstance(frame, streaming.StreamError)
+    assert frame.failure is not None
+    assert frame.failure.recovery.known is False
+    assert frame.failure.recovery.is_retryable is False
+    assert frame.action == "reconnect_someday"
 
 
 def test_unknown_op_yields_unknown_frame():
@@ -541,8 +621,7 @@ def test_subscribe_dedups():
 def test_subscribe_cap_rejects_oversize_set():
     client = streaming.AgaraStreamClient()
     too_many = [
-        streaming.orderbook(str(i))
-        for i in range(streaming.MAX_SUBSCRIPTIONS_PER_CONNECTION + 1)
+        streaming.orderbook(str(i)) for i in range(streaming.MAX_SUBSCRIPTIONS_PER_CONNECTION + 1)
     ]
     with pytest.raises(ValueError):
         asyncio.run(client.subscribe(too_many))
@@ -575,24 +654,28 @@ async def test_trade_dispatch_routes_to_on_trade():
     async def _(t: streaming.Trade) -> None:
         captured.append(t)
 
-    await client._dispatch(streaming.decode_frame({
-        "op": "update",
-        "channel": "trades",
-        "condition_id": "0x21",
-        "sequence": 1,
-        "data": {
-            "kind": "trade",
-            "fill_id": "42",
-            "taker_token_id": "yes-token",
-            "maker_token_id": "yes-token",
-            "side": "BUY",
-            "price": 60,
-            "size": 120,
-            "price_scale": 100,
-            "size_scale": 1,
-            "settlement_mode": "NORMAL",
-        },
-    }))
+    await client._dispatch(
+        streaming.decode_frame(
+            {
+                "op": "update",
+                "channel": "trades",
+                "condition_id": "0x21",
+                "sequence": 1,
+                "data": {
+                    "kind": "trade",
+                    "fill_id": "42",
+                    "taker_token_id": "yes-token",
+                    "maker_token_id": "yes-token",
+                    "side": "BUY",
+                    "price": 60,
+                    "size": 120,
+                    "price_scale": 100,
+                    "size_scale": 1,
+                    "settlement_mode": "NORMAL",
+                },
+            }
+        )
+    )
     assert len(captured) == 1
     assert captured[0].fill_id == "42"
     assert captured[0].condition_id == "0x21"
@@ -608,26 +691,30 @@ async def test_fill_dispatch_routes_to_on_fill():
     async def _(f: streaming.Fill) -> None:
         captured.append(f)
 
-    await client._dispatch(streaming.decode_frame({
-        "op": "update",
-        "channel": "account_events",
-        "sequence": 1,
-        "data": {
-            "kind": "fill",
-            "role": "TAKER",
-            "fill_id": "f1",
-            "order_id": "33333333-3333-3333-3333-333333333333",
-            "order_hash": "0x789abc",
-            "token_id": "yes-token",
-            "side": "BUY",
-            "price": 60,
-            "size": 1_000_000,
-            "price_scale": 100,
-            "size_scale": 1_000_000,
-            "settlement_mode": "NORMAL",
-            "fee_micro": "0",
-        },
-    }))
+    await client._dispatch(
+        streaming.decode_frame(
+            {
+                "op": "update",
+                "channel": "account_events",
+                "sequence": 1,
+                "data": {
+                    "kind": "fill",
+                    "role": "TAKER",
+                    "fill_id": "f1",
+                    "order_id": "33333333-3333-3333-3333-333333333333",
+                    "order_hash": "0x789abc",
+                    "token_id": "yes-token",
+                    "side": "BUY",
+                    "price": 60,
+                    "size": 1_000_000,
+                    "price_scale": 100,
+                    "size_scale": 1_000_000,
+                    "settlement_mode": "NORMAL",
+                    "fee_micro": "0",
+                },
+            }
+        )
+    )
     assert len(captured) == 1
     assert captured[0].fill_id == "f1"
     assert captured[0].order_id == "33333333-3333-3333-3333-333333333333"
@@ -647,33 +734,41 @@ async def test_orderbook_snapshot_and_delta_route_separately():
     async def _(d: streaming.OrderbookDelta) -> None:
         deltas.append(d)
 
-    await client._dispatch(streaming.decode_frame({
-        "op": "update",
-        "channel": "orderbook",
-        "token_id": "t",
-        "sequence": 1,
-        "data": {
-            "kind": "snapshot",
-            "bids": [[60, 100]],
-            "asks": [],
-            "tick_size": 1,
-            "price_scale": 100,
-            "size_scale": 1,
-        },
-    }))
-    await client._dispatch(streaming.decode_frame({
-        "op": "update",
-        "channel": "orderbook",
-        "token_id": "t",
-        "sequence": 2,
-        "data": {
-            "kind": "delta",
-            "bids": [[60, 0]],
-            "asks": [],
-            "price_scale": 100,
-            "size_scale": 1,
-        },
-    }))
+    await client._dispatch(
+        streaming.decode_frame(
+            {
+                "op": "update",
+                "channel": "orderbook",
+                "token_id": "t",
+                "sequence": 1,
+                "data": {
+                    "kind": "snapshot",
+                    "bids": [[60, 100]],
+                    "asks": [],
+                    "tick_size": 1,
+                    "price_scale": 100,
+                    "size_scale": 1,
+                },
+            }
+        )
+    )
+    await client._dispatch(
+        streaming.decode_frame(
+            {
+                "op": "update",
+                "channel": "orderbook",
+                "token_id": "t",
+                "sequence": 2,
+                "data": {
+                    "kind": "delta",
+                    "bids": [[60, 0]],
+                    "asks": [],
+                    "price_scale": 100,
+                    "size_scale": 1,
+                },
+            }
+        )
+    )
     assert len(snaps) == 1 and snaps[0].sequence == 1
     assert len(deltas) == 1 and deltas[0].sequence == 2
 
@@ -687,10 +782,14 @@ async def test_sequence_reset_routes_to_handler():
     async def _(r: streaming.SequenceReset) -> None:
         resets.append(r)
 
-    await client._dispatch(streaming.decode_frame({
-        "op": "sequence_reset",
-        "channel": "account_events",
-    }))
+    await client._dispatch(
+        streaming.decode_frame(
+            {
+                "op": "sequence_reset",
+                "channel": "account_events",
+            }
+        )
+    )
     assert len(resets) == 1
     assert resets[0].channel == "account_events"
 
@@ -722,24 +821,28 @@ async def test_handler_exception_routes_to_on_error():
     async def _(err: streaming.StreamError) -> None:
         errors.append(err)
 
-    await client._dispatch(streaming.decode_frame({
-        "op": "update",
-        "channel": "trades",
-        "condition_id": "0x21",
-        "sequence": 1,
-        "data": {
-            "kind": "trade",
-            "fill_id": "f1",
-            "taker_token_id": "yes-token",
-            "maker_token_id": "yes-token",
-            "side": "BUY",
-            "price": 60,
-            "size": 1,
-            "price_scale": 100,
-            "size_scale": 1,
-            "settlement_mode": "NORMAL",
-        },
-    }))
+    await client._dispatch(
+        streaming.decode_frame(
+            {
+                "op": "update",
+                "channel": "trades",
+                "condition_id": "0x21",
+                "sequence": 1,
+                "data": {
+                    "kind": "trade",
+                    "fill_id": "f1",
+                    "taker_token_id": "yes-token",
+                    "maker_token_id": "yes-token",
+                    "side": "BUY",
+                    "price": 60,
+                    "size": 1,
+                    "price_scale": 100,
+                    "size_scale": 1,
+                    "settlement_mode": "NORMAL",
+                },
+            }
+        )
+    )
     assert len(errors) == 1
     assert errors[0].code == "handler_exception"
     assert "RuntimeError" in errors[0].message
@@ -806,8 +909,15 @@ async def test_resubscribe_action_replays_endpoint_subscriptions():
 
     await client._handle_error_action(
         streaming.StreamError(
-            code="subject_unavailable",
+            code="stream_subject_unavailable",
             message="gone",
+            failure=streaming.PublicFailure.from_wire(
+                {
+                    "code": "stream_subject_unavailable",
+                    "title": "Stream subject temporarily unavailable",
+                    "recovery": {"strategy": "none"},
+                }
+            ),
             action="resubscribe",
             channel="orderbook",
             token_id="tok",
@@ -831,8 +941,15 @@ async def test_reconnect_action_closes_affected_endpoint():
 
     await client._handle_error_action(
         streaming.StreamError(
-            code="unauthorized",
+            code="identity_token_expired",
             message="token rejected",
+            failure=streaming.PublicFailure.from_wire(
+                {
+                    "code": "identity_token_expired",
+                    "title": "Your session has expired",
+                    "recovery": {"strategy": "refresh_identity_token"},
+                }
+            ),
             action="reconnect",
             channel="account_events",
         )
@@ -841,3 +958,51 @@ async def test_reconnect_action_closes_affected_endpoint():
     assert fake_account.closed
     assert not fake_market.closed
     assert fake_account.sent == []
+
+
+@pytest.mark.asyncio
+async def test_future_failure_cannot_activate_known_reconnect_action():
+    client = streaming.AgaraStreamClient()
+    fake = _FakeEndpoint()
+    client._market = fake  # type: ignore[assignment]
+    frame = streaming.decode_frame(
+        {
+            "op": "error",
+            "failure": {
+                "code": "future_failure",
+                "title": "Future failure",
+                "recovery": {"strategy": "none"},
+            },
+            "action": "reconnect",
+            "channel": "orderbook",
+        }
+    )
+    assert isinstance(frame, streaming.StreamError)
+
+    await client._handle_error_action(frame)
+
+    assert not fake.closed
+
+
+@pytest.mark.asyncio
+async def test_unknown_recovery_cannot_activate_known_resubscribe_action():
+    client = streaming.AgaraStreamClient()
+    fake = _FakeEndpoint()
+    client._market = fake  # type: ignore[assignment]
+    frame = streaming.decode_frame(
+        {
+            "op": "error",
+            "failure": {
+                "code": "stream_subject_unavailable",
+                "title": "Stream subject temporarily unavailable",
+                "recovery": {"strategy": "retry_someday"},
+            },
+            "action": "resubscribe",
+            "channel": "orderbook",
+        }
+    )
+    assert isinstance(frame, streaming.StreamError)
+
+    await client._handle_error_action(frame)
+
+    assert fake.sent == []

@@ -1,0 +1,603 @@
+{
+  "platform_commit": "a7e8c2dc1ab3b16f4133d0952347d5cc1bbd1b71",
+  "source_files": [
+    "crates/service/src/orders/model.rs",
+    "crates/service/src/portfolio.rs",
+    "crates/service/src/portfolio/lp_payout.rs",
+    "apps/router/src/lp_incentives.rs",
+    "crates/service/src/settled_pnl.rs",
+    "crates/service/src/realized_pnl.rs",
+    "apps/router/src/batches.rs",
+    "apps/router/src/handlers/portfolio.rs",
+    "apps/api/src/routes/prices/point.ts",
+    "apps/api/src/routes/prices/ticks.ts",
+    "apps/api/src/routes/prices/token-history.ts"
+  ],
+  "responses": {
+    "get_order": {
+      "order": {
+        "internal_id": "10000000-0000-4000-8000-000000000001",
+        "exchange": "AGARA",
+        "token_id": "123",
+        "condition_id": "0x1111111111111111111111111111111111111111111111111111111111111111",
+        "side": "BUY",
+        "type": "MARKET",
+        "price_micro": null,
+        "original_size_micro": null,
+        "collateral_amount_micro": "9007199254740993",
+        "size_matched_micro": "1000000",
+        "avg_fill_price_micro": "550000",
+        "status": "PARTIALLY_FILLED",
+        "is_terminal": true,
+        "failure": null,
+        "expiration": "2026-09-17T00:00:00Z",
+        "created_at": "2026-09-17T00:00:00Z",
+        "cancel_requested_at": null
+      },
+      "markets": {
+        "123": {
+          "market_id": "10000000-0000-4000-8000-000000000001",
+          "market_title": "BTC above reference?",
+          "outcome_name": "Yes",
+          "logo_url": null,
+          "event_slug": "btc",
+          "state": "ACTIVE",
+          "neg_risk_id": null,
+          "display": {
+            "market": {},
+            "outcome": {}
+          }
+        }
+      }
+    },
+    "list_orders": {
+      "orders": [
+        {
+          "internal_id": "10000000-0000-4000-8000-000000000001",
+          "exchange": "AGARA",
+          "token_id": "123",
+          "condition_id": "0x1111111111111111111111111111111111111111111111111111111111111111",
+          "side": "BUY",
+          "type": "MARKET",
+          "price_micro": null,
+          "original_size_micro": null,
+          "collateral_amount_micro": "9007199254740993",
+          "size_matched_micro": "1000000",
+          "avg_fill_price_micro": "550000",
+          "status": "PARTIALLY_FILLED",
+          "is_terminal": true,
+          "failure": null,
+          "expiration": "2026-09-17T00:00:00Z",
+          "created_at": "2026-09-17T00:00:00Z",
+          "cancel_requested_at": null
+        }
+      ],
+      "markets": {
+        "123": {
+          "market_id": "10000000-0000-4000-8000-000000000001",
+          "market_title": "BTC above reference?",
+          "outcome_name": "Yes",
+          "logo_url": null,
+          "event_slug": "btc",
+          "state": "ACTIVE",
+          "neg_risk_id": null,
+          "display": {
+            "market": {},
+            "outcome": {}
+          }
+        }
+      },
+      "pagination": {
+        "next_cursor": "opaque",
+        "limit": 1
+      },
+      "as_of": "2026-09-17T00:00:00Z"
+    },
+    "list_open_orders": {
+      "markets": {
+        "123": {
+          "market_id": "10000000-0000-4000-8000-000000000001",
+          "market_title": "BTC above reference?",
+          "outcome_name": "Yes",
+          "logo_url": null,
+          "event_slug": "btc",
+          "state": "ACTIVE",
+          "neg_risk_id": null,
+          "display": {
+            "market": {},
+            "outcome": {}
+          }
+        }
+      },
+      "events": {
+        "btc": {
+          "event_title": "BTC",
+          "display": {
+            "event": {}
+          }
+        }
+      },
+      "as_of": "2026-09-17T00:00:00Z",
+      "orders": [
+        {
+          "internal_id": "10000000-0000-4000-8000-000000000001",
+          "exchange": "AGARA",
+          "token_id": "123",
+          "condition_id": "0x1111111111111111111111111111111111111111111111111111111111111111",
+          "side": "BUY",
+          "type": "LIMIT",
+          "price_micro": null,
+          "original_size_micro": null,
+          "collateral_amount_micro": "9007199254740993",
+          "size_matched_micro": "1000000",
+          "avg_fill_price_micro": "550000",
+          "status": "PARTIALLY_FILLED",
+          "is_terminal": false,
+          "failure": null,
+          "expiration": "2026-09-17T00:00:00Z",
+          "created_at": "2026-09-17T00:00:00Z",
+          "cancel_requested_at": null
+        }
+      ],
+      "pagination": {
+        "next_cursor": "opaque",
+        "limit": 1
+      }
+    },
+    "list_positions": {
+      "markets": {
+        "123": {
+          "market_id": "10000000-0000-4000-8000-000000000001",
+          "market_title": "BTC above reference?",
+          "outcome_name": "Yes",
+          "logo_url": null,
+          "event_slug": "btc",
+          "state": "ACTIVE",
+          "neg_risk_id": null,
+          "display": {
+            "market": {},
+            "outcome": {}
+          }
+        }
+      },
+      "events": {
+        "btc": {
+          "event_title": "BTC",
+          "display": {
+            "event": {}
+          }
+        }
+      },
+      "as_of": "2026-09-17T00:00:00Z",
+      "positions": [
+        {
+          "exchange": "AGARA",
+          "condition_id": "0x1111111111111111111111111111111111111111111111111111111111111111",
+          "token_id": "123",
+          "shares_micro": "9007199254740993",
+          "available_shares_micro": "9007199253740993",
+          "avg_price_micro": "550000",
+          "current_price_micro": "600000",
+          "current_value_micro": "5404319552844595",
+          "to_win_micro": "9007199254740993",
+          "profit_loss_micro": "450359962737050",
+          "profit_loss_percent": "9.090909",
+          "redeemable": false,
+          "mergeable": true,
+          "mergeable_shares_micro": "1000000"
+        }
+      ],
+      "unavailable_exchanges": [
+        "POLYMARKET"
+      ]
+    },
+    "list_trades": {
+      "markets": {
+        "123": {
+          "market_id": "10000000-0000-4000-8000-000000000001",
+          "market_title": "BTC above reference?",
+          "outcome_name": "Yes",
+          "logo_url": null,
+          "event_slug": "btc",
+          "state": "ACTIVE",
+          "neg_risk_id": null,
+          "display": {
+            "market": {},
+            "outcome": {}
+          }
+        }
+      },
+      "events": {
+        "btc": {
+          "event_title": "BTC",
+          "display": {
+            "event": {}
+          }
+        }
+      },
+      "as_of": "2026-09-17T00:00:00Z",
+      "trades": [
+        {
+          "exchange": "AGARA",
+          "trade_id": "10000000-0000-4000-8000-000000000001",
+          "fill_id": "9007199254740993",
+          "order_id": "10000000-0000-4000-8000-000000000001",
+          "token_id": "123",
+          "side": "BUY",
+          "shares_micro": "1000000",
+          "price_micro": "550000",
+          "fee_micro": "2",
+          "role": "TAKER",
+          "status": "CONFIRMED",
+          "transaction_hash": "0x2222222222222222222222222222222222222222222222222222222222222222",
+          "executed_at": "2026-09-17T00:00:00Z"
+        }
+      ],
+      "pagination": {
+        "next_cursor": "opaque",
+        "limit": 1
+      },
+      "unavailable_exchanges": [
+        "POLYMARKET"
+      ]
+    },
+    "get_order_trades": {
+      "trades": [
+        {
+          "exchange": "AGARA",
+          "trade_id": "10000000-0000-4000-8000-000000000001",
+          "fill_id": "9007199254740993",
+          "order_id": "10000000-0000-4000-8000-000000000001",
+          "token_id": "123",
+          "side": "BUY",
+          "shares_micro": "1000000",
+          "price_micro": "550000",
+          "fee_micro": "2",
+          "role": "TAKER",
+          "status": "CONFIRMED",
+          "transaction_hash": "0x2222222222222222222222222222222222222222222222222222222222222222",
+          "executed_at": "2026-09-17T00:00:00Z"
+        }
+      ],
+      "as_of": "2026-09-17T00:00:00Z"
+    },
+    "list_activities": {
+      "markets": {
+        "123": {
+          "market_id": "10000000-0000-4000-8000-000000000001",
+          "market_title": "BTC above reference?",
+          "outcome_name": "Yes",
+          "logo_url": null,
+          "event_slug": "btc",
+          "state": "ACTIVE",
+          "neg_risk_id": null,
+          "display": {
+            "market": {},
+            "outcome": {}
+          }
+        }
+      },
+      "events": {
+        "btc": {
+          "event_title": "BTC",
+          "display": {
+            "event": {}
+          }
+        }
+      },
+      "as_of": "2026-09-17T00:00:00Z",
+      "conditions": {
+        "0x1111111111111111111111111111111111111111111111111111111111111111": {
+          "market_id": "10000000-0000-4000-8000-000000000001",
+          "market_title": "BTC above reference?",
+          "logo_url": null,
+          "event_slug": "btc",
+          "display": {
+            "market": {}
+          }
+        }
+      },
+      "activities": [
+        {
+          "type": "ORDER",
+          "exchange": "AGARA",
+          "id": "order:10000000-0000-4000-8000-000000000001",
+          "order_id": "10000000-0000-4000-8000-000000000001",
+          "status": "PARTIALLY_FILLED",
+          "fill_status": "PARTIAL",
+          "condition_id": "0x1111111111111111111111111111111111111111111111111111111111111111",
+          "token_id": "123",
+          "side": "BUY",
+          "filled_shares_micro": "1000000",
+          "average_fill_price_micro": "550000",
+          "filled_amount_micro": "550000",
+          "fees_micro": "2",
+          "created_at": "2026-09-17T00:00:00Z"
+        },
+        {
+          "type": "SPLIT",
+          "exchange": "AGARA",
+          "id": "split:10000000-0000-4000-8000-000000000001",
+          "condition_id": "0x1111111111111111111111111111111111111111111111111111111111111111",
+          "shares_micro": "1000000",
+          "amount_micro": "1000000",
+          "tx_hash": "0x2222222222222222222222222222222222222222222222222222222222222222",
+          "created_at": "2026-09-17T00:00:00Z"
+        },
+        {
+          "type": "MERGE",
+          "exchange": "AGARA",
+          "id": "merge:10000000-0000-4000-8000-000000000001",
+          "condition_id": "0x1111111111111111111111111111111111111111111111111111111111111111",
+          "shares_micro": "1000000",
+          "amount_micro": "1000000",
+          "tx_hash": "0x2222222222222222222222222222222222222222222222222222222222222222",
+          "created_at": "2026-09-17T00:00:00Z"
+        },
+        {
+          "type": "REDEEM",
+          "exchange": "AGARA",
+          "id": "redeem:10000000-0000-4000-8000-000000000001",
+          "condition_id": "0x1111111111111111111111111111111111111111111111111111111111111111",
+          "shares_micro": "1000000",
+          "amount_micro": "1000000",
+          "tx_hash": "0x2222222222222222222222222222222222222222222222222222222222222222",
+          "created_at": "2026-09-17T00:00:00Z",
+          "token_id": "123"
+        },
+        {
+          "type": "DEPOSIT",
+          "exchange": "AGARA",
+          "id": "deposit:10000000-0000-4000-8000-000000000001",
+          "amount_micro": "1000000",
+          "chain_id": 8453,
+          "token_address": "0x3333333333333333333333333333333333333333",
+          "counterparty_address": "0x4444444444444444444444444444444444444444",
+          "tx_hash": "0x2222222222222222222222222222222222222222222222222222222222222222",
+          "created_at": "2026-09-17T00:00:00Z"
+        },
+        {
+          "type": "WITHDRAWAL",
+          "exchange": "AGARA",
+          "id": "withdrawal:10000000-0000-4000-8000-000000000001",
+          "amount_micro": "1000000",
+          "chain_id": 8453,
+          "token_address": "0x3333333333333333333333333333333333333333",
+          "counterparty_address": "0x4444444444444444444444444444444444444444",
+          "tx_hash": "0x2222222222222222222222222222222222222222222222222222222222222222",
+          "created_at": "2026-09-17T00:00:00Z"
+        },
+        {
+          "type": "LP_PAYOUT",
+          "exchange": "AGARA",
+          "id": "lp_payout:10000000-0000-4000-8000-000000000001",
+          "amount_micro": "1234567",
+          "epoch_date": "2026-09-16",
+          "tx_hash": "0x2222222222222222222222222222222222222222222222222222222222222222",
+          "created_at": "2026-09-17T00:00:00Z"
+        }
+      ],
+      "pagination": {
+        "next_cursor": "opaque",
+        "limit": 7
+      }
+    },
+    "get_portfolio_summary": {
+      "summaries": [
+        {
+          "exchange": "AGARA",
+          "cash_balance_micro": "1000000",
+          "free_cash_micro": "500000",
+          "positions_value_micro": "600000",
+          "portfolio_value_micro": "1600000",
+          "open_cost_basis_micro": "550000",
+          "open_unrealized_pnl_micro": "50000",
+          "as_of": "2026-09-17T00:00:00Z"
+        }
+      ]
+    },
+    "list_lp_incentives": {
+      "eligible": true,
+      "epoch_date": "2026-09-16",
+      "epoch_ends_at": "2026-09-17T00:00:00Z",
+      "markets": [
+        {
+          "market_id": "10000000-0000-4000-8000-000000000001",
+          "question": "BTC above reference?",
+          "event_slug": "btc",
+          "event_title": "BTC",
+          "logo_url": null,
+          "close_time": "2026-09-17T00:00:00Z",
+          "phase": "ACTIVE",
+          "pool_micro": "100000000",
+          "max_spread_micro": 10000,
+          "min_shares_micro": "1000000",
+          "epoch_score": 1.5,
+          "market_total_score": 3.0,
+          "projected_payout_micro": "50000000",
+          "has_traded": true
+        }
+      ]
+    },
+    "get_portfolio_pnl": {
+      "bucket_at": "2026-09-17T00:00:00Z",
+      "mark_run_id": "10000000-0000-4000-8000-000000000001",
+      "mark_captured_at": "2026-09-17T00:00:00Z",
+      "chain_id": 8453,
+      "classification_version": 1,
+      "wallet_universe_generation": 2,
+      "custody_through_block": 30000000,
+      "custody_through_block_hash": "0x2222222222222222222222222222222222222222222222222222222222222222",
+      "custody_through_block_time": "2026-09-17T00:00:00Z",
+      "collateral_micro": "1000000",
+      "positions_value_micro": "2000000",
+      "cumulative_inflow_micro": "3000000",
+      "cumulative_outflow_micro": "500000",
+      "lifetime_pnl_micro": "500000",
+      "position_count": 1
+    },
+    "get_portfolio_pnl_history": {
+      "from": "2026-09-17T00:00:00Z",
+      "to": "2026-09-17T00:00:00Z",
+      "start": {
+        "bucket_at": "2026-09-17T00:00:00Z",
+        "mark_run_id": "10000000-0000-4000-8000-000000000001",
+        "mark_captured_at": "2026-09-17T00:00:00Z",
+        "chain_id": 8453,
+        "classification_version": 1,
+        "wallet_universe_generation": 2,
+        "custody_through_block": 30000000,
+        "custody_through_block_hash": "0x2222222222222222222222222222222222222222222222222222222222222222",
+        "custody_through_block_time": "2026-09-17T00:00:00Z",
+        "collateral_micro": "1000000",
+        "positions_value_micro": "2000000",
+        "cumulative_inflow_micro": "3000000",
+        "cumulative_outflow_micro": "500000",
+        "lifetime_pnl_micro": "500000",
+        "position_count": 1
+      },
+      "end": {
+        "bucket_at": "2026-09-17T00:00:00Z",
+        "mark_run_id": "10000000-0000-4000-8000-000000000001",
+        "mark_captured_at": "2026-09-17T00:00:00Z",
+        "chain_id": 8453,
+        "classification_version": 1,
+        "wallet_universe_generation": 2,
+        "custody_through_block": 30000000,
+        "custody_through_block_hash": "0x2222222222222222222222222222222222222222222222222222222222222222",
+        "custody_through_block_time": "2026-09-17T00:00:00Z",
+        "collateral_micro": "1000000",
+        "positions_value_micro": "2000000",
+        "cumulative_inflow_micro": "3000000",
+        "cumulative_outflow_micro": "500000",
+        "lifetime_pnl_micro": "500000",
+        "position_count": 1
+      },
+      "lifetime_pnl_change_micro": "0",
+      "points": [
+        {
+          "bucket_at": "2026-09-17T00:00:00Z",
+          "mark_run_id": "10000000-0000-4000-8000-000000000001",
+          "mark_captured_at": "2026-09-17T00:00:00Z",
+          "chain_id": 8453,
+          "classification_version": 1,
+          "wallet_universe_generation": 2,
+          "custody_through_block": 30000000,
+          "custody_through_block_hash": "0x2222222222222222222222222222222222222222222222222222222222222222",
+          "custody_through_block_time": "2026-09-17T00:00:00Z",
+          "collateral_micro": "1000000",
+          "positions_value_micro": "2000000",
+          "cumulative_inflow_micro": "3000000",
+          "cumulative_outflow_micro": "500000",
+          "lifetime_pnl_micro": "500000",
+          "position_count": 1
+        }
+      ],
+      "has_more": false
+    },
+    "get_realized_pnl": {
+      "currency": "USDC",
+      "amountScale": 12,
+      "timezone": "UTC",
+      "asOf": "2026-09-17T00:00:00Z",
+      "coverageStartedAt": "2026-09-17T00:00:00Z",
+      "reportingStartedAt": "2026-09-17T00:00:00Z",
+      "throughEvent": {
+        "shardId": 1,
+        "eventSeq": "9007199254740993"
+      },
+      "pendingOperations": 2,
+      "granularity": "day",
+      "window": "7d",
+      "currentBucketPartial": true,
+      "totals": {
+        "last7Days": {
+          "sales": "1000000000000",
+          "directMerges": "2000000000000",
+          "redemptions": "3000000000000",
+          "total": "6000000000000"
+        },
+        "last30Days": {
+          "sales": "1000000000000",
+          "directMerges": "2000000000000",
+          "redemptions": "3000000000000",
+          "total": "6000000000000"
+        },
+        "allTime": {
+          "sales": "1000000000000",
+          "directMerges": "2000000000000",
+          "redemptions": "3000000000000",
+          "total": "6000000000000"
+        }
+      },
+      "buckets": [
+        {
+          "timestamp": "2026-09-17T00:00:00Z",
+          "sales": "1000000000000",
+          "directMerges": "2000000000000",
+          "redemptions": "3000000000000",
+          "total": "6000000000000"
+        }
+      ]
+    },
+    "get_batch": {
+      "batch_hash": "0x2222222222222222222222222222222222222222222222222222222222222222",
+      "status": "FAILED",
+      "seq": 4,
+      "deadline_unix_seconds": 1900000000,
+      "origin": "PRESIGNED",
+      "tx_hash": null,
+      "executed_at": null,
+      "failure": {
+        "code": "insufficient_balance",
+        "title": "Insufficient balance",
+        "detail": "Available balance is lower than the order value.",
+        "recovery": {
+          "strategy": "none"
+        }
+      },
+      "superseded_by_batch_hash": null,
+      "heals_batch_hash": null,
+      "unwound_at": null,
+      "created_at": "2026-09-17T00:00:00Z"
+    },
+    "split_position": {
+      "batch_hash": "0x2222222222222222222222222222222222222222222222222222222222222222",
+      "status": "PENDING",
+      "as_of": "2026-09-17T00:00:00Z"
+    },
+    "merge_position": {
+      "operation": "MERGE",
+      "condition_id": "0x1111111111111111111111111111111111111111111111111111111111111111",
+      "relayer_transaction_id": "10000000-0000-4000-8000-000000000001",
+      "transaction_hash": null,
+      "relayer_state": "CONFIRMED",
+      "as_of": "2026-09-17T00:00:00Z"
+    },
+    "get_price_point": {
+      "value": 64343.71609685,
+      "mantissa": "6434371609685",
+      "expo": -8,
+      "publish_time_micros": 1753500000000000
+    },
+    "get_price_ticks": {
+      "s": "ok",
+      "t": [
+        1753500000
+      ],
+      "c": [
+        64343.71609685
+      ]
+    },
+    "get_token_history": {
+      "s": "ok",
+      "t": [
+        1753500000
+      ],
+      "c": [
+        0.55
+      ],
+      "latestTradeAt": 1753500000
+    }
+  }
+}

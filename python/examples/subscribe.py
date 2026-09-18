@@ -20,7 +20,6 @@ from dataclasses import asdict
 
 from agara_sdk import streaming
 
-
 _FACTORIES = {
     "orderbook": streaming.orderbook,
     "best_quote": streaming.best_quote,
@@ -31,11 +30,9 @@ _FACTORIES = {
 
 def parse_channels(args: list[str]) -> list[streaming.Channel]:
     if not args or len(args) % 2 != 0:
-        sys.exit(
-            "usage: subscribe.py <channel> <subject_id> [<channel> <subject_id>]..."
-        )
+        sys.exit("usage: subscribe.py <channel> <subject_id> [<channel> <subject_id>]...")
     channels = []
-    for name, subject in zip(args[0::2], args[1::2]):
+    for name, subject in zip(args[0::2], args[1::2], strict=True):
         factory = _FACTORIES.get(name)
         if factory is None:
             sys.exit(f"unknown channel {name!r}; pick one of {list(_FACTORIES)}")

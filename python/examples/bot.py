@@ -37,10 +37,7 @@ async def run(token_id: str, condition_id: str, token: str, base_url: str) -> No
 
     @client.on_orderbook_delta
     async def _(d: streaming.OrderbookDelta) -> None:
-        print(
-            f"[delta] token={d.token_id} seq={d.sequence} "
-            f"bids={len(d.bids)} asks={len(d.asks)}"
-        )
+        print(f"[delta] token={d.token_id} seq={d.sequence} bids={len(d.bids)} asks={len(d.asks)}")
 
     @client.on_best_quote
     async def _(q: streaming.BestQuote) -> None:
@@ -75,9 +72,13 @@ async def run(token_id: str, condition_id: str, token: str, base_url: str) -> No
 
     @client.on_order_cancelled
     async def _(o: streaming.OrderCancelled) -> None:
+        print(f"[cancelled] order={o.order_id} token={o.token_id} reason={o.reason}")
+
+    @client.on_order_rejected
+    async def _(o: streaming.OrderRejected) -> None:
         print(
-            f"[cancelled] order={o.order_id} token={o.token_id} "
-            f"reason={o.reason}"
+            f"[rejected] order={o.order_id} code={o.failure.code} "
+            f"detail={o.failure.detail or o.failure.title}"
         )
 
     @client.on_sequence_reset
@@ -89,14 +90,16 @@ async def run(token_id: str, condition_id: str, token: str, base_url: str) -> No
 
     @client.on_error
     async def _(err: streaming.StreamError) -> None:
-        print(f"[error] {err.code}: {err.message}")
+        print(f"[error] {err.code}: {err.message} action={err.action}")
 
-    await client.subscribe([
-        streaming.orderbook(token_id),
-        streaming.best_quote(token_id),
-        streaming.trades(condition_id),
-        streaming.account_events(),
-    ])
+    await client.subscribe(
+        [
+            streaming.orderbook(token_id),
+            streaming.best_quote(token_id),
+            streaming.trades(condition_id),
+            streaming.account_events(),
+        ]
+    )
     await client.run()
 
 

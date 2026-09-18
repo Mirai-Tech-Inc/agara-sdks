@@ -1,0 +1,837 @@
+{
+  "platform_commit": "a7e8c2dc1ab3b16f4133d0952347d5cc1bbd1b71",
+  "bindings": {
+    "Order": {
+      "source_type": "Order"
+    },
+    "CreateClobOrderResponse": {
+      "source_type": "CreateClobOrderResponse"
+    },
+    "ClobOrderResponse": {
+      "source_type": "ClobOrderResponse"
+    },
+    "MarketMeta": {
+      "source_type": "MarketMeta"
+    },
+    "MarketMetaDisplay": {
+      "source_type": "MarketMetaDisplay"
+    },
+    "ClobOrdersListResponse": {
+      "source_type": "ClobOrdersListResponse"
+    },
+    "CancelClobOrderResponse": {
+      "source_type": "CancelClobOrderResponse"
+    },
+    "CancelAllClobOrdersResponse": {
+      "source_type": "CancelAllClobOrdersResponse"
+    },
+    "PortfolioPositionsResponse": {
+      "source_type": "PortfolioPositionsResponse"
+    },
+    "PortfolioPosition": {
+      "source_type": "PortfolioPosition"
+    },
+    "EventMeta": {
+      "source_type": "EventMeta"
+    },
+    "EventMetaDisplay": {
+      "source_type": "EventMetaDisplay"
+    },
+    "PortfolioOpenOrdersResponse": {
+      "source_type": "PortfolioOpenOrdersResponse"
+    },
+    "PortfolioSummaryResponse": {
+      "source_type": "PortfolioSummaryResponse"
+    },
+    "PortfolioSummaryEntry": {
+      "source_type": "PortfolioSummaryEntry"
+    },
+    "PortfolioTradesResponse": {
+      "source_type": "PortfolioTradesResponse"
+    },
+    "Fill": {
+      "source_type": "Fill"
+    },
+    "PortfolioActivitiesResponse": {
+      "source_type": "PortfolioActivitiesResponse"
+    },
+    "ConditionMeta": {
+      "source_type": "ConditionMeta"
+    },
+    "ConditionMetaDisplay": {
+      "source_type": "ConditionMetaDisplay"
+    },
+    "PortfolioBridgeDepositAddressResponse": {
+      "source_type": "PortfolioBridgeDepositAddressResponse"
+    },
+    "PortfolioBridgeDepositAddresses": {
+      "source_type": "PortfolioBridgeDepositAddresses"
+    },
+    "PortfolioBridgeSupportedAssetsResponse": {
+      "source_type": "PortfolioBridgeSupportedAssetsResponse"
+    },
+    "PortfolioBridgeSupportedAsset": {
+      "source_type": "PortfolioBridgeSupportedAsset"
+    },
+    "PortfolioBridgeSupportedToken": {
+      "source_type": "PortfolioBridgeSupportedToken"
+    },
+    "PortfolioBridgeDepositQuoteResponse": {
+      "source_type": "PortfolioBridgeDepositQuoteResponse"
+    },
+    "PortfolioBridgeEstimatedFeeBreakdown": {
+      "source_type": "PortfolioBridgeEstimatedFeeBreakdown"
+    },
+    "PortfolioBridgeDepositQuoteRequest": {
+      "source_type": "PortfolioBridgeDepositQuoteRequest"
+    },
+    "PortfolioBridgeWithdrawQuoteRequest": {
+      "source_type": "PortfolioBridgeWithdrawQuoteRequest"
+    },
+    "RebatesSummaryResponse": {
+      "source_type": "RebatesSummaryResponse"
+    },
+    "LpIncentivesResponse": {
+      "source_type": "LpIncentivesResponse"
+    },
+    "LpIncentiveMarket": {
+      "source_type": "LpIncentiveMarket"
+    },
+    "LpIncentiveCategoriesResponse": {
+      "source_type": "LpIncentiveCategoriesResponse"
+    },
+    "LpIncentiveCategory": {
+      "source_type": "LpIncentiveCategory"
+    },
+    "ClosedLpIncentivesResponse": {
+      "source_type": "ClosedLpIncentivesResponse"
+    },
+    "ClosedLpIncentiveMarket": {
+      "source_type": "ClosedLpIncentiveMarket"
+    },
+    "LpIncentiveEarningsResponse": {
+      "source_type": "LpIncentiveEarningsResponse"
+    },
+    "WalletPnlSnapshotDto": {
+      "source_type": "WalletPnlSnapshotDto"
+    },
+    "WalletPnlHistoryDto": {
+      "source_type": "WalletPnlHistoryDto"
+    },
+    "RealizedPnlReportDto": {
+      "source_type": "RealizedPnlReportDto"
+    },
+    "RealizedPnlThroughEventDto": {
+      "source_type": "RealizedPnlThroughEventDto"
+    },
+    "RealizedPnlTotalsDto": {
+      "source_type": "RealizedPnlTotalsDto"
+    },
+    "RealizedPnlCategoryTotalsDto": {
+      "source_type": "RealizedPnlCategoryTotalsDto"
+    },
+    "RealizedPnlBucketDto": {
+      "source_type": "RealizedPnlBucketDto"
+    },
+    "AccountBatchStatusDto": {
+      "source_type": "AccountBatchStatusDto"
+    },
+    "BatchGroupStatusDto": {
+      "source_type": "BatchGroupStatusDto"
+    },
+    "GroupChunkDto": {
+      "source_type": "GroupChunkDto"
+    },
+    "PortfolioOrderActivity": {
+      "source_type": "PortfolioOrderActivity"
+    },
+    "PortfolioSplitActivity": {
+      "source_type": "PortfolioSplitActivity"
+    },
+    "PortfolioMergeActivity": {
+      "source_type": "PortfolioMergeActivity"
+    },
+    "PortfolioRedeemActivity": {
+      "source_type": "PortfolioRedeemActivity"
+    },
+    "PortfolioDepositActivity": {
+      "source_type": "PortfolioDepositActivity"
+    },
+    "PortfolioWithdrawalActivity": {
+      "source_type": "PortfolioWithdrawalActivity"
+    },
+    "Pagination": {
+      "source_type": "CursorPagination"
+    },
+    "RecoveryWire": {
+      "schema": "recovery.schema.json"
+    },
+    "Failure": {
+      "source_type": "KnownPublicFailure"
+    },
+    "Status": {
+      "source_type": "StatusResponse"
+    },
+    "RawOrderbookLevel": {
+      "source_type": "OrderbookLevel"
+    },
+    "RawOrderbook": {
+      "source_type": "AgaraOrderbookResponse"
+    },
+    "LimitOrderRequest": {
+      "source_type": "CreateClobOrderRequest",
+      "exclude": [
+        "collateral_amount_micro"
+      ]
+    },
+    "MarketBuyRequest": {
+      "source_type": "CreateClobOrderRequest",
+      "exclude": [
+        "price_micro",
+        "shares_micro",
+        "expiration_unix_seconds"
+      ]
+    },
+    "MarketSellRequest": {
+      "source_type": "CreateClobOrderRequest",
+      "exclude": [
+        "price_micro",
+        "collateral_amount_micro",
+        "expiration_unix_seconds"
+      ]
+    },
+    "SignedOrderRequest": {
+      "source_type": "CreateSignedClobOrderRequest"
+    },
+    "AcceptedSignedOrder": {
+      "source_type": "BatchSignedOrderOutcome",
+      "variant": "Accepted",
+      "flattened_into": "BatchSignedOrderResult"
+    },
+    "RejectedSignedOrder": {
+      "source_type": "BatchSignedOrderOutcome",
+      "variant": "Rejected",
+      "flattened_into": "BatchSignedOrderResult"
+    },
+    "SignedOrdersResponse": {
+      "source_type": "CreateSignedClobOrderBatchResponse"
+    },
+    "OrderTradesResponse": {
+      "source_type": "OrderTradesResponse"
+    },
+    "PositionOperationAccepted": {
+      "source_type": "PositionOperationAccepted"
+    },
+    "PositionOperationReceipt": {
+      "source_type": "PortfolioPositionOperationResponse"
+    },
+    "PortfolioBridgeWithdrawQuoteResponse": {
+      "source_type": "PortfolioBridgeDepositQuoteResponse"
+    },
+    "SplitOp": {
+      "source_type": "BatchOpDto",
+      "variant": "Split"
+    },
+    "MergeOp": {
+      "source_type": "BatchOpDto",
+      "variant": "Merge"
+    },
+    "WithdrawOp": {
+      "source_type": "BatchOpDto",
+      "variant": "Withdraw"
+    },
+    "BatchSubmission": {
+      "source_type": "AccountBatchSubmission"
+    },
+    "BatchSupersedeSubmission": {
+      "source_type": "AccountBatchSupersedeSubmission"
+    },
+    "BatchAccepted": {
+      "source_type": "AccountBatchAccepted"
+    },
+    "BatchSuperseded": {
+      "source_type": "AccountBatchSupersedeOutcome",
+      "variant": "Superseded"
+    },
+    "BatchSupersedeRefused": {
+      "source_type": "AccountBatchSupersedeOutcome",
+      "variant": "Refused"
+    },
+    "OrderActivity": {
+      "source_type": "PortfolioActivity",
+      "variant": "Order"
+    },
+    "SplitActivity": {
+      "source_type": "PortfolioActivity",
+      "variant": "Split"
+    },
+    "MergeActivity": {
+      "source_type": "PortfolioActivity",
+      "variant": "Merge"
+    },
+    "RedeemActivity": {
+      "source_type": "PortfolioActivity",
+      "variant": "Redeem"
+    },
+    "DepositActivity": {
+      "source_type": "PortfolioActivity",
+      "variant": "Deposit"
+    },
+    "WithdrawalActivity": {
+      "source_type": "PortfolioActivity",
+      "variant": "Withdrawal"
+    },
+    "LpPayoutActivity": {
+      "source_type": "PortfolioActivity",
+      "variant": "LpPayout"
+    }
+  },
+  "declarations": {
+    "AccountBatchAccepted": {
+      "source": "crates/service/src/account_batch_gauntlet/dto.rs",
+      "line": 40,
+      "kind": "struct",
+      "declaration": "/// Acceptance response: the digest that keys the row and the workflow.\n#[derive(utoipa::ToSchema, Debug, Clone, serde::Serialize, serde::Deserialize)]\npub struct AccountBatchAccepted {\n\t/// EIP-712 batch digest, 0x hex.\n\tpub batch_hash: String,\n}"
+    },
+    "AccountBatchStatusDto": {
+      "source": "apps/router/src/batches.rs",
+      "line": 50,
+      "kind": "struct",
+      "declaration": "#[derive(Debug, Clone, serde::Serialize, utoipa::ToSchema)]\npub(crate) struct AccountBatchStatusDto {\n\tpub batch_hash: String,\n\tpub status: String,\n\tpub seq: i64,\n\tpub deadline_unix_seconds: i64,\n\tpub origin: String,\n\tpub tx_hash: Option<String>,\n\tpub executed_at: Option<DateTime<Utc>>,\n\tpub failure: Option<KnownPublicFailure>,\n\tpub superseded_by_batch_hash: Option<String>,\n\tpub heals_batch_hash: Option<String>,\n\tpub unwound_at: Option<DateTime<Utc>>,\n\tpub created_at: DateTime<Utc>,\n}"
+    },
+    "AccountBatchSubmission": {
+      "source": "crates/service/src/account_batch_gauntlet/dto.rs",
+      "line": 5,
+      "kind": "struct",
+      "declaration": "/// Presigned submission body: typed ops plus the signed binding tuple.\n#[derive(utoipa::ToSchema, Debug, Clone, serde::Serialize, serde::Deserialize)]\n#[schema(example = account_batch_submission_example)]\npub struct AccountBatchSubmission {\n\t/// Typed ops in execution order.\n\tpub ops: Vec<BatchOpDto>,\n\n\t/// Account seq the signature binds. The live seq, or the next one above it when batches are\n\t/// already queued on this wallet; it may not skip a seq that no batch holds.\n\tpub seq: u64,\n\n\t/// Signature deadline, unix seconds.\n\tpub deadline_unix_seconds: u64,\n\n\t/// Holder signature over the batch digest, 0x hex.\n\tpub signature: String,\n\n\t/// The `FAILED_DIVERGENT` batch this batch heals, if any.\n\tpub heals_batch_hash: Option<String>,\n}"
+    },
+    "AccountBatchSupersedeOutcome": {
+      "source": "apps/router/src/batches.rs",
+      "line": 66,
+      "kind": "enum",
+      "declaration": "#[derive(Debug, Clone, serde::Serialize, utoipa::ToSchema)]\n#[serde(tag = \"outcome\", rename_all = \"SCREAMING_SNAKE_CASE\")]\npub(crate) enum AccountBatchSupersedeOutcome {\n\tSuperseded { batch: AccountBatchStatusDto },\n\tRefused { current: AccountBatchStatusDto },\n}"
+    },
+    "AccountBatchSupersedeSubmission": {
+      "source": "crates/service/src/account_batch_gauntlet/dto.rs",
+      "line": 26,
+      "kind": "struct",
+      "declaration": "/// Supersede body: new ops re-signed at the superseded batch's seq.\n#[derive(utoipa::ToSchema, Debug, Clone, serde::Serialize, serde::Deserialize)]\n#[schema(example = account_batch_supersede_submission_example)]\npub struct AccountBatchSupersedeSubmission {\n\t/// Typed ops in execution order.\n\tpub ops: Vec<BatchOpDto>,\n\n\t/// Signature deadline, unix seconds.\n\tpub deadline_unix_seconds: u64,\n\n\t/// Holder signature over the successor digest (same seq), 0x hex.\n\tpub signature: String,\n}"
+    },
+    "AgaraOrderbookResponse": {
+      "source": "apps/router/src/orderbook.rs",
+      "line": 28,
+      "kind": "struct",
+      "declaration": "/// FE-facing orderbook snapshot for a single agara token.\n#[derive(Serialize, utoipa::ToSchema)]\npub struct AgaraOrderbookResponse {\n\t/// Bids sorted descending by price (best first).\n\tbids: Vec<OrderbookLevel>,\n\t/// Asks sorted ascending by price (best first).\n\tasks: Vec<OrderbookLevel>,\n\t/// UTC ISO-8601 timestamp stamped at response time.\n\t#[schema(example = \"2026-05-12T10:23:45.678Z\")]\n\ttimestamp: String,\n\t/// Snapshot sequence number stringified \u2014 two snapshots with the\n\t/// same hash are byte-identical.\n\t#[schema(example = \"1234\")]\n\thash: String,\n\t/// Minimum price increment for this market.\n\t#[schema(example = \"0.01\")]\n\ttick_size: String,\n}"
+    },
+    "BatchGroupStatusDto": {
+      "source": "apps/router/src/batch_groups.rs",
+      "line": 73,
+      "kind": "struct",
+      "declaration": "/// Group status: the row plus its chunk rows in slot order.\n#[derive(Debug, Clone, serde::Serialize, utoipa::ToSchema)]\npub(crate) struct BatchGroupStatusDto {\n\t/// Group id.\n\tpub group_id: Uuid,\n\n\t/// Ops in the stored plan (candidates before phase A confirms, the frozen\n\t/// confirmed subset after).\n\tpub op_count: usize,\n\n\t/// Chunks the confirmed plan mirrors; `null` while phase A runs.\n\tpub chunk_count: Option<i32>,\n\n\t/// Set when every chunk settled and the group closed.\n\tpub completed_at: Option<chrono::DateTime<chrono::Utc>>,\n\n\t/// Chunk rows, slot order; retaken slots list every attempt.\n\tpub chunks: Vec<GroupChunkDto>,\n\n\t/// Response timestamp.\n\tpub as_of: chrono::DateTime<chrono::Utc>,\n}"
+    },
+    "BatchOpDto": {
+      "source": "crates/account-batch/src/ops.rs",
+      "line": 23,
+      "kind": "enum",
+      "declaration": "/// One typed intent inside an account batch, in execution order.\n///\n/// Serialized with a `kind` tag in SCREAMING_SNAKE_CASE, matching the wire\n/// contract of `POST /trade/v1/positions/batch/signed`.\n#[derive(Debug, Clone, PartialEq, Eq, serde::Serialize, serde::Deserialize)]\n#[cfg_attr(feature = \"openapi\", derive(utoipa::ToSchema))]\n#[serde(tag = \"kind\", rename_all = \"SCREAMING_SNAKE_CASE\")]\npub enum BatchOpDto {\n\t/// Split collateral into a complete set: `shares_micro` of each leg.\n\tSplit {\n\t\t/// Market row id used for lookup and gating.\n\t\tmarket_id: Uuid,\n\n\t\t/// 0x-prefixed condition id the client signed over; must equal the\n\t\t/// stored condition of `market_id`.\n\t\tcondition_id: String,\n\n\t\t/// Complete-set size in micro units; equals the collateral consumed.\n\t\tshares_micro: i64,\n\t},\n\n\t/// Merge a complete set back into collateral.\n\tMerge {\n\t\t/// Market row id used for lookup and gating.\n\t\tmarket_id: Uuid,\n\n\t\t/// 0x-prefixed condition id the client signed over.\n\t\tcondition_id: String,\n\n\t\t/// Complete-set size in micro units; equals the collateral produced.\n\t\tshares_micro: i64,\n\t},\n\n\t/// Redeem the full current balance of a resolved market's positions.\n\t/// Deliberately sizeless: the chain burns whatever balances exist at\n\t/// execution, and the engine applies post-confirmation from actuals.\n\tRedeem {\n\t\t/// Market row id used for lookup and gating.\n\t\tmarket_id: Uuid,\n\n\t\t/// 0x-prefixed condition id the client signed over.\n\t\tcondition_id: String,\n\t},\n\n\t/// Transfer collateral out of the account.\n\tWithdraw {\n\t\t/// 0x-prefixed recipient; never the wallet's own account.\n\t\tdestination: String,\n\n\t\t/// Amount in micro units.\n\t\tamount_micro: i64,\n\t},\n\n\t/// Exact transient approval for a validated Swap API transaction.\n\tAcrossSwapApprove {\n\t\t/// Allowlisted provider target that consumes the allowance.\n\t\tspender: String,\n\n\t\t/// Must equal the paired withdrawal input, in micro units.\n\t\tamount_micro: i64,\n\t},\n\n\t/// Swap API direct Across route using the universal `deposit` encoding.\n\tWithdrawAcrossSwapDeposit {\n\t\t/// The wallet's own account and Across refund address.\n\t\tdepositor: String,\n\n\t\t/// Destination recipient.\n\t\trecipient: String,\n\n\t\t/// Destination chain id.\n\t\tdestination_chain_id: u64,\n\n\t\t/// Destination token.\n\t\toutput_token: String,\n\n\t\t/// Base USDC input and engine debit, in micro units.\n\t\tinput_amount_micro: i64,\n\n\t\t/// Conservative destination output in token base units.\n\t\toutput_amount_base_units: u64,\n\n\t\t/// Across quote timestamp.\n\t\tquote_timestamp: u32,\n\n\t\t/// Across fill deadline.\n\t\tfill_deadline: u32,\n\n\t\t/// Raw offset-or-timestamp exclusivity parameter.\n\t\texclusivity_parameter: u32,\n\n\t\t/// Exclusive relayer or the zero address.\n\t\texclusive_relayer: String,\n\n\t\t/// Public two-byte id, `0x` prefixed.\n\t\tintegrator_id: Option<String>,\n\t},\n\n\t/// Swap API direct Across route, reconstructed as attributed `depositV3` calldata.\n\tWithdrawAcrossSwapDepositV3 {\n\t\t/// The wallet's own account and Across refund address.\n\t\tdepositor: String,\n\n\t\t/// Destination recipient.\n\t\trecipient: String,\n\n\t\t/// Destination chain id.\n\t\tdestination_chain_id: u64,\n\n\t\t/// Destination token.\n\t\toutput_token: String,\n\n\t\t/// Base USDC input and engine debit, in micro units.\n\t\tinput_amount_micro: i64,\n\n\t\t/// Conservative destination output in token base units.\n\t\toutput_amount_base_units: u64,\n\n\t\t/// Across quote timestamp.\n\t\tquote_timestamp: u32,\n\n\t\t/// Across fill deadline.\n\t\tfill_deadline: u32,\n\n\t\t/// Raw offset-or-timestamp exclusivity parameter.\n\t\t#[serde(rename = \"exclusivity_deadline\", alias = \"exclusivity_parameter\")]\n\t\texclusivity_parameter: u32,\n\n\t\t/// Exclusive relayer or the zero address.\n\t\texclusive_relayer: String,\n\n\t\t/// Public two-byte id, `0x` prefixed.\n\t\tintegrator_id: Option<String>,\n\t},\n\n\t/// Swap API native-USDC route through Circle CCTP V2.\n\tWithdrawAcrossSwapCctp {\n\t\t/// Destination recipient.\n\t\trecipient: String,\n\n\t\t/// Destination chain id pinned to the shared CCTP policy.\n\t\tdestination_chain_id: u64,\n\n\t\t/// Base USDC input and engine debit, in micro units.\n\t\tinput_amount_micro: i64,\n\n\t\t/// Maximum destination fee in Base-USDC units.\n\t\tmax_fee_base_units: u64,\n\n\t\t/// Only address permitted to deliver the Circle message, padded bytes32 hex.\n\t\tdestination_caller: String,\n\n\t\t/// Exact Circle finality threshold.\n\t\tmin_finality_threshold: u32,\n\n\t\t/// Public two-byte id, `0x` prefixed.\n\t\tintegrator_id: Option<String>,\n\t},\n}"
+    },
+    "BatchSignedOrderOutcome": {
+      "source": "crates/service/src/orders/dto.rs",
+      "line": 130,
+      "kind": "enum",
+      "declaration": "/// Outcome of one order in a batch, mirroring the single-order endpoint. An\n/// accepted order carries the same fields as [`CreateClobOrderResponse`]; an\n/// expected per-order rejection carries canonical public failure metadata.\n/// Tagged on `outcome` rather than `status` because the accepted body already\n/// has its own `status` field.\n#[derive(Debug, Clone, Serialize, utoipa::ToSchema)]\n#[serde(tag = \"outcome\", rename_all = \"snake_case\")]\npub enum BatchSignedOrderOutcome {\n\t/// Order accepted and queued for submission.\n\tAccepted(CreateClobOrderResponse),\n\t/// Order rejected without exposing private provider or storage diagnostics.\n\tRejected {\n\t\t/// Registry-backed code, public detail, and recovery guidance.\n\t\tfailure: KnownPublicFailure,\n\t},\n}"
+    },
+    "BatchSignedOrderResult": {
+      "source": "crates/service/src/orders/dto.rs",
+      "line": 147,
+      "kind": "struct",
+      "declaration": "/// One batch entry, tagged with its position in the submitted array.\n#[derive(Debug, Clone, Serialize, utoipa::ToSchema)]\npub struct BatchSignedOrderResult {\n\t/// Zero-based index into the submitted `orders` array.\n\tpub index: usize,\n\t/// Per-order outcome.\n\t#[serde(flatten)]\n\tpub outcome: BatchSignedOrderOutcome,\n}"
+    },
+    "CancelAllClobOrdersResponse": {
+      "source": "crates/service/src/orders/dto.rs",
+      "line": 204,
+      "kind": "struct",
+      "declaration": "/// CLOB cancel-all response.\n#[derive(Debug, Clone, Serialize, utoipa::ToSchema)]\npub struct CancelAllClobOrdersResponse {\n\t/// Wallet identifiers included in the cancellation request.\n\tpub wallet_ids: Vec<Uuid>,\n\t/// Pending async operation.\n\tpub pending_operation: ClobOrderPendingOperation,\n\t/// Response timestamp.\n\tpub as_of: DateTime<Utc>,\n}"
+    },
+    "CancelClobOrderResponse": {
+      "source": "crates/service/src/orders/dto.rs",
+      "line": 193,
+      "kind": "struct",
+      "declaration": "/// CLOB order cancellation response.\n#[derive(Debug, Clone, Serialize, utoipa::ToSchema)]\npub struct CancelClobOrderResponse {\n\t/// Internal order UUID.\n\tpub order_id: Uuid,\n\t/// Pending async operation.\n\tpub pending_operation: ClobOrderPendingOperation,\n\t/// Response timestamp.\n\tpub as_of: DateTime<Utc>,\n}"
+    },
+    "ClobOrderResponse": {
+      "source": "crates/service/src/orders/dto.rs",
+      "line": 237,
+      "kind": "struct",
+      "declaration": "/// Local CLOB order response.\n#[derive(Debug, Clone, Serialize, utoipa::ToSchema)]\npub struct ClobOrderResponse {\n\t/// Order row.\n\tpub order: Order,\n\t/// Market display metadata keyed by outcome token id.\n\tpub markets: BTreeMap<String, MarketMeta>,\n}"
+    },
+    "ClobOrdersListResponse": {
+      "source": "crates/service/src/orders/dto.rs",
+      "line": 256,
+      "kind": "struct",
+      "declaration": "/// Local CLOB order list response.\n#[derive(Debug, Clone, Serialize, utoipa::ToSchema)]\npub struct ClobOrdersListResponse {\n\t/// Order rows.\n\tpub orders: Vec<Order>,\n\t/// Market display metadata keyed by outcome token id.\n\tpub markets: BTreeMap<String, MarketMeta>,\n\t/// Keyset pagination state.\n\tpub pagination: CursorPagination<PortfolioListLimit>,\n\t/// Response timestamp.\n\tpub as_of: DateTime<Utc>,\n}"
+    },
+    "ClosedLpIncentiveMarket": {
+      "source": "apps/router/src/lp_incentives.rs",
+      "line": 247,
+      "kind": "struct",
+      "declaration": "#[derive(Debug, Serialize, utoipa::ToSchema)]\npub(crate) struct ClosedLpIncentiveMarket {\n\t/// Agara market UUID.\n\tpub(crate) market_id: String,\n\n\t/// Market question.\n\tpub(crate) question: String,\n\n\t/// Parent event slug, for linking to the market's event page.\n\tpub(crate) event_slug: String,\n\n\t/// Parent event title.\n\tpub(crate) event_title: String,\n\n\t/// Root-category slug, or `null` when the parent event has no active category.\n\tpub(crate) category_slug: Option<String>,\n\n\t/// User-facing root-category label, or `null` when the parent event has no active category.\n\tpub(crate) category_label: Option<String>,\n\n\t/// Resolution time as RFC 3339, or `null` while the market is live.\n\tpub(crate) closed_at: Option<String>,\n\n\t/// This cycle's reward pool.\n\tpub(crate) pool_micro: String,\n\n\t/// The caller's score in this cycle.\n\tpub(crate) epoch_score: f64,\n\n\t/// Total market score in this cycle.\n\tpub(crate) market_total_score: f64,\n\n\t/// This cycle's pro-rata payout before the minimum payout is applied.\n\tpub(crate) potential_payout_micro: String,\n\n\t/// Rewards credited to the caller in this cycle.\n\tpub(crate) earned_micro: String,\n\n\t/// The reward day this row covers.\n\tpub(crate) epoch_date: String,\n\n\t/// Whether settlement has credited this cycle.\n\tpub(crate) credited: bool,\n\n\t/// Whether the caller has traded this market at least once.\n\tpub(crate) has_traded: bool,\n}"
+    },
+    "ClosedLpIncentivesResponse": {
+      "source": "apps/router/src/lp_incentives.rs",
+      "line": 160,
+      "kind": "struct",
+      "declaration": "#[derive(Debug, Serialize, utoipa::ToSchema)]\npub(crate) struct ClosedLpIncentivesResponse {\n\t/// Always `true`: every authenticated caller sees their reward rows.\n\t/// Retained for API compatibility.\n\tpub(crate) eligible: bool,\n\n\t/// The caller's credited LP reward cycles in this page.\n\tpub(crate) markets: Vec<ClosedLpIncentiveMarket>,\n\n\t/// Requested page size.\n\tpub(crate) limit: u32,\n\n\t/// 1-based page number this response covers.\n\tpub(crate) page: u32,\n\n\t/// Total rows matching the filters across all pages.\n\tpub(crate) total: u64,\n}"
+    },
+    "ConditionMeta": {
+      "source": "crates/service/src/portfolio.rs",
+      "line": 349,
+      "kind": "struct",
+      "declaration": "/// Market display metadata for condition-level rows (splits), keyed in\n/// responses by condition id. Logo resolution is condition-level (market\n/// image, then event icon) \u2014 outcome logos are team-dependent and would\n/// flap across requests under the outcome-keyed store's last-row-wins.\n#[derive(Debug, Clone, PartialEq, Eq, Serialize, utoipa::ToSchema)]\npub struct ConditionMeta {\n\t/// Canonical market UUID.\n\tpub market_id: Uuid,\n\n\t/// Market title.\n\tpub market_title: String,\n\n\t/// Logo URL.\n\tpub logo_url: Option<String>,\n\n\t/// Event slug.\n\tpub event_slug: String,\n\n\t/// Raw market display passthrough.\n\tpub display: ConditionMetaDisplay,\n}"
+    },
+    "ConditionMetaDisplay": {
+      "source": "crates/service/src/portfolio.rs",
+      "line": 301,
+      "kind": "struct",
+      "declaration": "/// Raw CMS display JSONB for a condition-level sidecar entry \u2014 market only. A\n/// condition aggregates every outcome leg, so no single outcome display applies\n/// (and an outcome blob would flap under the store's last-row-wins, like logos).\n#[derive(Debug, Clone, PartialEq, Eq, Serialize, utoipa::ToSchema)]\npub struct ConditionMetaDisplay {\n\t/// Raw market-level display blob as stored by the CMS.\n\t#[schema(value_type = Object)]\n\tpub market: serde_json::Value,\n}"
+    },
+    "CreateClobOrderRequest": {
+      "source": "crates/service/src/orders/dto.rs",
+      "line": 24,
+      "kind": "struct",
+      "declaration": "/// CLOB order creation request body.\n#[derive(Debug, Clone, Deserialize, utoipa::ToSchema)]\n#[schema(example = create_clob_order_request_example)]\npub struct CreateClobOrderRequest {\n\t/// Outcome token id.\n\tpub token_id: TokenId,\n\t/// Order side.\n\tpub side: Side,\n\t/// Order type.\n\t#[serde(rename = \"type\")]\n\tpub type_: ClobOrderType,\n\t/// Time in force.\n\tpub time_in_force: ClobOrderTimeInForce,\n\t/// Limit price in micro units. Required for `LIMIT`; rejected for `MARKET`.\n\tpub price_micro: Option<MicroAmount>,\n\t/// Collateral amount to spend, in micro units. The size for a `MARKET`\n\t/// BUY. Exactly one of `collateral_amount_micro` and `shares_micro` may\n\t/// be set.\n\tpub collateral_amount_micro: Option<MicroAmount>,\n\t/// Shares amount in micro units. The size for a `LIMIT` order or a\n\t/// `MARKET` SELL. Exactly one of `collateral_amount_micro` and\n\t/// `shares_micro` may be set.\n\tpub shares_micro: Option<MicroAmount>,\n\t/// Post-only flag. `LIMIT` only; the order is rejected instead of\n\t/// crossing the spread. Defaults to `false`.\n\tpub post_only: Option<bool>,\n\t/// Expiration in Unix seconds. Required for `GTD` and must be at least\n\t/// 30 seconds in the future; omit it for every other time-in-force.\n\t#[schema(value_type = Option<i64>, example = 1794700800_i64)]\n\tpub expiration_unix_seconds: Option<agara_domain::UnixTimestamp>,\n}"
+    },
+    "CreateClobOrderResponse": {
+      "source": "crates/service/src/orders/dto.rs",
+      "line": 178,
+      "kind": "struct",
+      "declaration": "/// CLOB order accepted response.\n#[derive(Debug, Clone, Serialize, utoipa::ToSchema)]\npub struct CreateClobOrderResponse {\n\t/// Internal order UUID.\n\tpub order_id: Uuid,\n\t/// Order source.\n\tpub source: agara_domain::Exchange,\n\t/// Local order status.\n\tpub status: ClobOrderStatus,\n\t/// Pending async operation.\n\tpub pending_operation: ClobOrderPendingOperation,\n\t/// Response timestamp.\n\tpub as_of: DateTime<Utc>,\n}"
+    },
+    "CreateSignedClobOrderBatchResponse": {
+      "source": "crates/service/src/orders/dto.rs",
+      "line": 157,
+      "kind": "struct",
+      "declaration": "/// Batched pre-signed order response. `results` is in request order, one\n/// entry per submitted order.\n#[derive(Debug, Clone, Serialize, utoipa::ToSchema)]\npub struct CreateSignedClobOrderBatchResponse {\n\t/// Per-order outcomes, in request order.\n\tpub results: Vec<BatchSignedOrderResult>,\n\t/// Response timestamp.\n\tpub as_of: DateTime<Utc>,\n}"
+    },
+    "CreateSignedClobOrderRequest": {
+      "source": "crates/service/src/orders/dto.rs",
+      "line": 56,
+      "kind": "struct",
+      "declaration": "/// CLOB order creation request body for pre-signed (bot/server-key)\n/// submissions. Carries the EIP-712 envelope fields the bot signed\n/// over so the router can recover and validate the signature without\n/// re-signing.\n#[derive(Debug, Clone, Deserialize, utoipa::ToSchema)]\n#[schema(example = create_signed_clob_order_request_example)]\npub struct CreateSignedClobOrderRequest {\n\t/// Outcome token id.\n\tpub token_id: TokenId,\n\t/// Order side.\n\tpub side: Side,\n\t/// Order type \u2014 only `LIMIT` is supported on this endpoint.\n\t#[serde(rename = \"type\")]\n\tpub type_: ClobOrderType,\n\t/// Time in force.\n\tpub time_in_force: ClobOrderTimeInForce,\n\t/// Limit price in micro units.\n\tpub price_micro: Option<MicroAmount>,\n\t/// Shares amount in micro units.\n\tpub shares_micro: Option<MicroAmount>,\n\t/// Post-only flag. The order is rejected instead of crossing the spread.\n\t/// Defaults to `false`.\n\tpub post_only: Option<bool>,\n\t/// Expiration in Unix seconds. Required for `GTD` and must be at least\n\t/// 30 seconds in the future; omit it for every other time-in-force.\n\t#[schema(value_type = Option<i64>, example = 1794700800_i64)]\n\tpub expiration_unix_seconds: Option<agara_domain::UnixTimestamp>,\n\n\t// The remaining fields are the EIP-712 envelope the bot signed over. The\n\t// router reconstructs it, re-hashes it, and recovers the signature, so\n\t// every field must match what was signed byte for byte.\n\t/// Per-order salt (u256 decimal string). Use a fresh value per order.\n\tpub salt: String,\n\t/// Maker address \u2014 must equal the wallet's deposit-wallet address.\n\tpub maker: String,\n\t/// CTF position id as the u256 value the bot signed over (decimal\n\t/// or `0x`-hex string). Must encode the same numeric value as\n\t/// `token_id` above \u2014 the router validates they match. Carried\n\t/// separately because the lookup `token_id` is a free-form string\n\t/// whose encoding isn't guaranteed to match what the bot used in\n\t/// the EIP-712 envelope.\n\tpub chain_token_id: String,\n\t/// Maker amount (u256 decimal string in chain micro units).\n\tpub maker_amount: String,\n\t/// Taker amount (u256 decimal string).\n\tpub taker_amount: String,\n\t/// Side encoded as the contract's `uint8`: 0 = BUY, 1 = SELL.\n\tpub side_u8: u8,\n\t/// Order timestamp (u256 decimal string; usually 0).\n\tpub timestamp: String,\n\t/// Metadata hash (0x-prefixed bytes32; usually zero).\n\tpub metadata: String,\n\t/// Builder code (0x-prefixed bytes32; usually zero).\n\tpub builder: String,\n\t/// 0x-prefixed keccak256 of the EIP-712 typed-data digest.\n\tpub order_hash: String,\n\t/// 0x-prefixed 65-byte (r||s||v) signature from the user's EOA.\n\tpub signature: String,\n}"
+    },
+    "CursorPagination": {
+      "source": "crates/service/src/cursor.rs",
+      "line": 92,
+      "kind": "struct",
+      "declaration": "/// Shared cursor-paginated response envelope. Carries the next page's opaque\n/// cursor (absent when the page is the last one) and the applied page size.\n/// Generic over the limit newtype so every list endpoint serializes the same\n/// `{ next_cursor, limit }` shape regardless of which limit type it applies;\n/// utoipa inlines the concrete limit schema at each response field.\n#[derive(Debug, Clone, PartialEq, Eq, Serialize, utoipa::ToSchema)]\npub struct CursorPagination<L> {\n\t/// Opaque cursor for the next page; `null` when no more rows remain.\n\tpub next_cursor: Option<String>,\n\n\t/// Applied page limit.\n\tpub limit: L,\n}"
+    },
+    "EventMeta": {
+      "source": "crates/service/src/portfolio.rs",
+      "line": 371,
+      "kind": "struct",
+      "declaration": "/// Event display metadata sidecar entry, keyed in responses by event slug.\n/// Event display is deduped here rather than nested per-outcome in `markets`,\n/// where the same (potentially large) blob would repeat for every outcome.\n#[derive(Debug, Clone, PartialEq, Eq, Serialize, utoipa::ToSchema)]\npub struct EventMeta {\n\t/// Event title.\n\tpub event_title: String,\n\n\t/// Raw event display passthrough.\n\tpub display: EventMetaDisplay,\n}"
+    },
+    "EventMetaDisplay": {
+      "source": "crates/service/src/portfolio.rs",
+      "line": 311,
+      "kind": "struct",
+      "declaration": "/// Raw CMS display JSONB for an event sidecar entry.\n#[derive(Debug, Clone, PartialEq, Eq, Serialize, utoipa::ToSchema)]\npub struct EventMetaDisplay {\n\t/// Raw event-level display blob as stored by the CMS.\n\t#[schema(value_type = Object)]\n\tpub event: serde_json::Value,\n}"
+    },
+    "Fill": {
+      "source": "crates/service/src/portfolio.rs",
+      "line": 491,
+      "kind": "struct",
+      "declaration": "/// One wallet's single-sided view of a fill \u2014 the shared item type for\n/// `/trade/v1/portfolio/trades` and `/trade/v1/orders/{id}/trades`.\n#[derive(Debug, Clone, PartialEq, Eq, Serialize, utoipa::ToSchema)]\npub struct Fill {\n\t/// Exchange this fill settled on. Drives FE behaviour like which\n\t/// block explorer to link `transaction_hash` against.\n\tpub exchange: agara_domain::Exchange,\n\t/// Trade row id \u2014 `agara_trades.id` for agara, the venue trade id for\n\t/// Polymarket. The universal per-fill identity.\n\tpub trade_id: TradeId,\n\t/// Engine fill id \u2014 the stream/REST join key. Serialised as a string\n\t/// (exceeds JS safe-integer range). `None` for Polymarket fills, which\n\t/// have no engine fill.\n\tpub fill_id: Option<String>,\n\t/// The placing order's local UUID. `None` when a Polymarket fill maps to\n\t/// no tracked local order.\n\tpub order_id: Option<OrderId>,\n\t/// Outcome token id.\n\tpub token_id: TokenId,\n\t/// This wallet's side of the fill.\n\tpub side: Side,\n\t/// Shares filled (micro).\n\tpub shares_micro: MicroAmount,\n\t/// This wallet's fill price (micro).\n\tpub price_micro: MicroAmount,\n\t/// Fee charged to this wallet in micro-collateral units; `0` means no fee.\n\tpub fee_micro: MicroAmount,\n\t/// Maker/taker leg. `None` for one-sided Polymarket fills.\n\tpub role: Option<FillRole>,\n\t/// Trade lifecycle status.\n\tpub status: TradeStatus,\n\t/// Settlement transaction hash; `None` until settled.\n\tpub transaction_hash: Option<String>,\n\t/// Execution timestamp.\n\tpub executed_at: DateTime<Utc>,\n}"
+    },
+    "GroupChunkDto": {
+      "source": "apps/router/src/batch_groups.rs",
+      "line": 54,
+      "kind": "struct",
+      "declaration": "/// One chunk row in the status read.\n#[derive(Debug, Clone, serde::Serialize, utoipa::ToSchema)]\npub(crate) struct GroupChunkDto {\n\t/// Slot the row occupies.\n\tpub chunk_index: i32,\n\n\t/// EIP-712 batch digest; pollable at `GET /trade/v1/batches/{batch_hash}`.\n\tpub batch_hash: String,\n\n\t/// Lifecycle status, as its db value.\n\tpub status: String,\n\n\t/// Confirmed transaction hash, when settled.\n\tpub tx_hash: Option<String>,\n\n\t/// Safe failure classification, when failed.\n\tpub failure: Option<KnownPublicFailure>,\n}"
+    },
+    "KnownPublicFailure": {
+      "source": "crates/problem-contracts/src/failure.rs",
+      "line": 73,
+      "kind": "struct",
+      "declaration": "/// Closed producer form of protocol-neutral failure details.\n#[derive(Debug, Clone, PartialEq, Eq, Serialize, ToSchema)]\n#[serde(deny_unknown_fields)]\npub struct KnownPublicFailure {\n\t/// Registered machine code.\n\tcode: KnownProblemCode,\n\n\t/// Canonical title from metadata.\n\ttitle: String,\n\n\t/// Optional allowlisted context.\n\t#[serde(skip_serializing_if = \"Option::is_none\")]\n\tdetail: Option<String>,\n\n\t/// Canonical recovery variant.\n\trecovery: KnownRecovery,\n}"
+    },
+    "LpIncentiveCategoriesResponse": {
+      "source": "apps/router/src/lp_incentives.rs",
+      "line": 142,
+      "kind": "struct",
+      "declaration": "#[derive(Debug, Serialize, utoipa::ToSchema)]\npub(crate) struct LpIncentiveCategoriesResponse {\n\t/// Active root categories containing current LP-incentive markets.\n\tpub(crate) categories: Vec<LpIncentiveCategory>,\n}"
+    },
+    "LpIncentiveCategory": {
+      "source": "apps/router/src/lp_incentives.rs",
+      "line": 148,
+      "kind": "struct",
+      "declaration": "#[derive(Debug, Serialize, utoipa::ToSchema)]\npub(crate) struct LpIncentiveCategory {\n\t/// Stable root-category slug.\n\tpub(crate) slug: String,\n\n\t/// User-facing root-category label.\n\tpub(crate) label: String,\n\n\t/// Distinct current incentive markets assigned under the root.\n\tpub(crate) market_count: i64,\n}"
+    },
+    "LpIncentiveEarningsResponse": {
+      "source": "apps/router/src/lp_incentives.rs",
+      "line": 179,
+      "kind": "struct",
+      "declaration": "#[derive(Debug, Serialize, utoipa::ToSchema)]\npub(crate) struct LpIncentiveEarningsResponse {\n\t/// Rewards earned so far in the current reward cycle, projected live from today's\n\t/// scores before the minimum payout is applied, in micro-collateral units.\n\tpub(crate) current_cycle_micro: String,\n\n\t/// The current cycle's projection plus rewards credited over the 6 prior days.\n\tpub(crate) last_7_days_micro: String,\n\n\t/// The current cycle's projection plus rewards credited over the 29 prior days.\n\tpub(crate) last_30_days_micro: String,\n\n\t/// The current cycle's projection plus all rewards ever credited to the caller.\n\tpub(crate) all_time_micro: String,\n}"
+    },
+    "LpIncentiveMarket": {
+      "source": "apps/router/src/lp_incentives.rs",
+      "line": 202,
+      "kind": "struct",
+      "declaration": "#[derive(Debug, Serialize, utoipa::ToSchema)]\npub(crate) struct LpIncentiveMarket {\n\t/// Agara market UUID.\n\tpub(crate) market_id: String,\n\n\t/// Market question.\n\tpub(crate) question: String,\n\n\t/// Parent event slug, for linking to the market's event page.\n\tpub(crate) event_slug: String,\n\n\t/// Parent event title.\n\tpub(crate) event_title: String,\n\n\t/// Market-level artwork, or `null` when none is configured.\n\tpub(crate) logo_url: Option<String>,\n\n\t/// Event close time as RFC 3339, if set.\n\tpub(crate) close_time: Option<String>,\n\n\t/// User-facing lifecycle bucket for this market.\n\tpub(crate) phase: LpIncentiveMarketPhase,\n\n\t/// This epoch's reward pool for the market, in micro-collateral units.\n\tpub(crate) pool_micro: String,\n\n\t/// Maximum qualifying distance from the midpoint, in micro-probability.\n\tpub(crate) max_spread_micro: u32,\n\n\t/// Minimum qualifying resting size, in micro-shares.\n\tpub(crate) min_shares_micro: String,\n\n\t/// The caller's current epoch score: their summed per-sample shares.\n\tpub(crate) epoch_score: f64,\n\n\t/// Total epoch score across all makers (= the market's scored-sample count).\n\tpub(crate) market_total_score: f64,\n\n\t/// Projected payout in micro-collateral units before the minimum payout is applied.\n\tpub(crate) projected_payout_micro: String,\n\n\t/// Whether the caller has traded this market at least once.\n\tpub(crate) has_traded: bool,\n}"
+    },
+    "LpIncentivesResponse": {
+      "source": "apps/router/src/lp_incentives.rs",
+      "line": 126,
+      "kind": "struct",
+      "declaration": "#[derive(Debug, Serialize, utoipa::ToSchema)]\npub(crate) struct LpIncentivesResponse {\n\t/// Always `true`: every caller sees the market list. Retained for API\n\t/// compatibility.\n\tpub(crate) eligible: bool,\n\n\t/// Current Eastern reward day.\n\tpub(crate) epoch_date: String,\n\n\t/// Exclusive end of the current reward day.\n\tpub(crate) epoch_ends_at: String,\n\n\t/// Active and upcoming LP-participating markets with the caller's current-epoch standing.\n\tpub(crate) markets: Vec<LpIncentiveMarket>,\n}"
+    },
+    "MarketMeta": {
+      "source": "crates/service/src/portfolio.rs",
+      "line": 319,
+      "kind": "struct",
+      "declaration": "/// Market display metadata sidecar entry, keyed in responses by outcome token id.\n#[derive(Debug, Clone, PartialEq, Eq, Serialize, utoipa::ToSchema)]\npub struct MarketMeta {\n\t/// Canonical market UUID.\n\tpub market_id: Uuid,\n\n\t/// Market title.\n\tpub market_title: String,\n\n\t/// Outcome name.\n\tpub outcome_name: String,\n\n\t/// Logo URL.\n\tpub logo_url: Option<String>,\n\n\t/// Event slug.\n\tpub event_slug: String,\n\n\t/// Market lifecycle state (`enum_agara_market_states`). Passed through as a\n\t/// string so a newly added state can't fail serialization here.\n\tpub state: String,\n\n\t/// Neg-risk group id; `Some` marks group membership. Members are excluded\n\t/// from the auto-redeem sweep, so their holdings never enter redemption.\n\tpub neg_risk_id: Option<String>,\n\n\t/// Raw market + outcome display passthrough.\n\tpub display: MarketMetaDisplay,\n}"
+    },
+    "MarketMetaDisplay": {
+      "source": "crates/service/src/portfolio.rs",
+      "line": 287,
+      "kind": "struct",
+      "declaration": "/// Raw CMS display JSONB for a market-outcome sidecar entry: the escape hatch\n/// for CMS display keys beyond the resolved fields. Best-effort, unversioned,\n/// read defensively.\n#[derive(Debug, Clone, PartialEq, Eq, Serialize, utoipa::ToSchema)]\npub struct MarketMetaDisplay {\n\t/// Raw market-level display blob as stored by the CMS.\n\t#[schema(value_type = Object)]\n\tpub market: serde_json::Value,\n\n\t/// Raw outcome-level display blob as stored by the CMS.\n\t#[schema(value_type = Object)]\n\tpub outcome: serde_json::Value,\n}"
+    },
+    "Order": {
+      "source": "crates/service/src/orders/model.rs",
+      "line": 87,
+      "kind": "struct",
+      "declaration": "/// On-the-wire order row \u2014 the trimmed ledger projection served by the\n/// order-list, single-order, and portfolio open-orders endpoints.\n#[derive(Debug, Clone, Serialize, utoipa::ToSchema)]\npub struct Order {\n\t/// Internal order UUID.\n\tpub internal_id: Uuid,\n\t/// Source exchange.\n\tpub exchange: agara_domain::Exchange,\n\t/// Outcome token id.\n\tpub token_id: TokenId,\n\t/// Market condition id.\n\tpub condition_id: Option<ConditionId>,\n\t/// Order side.\n\tpub side: Side,\n\t/// Order type.\n\t#[serde(rename = \"type\")]\n\tpub type_: ClobOrderType,\n\t/// Limit price in micro units.\n\tpub price_micro: Option<MicroAmount>,\n\t/// Original shares amount in micro units.\n\tpub original_size_micro: Option<MicroAmount>,\n\t/// Collateral amount in micro units.\n\tpub collateral_amount_micro: Option<MicroAmount>,\n\t/// Total filled shares in micro units.\n\tpub size_matched_micro: MicroAmount,\n\t/// Average fill price in micro units.\n\tpub avg_fill_price_micro: Option<MicroAmount>,\n\t/// Local status.\n\tpub status: ClobOrderStatus,\n\n\t/// Whether the order is terminal, including a partially filled FAK with no live remainder.\n\tpub is_terminal: bool,\n\n\t/// Safe terminal-failure classification.\n\tpub failure: Option<KnownPublicFailure>,\n\t/// Expiration timestamp.\n\tpub expiration: chrono::DateTime<chrono::Utc>,\n\t/// Creation timestamp.\n\tpub created_at: chrono::DateTime<chrono::Utc>,\n\t/// When the user requested cancellation, if a durable intent is recorded.\n\tpub cancel_requested_at: Option<chrono::DateTime<chrono::Utc>>,\n}"
+    },
+    "OrderTradesResponse": {
+      "source": "crates/service/src/orders/dto.rs",
+      "line": 246,
+      "kind": "struct",
+      "declaration": "/// Trades-for-an-order response body.\n#[derive(Debug, Clone, Serialize, utoipa::ToSchema)]\npub struct OrderTradesResponse {\n\t/// This order's fills, newest-first. Same `Fill` shape as\n\t/// `/trade/v1/portfolio/trades`.\n\tpub trades: Vec<Fill>,\n\t/// Response timestamp.\n\tpub as_of: DateTime<Utc>,\n}"
+    },
+    "OrderbookLevel": {
+      "source": "apps/router/src/orderbook.rs",
+      "line": 47,
+      "kind": "struct",
+      "declaration": "#[derive(Serialize, utoipa::ToSchema)]\nstruct OrderbookLevel {\n\t/// Price in collateral units per share, not micro-units.\n\t#[schema(example = 0.6)]\n\tprice: f64,\n\t/// Size in shares, not micro-shares.\n\t#[schema(example = 100.0)]\n\tsize: f64,\n}"
+    },
+    "PortfolioActivitiesResponse": {
+      "source": "crates/service/src/portfolio.rs",
+      "line": 812,
+      "kind": "struct",
+      "declaration": "/// Canonical AGARA activity response.\n#[derive(Debug, Clone, PartialEq, Eq, Serialize, utoipa::ToSchema)]\npub struct PortfolioActivitiesResponse {\n\t/// Activities sorted by timestamp and internal reference UUID descending.\n\tpub activities: Vec<PortfolioActivity>,\n\n\t/// Current-page market metadata keyed by outcome token id.\n\tpub markets: BTreeMap<String, MarketMeta>,\n\n\t/// Current-page condition metadata keyed by condition id.\n\tpub conditions: BTreeMap<String, ConditionMeta>,\n\n\t/// Current-page event metadata keyed by event slug.\n\tpub events: BTreeMap<String, EventMeta>,\n\n\t/// Current-data keyset pagination state.\n\tpub pagination: CursorPagination<PortfolioActivityLimit>,\n\n\t/// Database read time for this page.\n\tpub as_of: DateTime<Utc>,\n}"
+    },
+    "PortfolioActivity": {
+      "source": "crates/service/src/portfolio.rs",
+      "line": 595,
+      "kind": "enum",
+      "declaration": "/// Canonical AGARA activity.\n#[derive(Debug, Clone, PartialEq, Eq, Serialize, utoipa::ToSchema)]\n#[serde(tag = \"type\", rename_all = \"SCREAMING_SNAKE_CASE\")]\n#[non_exhaustive]\npub enum PortfolioActivity {\n\t/// Order with at least one recorded fill.\n\tOrder(PortfolioOrderActivity),\n\n\t/// Complete-set split.\n\tSplit(PortfolioSplitActivity),\n\n\t/// Complete-set merge.\n\tMerge(PortfolioMergeActivity),\n\n\t/// Resolved outcome redemption.\n\tRedeem(PortfolioRedeemActivity),\n\n\t/// External collateral deposit.\n\tDeposit(PortfolioDepositActivity),\n\n\t/// External collateral withdrawal.\n\tWithdrawal(PortfolioWithdrawalActivity),\n\n\t/// Confirmed liquidity-provider reward payout.\n\tLpPayout(PortfolioLpPayoutActivity),\n}"
+    },
+    "PortfolioBridgeDepositAddressResponse": {
+      "source": "crates/service/src/portfolio.rs",
+      "line": 834,
+      "kind": "struct",
+      "declaration": "/// Bridge deposit address response body.\n#[derive(Debug, Clone, PartialEq, Eq, Serialize, utoipa::ToSchema)]\npub struct PortfolioBridgeDepositAddressResponse {\n\t/// Deposit wallet address.\n\tpub wallet_address: String,\n\t/// SDK-provided deposit addresses.\n\tpub deposit_addresses: PortfolioBridgeDepositAddresses,\n\t/// SDK-provided bridge note.\n\tpub note: Option<String>,\n}"
+    },
+    "PortfolioBridgeDepositAddresses": {
+      "source": "crates/service/src/portfolio.rs",
+      "line": 845,
+      "kind": "struct",
+      "declaration": "/// SDK-provided deposit addresses.\n#[derive(Debug, Clone, PartialEq, Eq, Serialize, utoipa::ToSchema)]\npub struct PortfolioBridgeDepositAddresses {\n\t/// EVM deposit address.\n\tpub evm: String,\n\t/// Solana deposit address.\n\tpub svm: String,\n\t/// Bitcoin deposit address.\n\tpub btc: String,\n}"
+    },
+    "PortfolioBridgeDepositQuoteRequest": {
+      "source": "crates/service/src/portfolio.rs",
+      "line": 895,
+      "kind": "struct",
+      "declaration": "/// Bridge deposit quote request body.\n#[derive(Debug, Clone, Deserialize, utoipa::ToSchema)]\npub struct PortfolioBridgeDepositQuoteRequest {\n\t/// Source chain id.\n\tpub from_chain_id: PortfolioBridgeChainId,\n\t/// Source token address.\n\tpub from_token_address: PortfolioBridgeTokenAddress,\n\t/// Source amount in base units.\n\tpub from_amount_base_unit: PortfolioBridgeBaseUnitAmount,\n}"
+    },
+    "PortfolioBridgeDepositQuoteResponse": {
+      "source": "crates/service/src/portfolio.rs",
+      "line": 906,
+      "kind": "struct",
+      "declaration": "/// Bridge deposit quote response body.\n#[derive(Debug, Clone, PartialEq, Eq, Serialize, utoipa::ToSchema)]\npub struct PortfolioBridgeDepositQuoteResponse {\n\t/// Estimated checkout time in milliseconds.\n\tpub est_checkout_time_ms: u64,\n\t/// Estimated fee breakdown.\n\tpub est_fee_breakdown: PortfolioBridgeEstimatedFeeBreakdown,\n\t/// Estimated input value in USD.\n\tpub est_input_usd: PortfolioDecimalString,\n\t/// Estimated output value in USD.\n\tpub est_output_usd: PortfolioDecimalString,\n\t/// Estimated destination token amount in base units.\n\tpub est_to_token_base_unit: PortfolioBridgeBaseUnitAmount,\n\t/// Bridge quote id.\n\tpub quote_id: PortfolioBridgeQuoteId,\n}"
+    },
+    "PortfolioBridgeEstimatedFeeBreakdown": {
+      "source": "crates/service/src/portfolio.rs",
+      "line": 991,
+      "kind": "struct",
+      "declaration": "/// Bridge deposit quote fee breakdown.\n#[derive(Debug, Clone, PartialEq, Eq, Serialize, utoipa::ToSchema)]\npub struct PortfolioBridgeEstimatedFeeBreakdown {\n\t/// App fee label.\n\tpub app_fee_label: String,\n\t/// App fee percent.\n\tpub app_fee_percent: PortfolioDecimalString,\n\t/// App fee in USD.\n\tpub app_fee_usd: PortfolioDecimalString,\n\t/// Fill cost percent.\n\tpub fill_cost_percent: PortfolioDecimalString,\n\t/// Fill cost in USD.\n\tpub fill_cost_usd: PortfolioDecimalString,\n\t/// Gas fee in USD.\n\tpub gas_usd: PortfolioDecimalString,\n\t/// Maximum slippage.\n\tpub max_slippage: PortfolioDecimalString,\n\t/// Minimum received amount.\n\tpub min_received: PortfolioDecimalString,\n\t/// Swap impact.\n\tpub swap_impact: PortfolioDecimalString,\n\t/// Swap impact in USD.\n\tpub swap_impact_usd: PortfolioDecimalString,\n\t/// Total impact.\n\tpub total_impact: PortfolioDecimalString,\n\t/// Total impact in USD.\n\tpub total_impact_usd: PortfolioDecimalString,\n}"
+    },
+    "PortfolioBridgeSupportedAsset": {
+      "source": "crates/service/src/portfolio.rs",
+      "line": 867,
+      "kind": "struct",
+      "declaration": "/// Bridge-supported asset.\n#[derive(Debug, Clone, PartialEq, Eq, Serialize, utoipa::ToSchema)]\npub struct PortfolioBridgeSupportedAsset {\n\t/// Source chain id.\n\tpub chain_id: PortfolioBridgeChainId,\n\t/// Source chain name.\n\tpub chain_name: String,\n\t/// Address type to use for this asset.\n\tpub address_type: PortfolioBridgeAddressType,\n\t/// Source token.\n\tpub token: PortfolioBridgeSupportedToken,\n\t/// Minimum checkout amount in USD.\n\tpub min_checkout_usd: PortfolioDecimalString,\n}"
+    },
+    "PortfolioBridgeSupportedAssetsResponse": {
+      "source": "crates/service/src/portfolio.rs",
+      "line": 856,
+      "kind": "struct",
+      "declaration": "/// Bridge supported-assets response body.\n#[derive(Debug, Clone, PartialEq, Eq, Serialize, utoipa::ToSchema)]\npub struct PortfolioBridgeSupportedAssetsResponse {\n\t/// Deposit wallet address.\n\tpub wallet_address: String,\n\t/// SDK-provided supported assets.\n\tpub supported_assets: Vec<PortfolioBridgeSupportedAsset>,\n\t/// SDK-provided bridge note.\n\tpub note: Option<String>,\n}"
+    },
+    "PortfolioBridgeSupportedToken": {
+      "source": "crates/service/src/portfolio.rs",
+      "line": 882,
+      "kind": "struct",
+      "declaration": "/// Bridge-supported token.\n#[derive(Debug, Clone, PartialEq, Eq, Serialize, utoipa::ToSchema)]\npub struct PortfolioBridgeSupportedToken {\n\t/// Token name.\n\tpub name: String,\n\t/// Token symbol.\n\tpub symbol: String,\n\t/// Token address.\n\tpub address: PortfolioBridgeTokenAddress,\n\t/// Token decimals.\n\tpub decimals: u8,\n}"
+    },
+    "PortfolioBridgeWithdrawQuoteRequest": {
+      "source": "crates/service/src/portfolio.rs",
+      "line": 923,
+      "kind": "struct",
+      "declaration": "/// Bridge withdraw quote request body.\n#[derive(Debug, Clone, Deserialize, utoipa::ToSchema)]\n#[schema(example = portfolio_bridge_withdraw_quote_request_example)]\npub struct PortfolioBridgeWithdrawQuoteRequest {\n\t/// Destination chain id.\n\tpub to_chain_id: PortfolioBridgeChainId,\n\t/// Destination token address.\n\tpub to_token_address: PortfolioBridgeTokenAddress,\n\t/// Destination recipient address.\n\tpub recipient_address: PortfolioBridgeRecipientAddress,\n\t/// Source collateral amount in base units.\n\tpub from_amount_base_unit: PortfolioBridgeBaseUnitAmount,\n}"
+    },
+    "PortfolioDepositActivity": {
+      "source": "crates/service/src/portfolio.rs",
+      "line": 743,
+      "kind": "struct",
+      "declaration": "/// External deposit activity row.\n#[derive(Debug, Clone, PartialEq, Eq, Serialize, utoipa::ToSchema)]\npub struct PortfolioDepositActivity {\n\t/// Exchange this activity occurred on.\n\tpub exchange: agara_domain::Exchange,\n\n\t/// Namespaced activity id.\n\tpub id: PortfolioActivityId,\n\n\t/// Positive magnitude; the variant conveys direction.\n\tpub amount_micro: MicroAmount,\n\n\t/// Chain the transfer settled on.\n\tpub chain_id: i64,\n\n\t/// Lowercased collateral token address.\n\tpub token_address: String,\n\n\t/// On-chain transfer peer.\n\tpub counterparty_address: String,\n\n\t/// Settlement transaction hash.\n\tpub tx_hash: String,\n\n\t/// Ledger creation timestamp.\n\tpub created_at: DateTime<Utc>,\n}"
+    },
+    "PortfolioLpPayoutActivity": {
+      "source": "crates/service/src/portfolio/lp_payout.rs",
+      "line": 5,
+      "kind": "struct",
+      "declaration": "/// Confirmed liquidity-provider reward payout.\n#[derive(Debug, Clone, PartialEq, Eq, serde::Serialize, utoipa::ToSchema)]\npub struct PortfolioLpPayoutActivity {\n\t/// Exchange this payout occurred on.\n\tpub exchange: agara_domain::Exchange,\n\n\t/// Namespaced payout item id.\n\tpub id: PortfolioActivityId,\n\n\t/// Exact paid amount in micro units.\n\tpub amount_micro: MicroAmount,\n\n\t/// Reward date in America/New_York.\n\tpub epoch_date: NaiveDate,\n\n\t/// Canonical confirmed transaction hash, when available.\n\tpub tx_hash: Option<String>,\n\n\t/// Payout confirmation timestamp.\n\tpub created_at: DateTime<Utc>,\n}"
+    },
+    "PortfolioMergeActivity": {
+      "source": "crates/service/src/portfolio.rs",
+      "line": 690,
+      "kind": "struct",
+      "declaration": "/// Complete-set merge activity.\n#[derive(Debug, Clone, PartialEq, Eq, Serialize, utoipa::ToSchema)]\npub struct PortfolioMergeActivity {\n\t/// Exchange this activity occurred on.\n\tpub exchange: agara_domain::Exchange,\n\n\t/// Namespaced activity id.\n\tpub id: PortfolioActivityId,\n\n\t/// Market condition id.\n\tpub condition_id: ConditionId,\n\n\t/// Shares burned per outcome leg.\n\tpub shares_micro: MicroAmount,\n\n\t/// Collateral released.\n\tpub amount_micro: MicroAmount,\n\n\t/// Settlement transaction hash.\n\tpub tx_hash: String,\n\n\t/// Ledger creation timestamp.\n\tpub created_at: DateTime<Utc>,\n}"
+    },
+    "PortfolioOpenOrdersResponse": {
+      "source": "crates/service/src/portfolio.rs",
+      "line": 465,
+      "kind": "struct",
+      "declaration": "/// Open-orders response body.\n#[derive(Debug, Clone, Serialize, utoipa::ToSchema)]\npub struct PortfolioOpenOrdersResponse {\n\t/// Open order rows.\n\tpub orders: Vec<crate::orders::model::Order>,\n\t/// Market display metadata keyed by outcome token id.\n\tpub markets: BTreeMap<String, MarketMeta>,\n\n\t/// Event display metadata keyed by event slug.\n\tpub events: BTreeMap<String, EventMeta>,\n\t/// Keyset pagination state.\n\tpub pagination: CursorPagination<PortfolioListLimit>,\n\t/// Snapshot timestamp.\n\tpub as_of: DateTime<Utc>,\n}"
+    },
+    "PortfolioOrderActivity": {
+      "source": "crates/service/src/portfolio.rs",
+      "line": 622,
+      "kind": "struct",
+      "declaration": "/// Order activity aggregated across its recorded fills.\n#[derive(Debug, Clone, PartialEq, Eq, Serialize, utoipa::ToSchema)]\npub struct PortfolioOrderActivity {\n\t/// Exchange this activity occurred on.\n\tpub exchange: agara_domain::Exchange,\n\n\t/// Activity id.\n\tpub id: PortfolioActivityId,\n\n\t/// Order id.\n\tpub order_id: OrderId,\n\n\t/// Current order status.\n\tpub status: ClobOrderStatus,\n\n\t/// Whether the order filled completely or partially.\n\tpub fill_status: PortfolioOrderFillStatus,\n\n\t/// Market condition id when chain metadata is available.\n\tpub condition_id: Option<ConditionId>,\n\n\t/// Outcome token id when chain metadata is available.\n\tpub token_id: Option<TokenId>,\n\n\t/// Order side.\n\tpub side: Side,\n\n\t/// Total filled shares.\n\tpub filled_shares_micro: MicroAmount,\n\n\t/// Filled-share weighted average price.\n\tpub average_fill_price_micro: MicroAmount,\n\n\t/// Total filled notional.\n\tpub filled_amount_micro: MicroAmount,\n\n\t/// Total fees charged across fills.\n\tpub fees_micro: MicroAmount,\n\n\t/// Earliest recorded fill timestamp.\n\tpub created_at: DateTime<Utc>,\n}"
+    },
+    "PortfolioPosition": {
+      "source": "crates/service/src/portfolio.rs",
+      "line": 413,
+      "kind": "struct",
+      "declaration": "/// Position row.\n#[derive(Debug, Clone, PartialEq, Eq, Serialize, utoipa::ToSchema)]\npub struct PortfolioPosition {\n\t/// Owning exchange; token ids can overlap across listings.\n\tpub exchange: agara_domain::Exchange,\n\t/// Market condition id.\n\tpub condition_id: ConditionId,\n\t/// Outcome token id.\n\tpub token_id: TokenId,\n\t/// Held shares.\n\tpub shares_micro: MicroAmount,\n\t/// Shares available to place into a new sell order.\n\tpub available_shares_micro: MicroAmount,\n\t/// Average entry price.\n\tpub avg_price_micro: MicroAmount,\n\t/// Current price.\n\tpub current_price_micro: MicroAmount,\n\t/// Current position value.\n\tpub current_value_micro: MicroAmount,\n\t/// Maximum payout if the outcome wins.\n\tpub to_win_micro: MicroAmount,\n\t/// Profit or loss.\n\tpub profit_loss_micro: MicroAmount,\n\t/// Profit or loss ratio.\n\tpub profit_loss_percent: PortfolioDecimalString,\n\t/// Whether the position is redeemable.\n\tpub redeemable: bool,\n\t/// Mergeable now: an active binary market with a held, locked-adjusted complete set. Advisory; engine is authority.\n\tpub mergeable: bool,\n\t/// Mergeable complete-set size (min available leg), micro. `None` when not mergeable; always `None` off AGARA.\n\tpub mergeable_shares_micro: Option<MicroAmount>,\n}"
+    },
+    "PortfolioPositionOperationResponse": {
+      "source": "crates/service/src/position_operations.rs",
+      "line": 154,
+      "kind": "struct",
+      "declaration": "/// Position operation response.\n#[derive(Debug, Clone, Serialize, utoipa::ToSchema)]\npub struct PortfolioPositionOperationResponse {\n\t/// Executed operation.\n\tpub operation: PortfolioPositionOperation,\n\t/// Market condition id.\n\tpub condition_id: ConditionId,\n\t/// Relayer transaction id.\n\tpub relayer_transaction_id: PortfolioBridgeRelayerTransactionId,\n\t/// On-chain transaction hash when available.\n\tpub transaction_hash: Option<String>,\n\t/// Final relayer state.\n\tpub relayer_state: PositionOperationRelayerState,\n\t/// Response timestamp.\n\tpub as_of: DateTime<Utc>,\n}"
+    },
+    "PortfolioPositionsResponse": {
+      "source": "crates/service/src/portfolio.rs",
+      "line": 446,
+      "kind": "struct",
+      "declaration": "/// Positions response body. Positions are returned in one unpaginated response.\n/// Treat the response as complete only when `unavailable_exchanges` is empty.\n#[derive(Debug, Clone, PartialEq, Eq, Serialize, utoipa::ToSchema)]\npub struct PortfolioPositionsResponse {\n\t/// Position rows.\n\tpub positions: Vec<PortfolioPosition>,\n\t/// Market display metadata keyed by outcome token id.\n\tpub markets: BTreeMap<String, MarketMeta>,\n\n\t/// Event display metadata keyed by event slug.\n\tpub events: BTreeMap<String, EventMeta>,\n\t/// Backends whose positions couldn't be fetched for this snapshot \u2014 their\n\t/// rows are absent rather than failing the whole request. Empty means every\n\t/// queried backend responded.\n\tpub unavailable_exchanges: Vec<agara_domain::Exchange>,\n\t/// Snapshot timestamp.\n\tpub as_of: DateTime<Utc>,\n}"
+    },
+    "PortfolioRedeemActivity": {
+      "source": "crates/service/src/portfolio.rs",
+      "line": 715,
+      "kind": "struct",
+      "declaration": "/// Resolved outcome redemption activity.\n#[derive(Debug, Clone, PartialEq, Eq, Serialize, utoipa::ToSchema)]\npub struct PortfolioRedeemActivity {\n\t/// Exchange this activity occurred on.\n\tpub exchange: agara_domain::Exchange,\n\n\t/// Namespaced activity id.\n\tpub id: PortfolioActivityId,\n\n\t/// Market condition id.\n\tpub condition_id: ConditionId,\n\n\t/// Winning outcome token id.\n\tpub token_id: TokenId,\n\n\t/// Winning outcome shares redeemed.\n\tpub shares_micro: MicroAmount,\n\n\t/// Collateral received.\n\tpub amount_micro: MicroAmount,\n\n\t/// Settlement transaction hash.\n\tpub tx_hash: String,\n\n\t/// Ledger creation timestamp.\n\tpub created_at: DateTime<Utc>,\n}"
+    },
+    "PortfolioSplitActivity": {
+      "source": "crates/service/src/portfolio.rs",
+      "line": 665,
+      "kind": "struct",
+      "declaration": "/// Complete-set split activity.\n#[derive(Debug, Clone, PartialEq, Eq, Serialize, utoipa::ToSchema)]\npub struct PortfolioSplitActivity {\n\t/// Exchange this activity occurred on.\n\tpub exchange: agara_domain::Exchange,\n\n\t/// Namespaced activity id.\n\tpub id: PortfolioActivityId,\n\n\t/// Market condition id.\n\tpub condition_id: ConditionId,\n\n\t/// Shares minted per outcome leg.\n\tpub shares_micro: MicroAmount,\n\n\t/// Collateral consumed.\n\tpub amount_micro: MicroAmount,\n\n\t/// Settlement transaction hash.\n\tpub tx_hash: String,\n\n\t/// Ledger creation timestamp.\n\tpub created_at: DateTime<Utc>,\n}"
+    },
+    "PortfolioSummaryEntry": {
+      "source": "crates/service/src/portfolio.rs",
+      "line": 383,
+      "kind": "struct",
+      "declaration": "/// One exchange's portfolio summary. Collateral and positions on different\n/// networks remain separate.\n#[derive(Debug, Clone, PartialEq, Eq, Serialize, utoipa::ToSchema)]\npub struct PortfolioSummaryEntry {\n\t/// Exchange this entry summarises.\n\tpub exchange: agara_domain::Exchange,\n\t/// Wallet collateral balance.\n\tpub cash_balance_micro: MicroAmount,\n\t/// Cash available for buy validation.\n\tpub free_cash_micro: MicroAmount,\n\t/// Current value of open positions.\n\tpub positions_value_micro: MicroAmount,\n\t/// Total portfolio value.\n\tpub portfolio_value_micro: MicroAmount,\n\t/// Cost basis of open positions.\n\tpub open_cost_basis_micro: MicroAmount,\n\t/// Unrealized P&L for open positions.\n\tpub open_unrealized_pnl_micro: MicroAmount,\n\t/// Snapshot timestamp.\n\tpub as_of: DateTime<Utc>,\n}"
+    },
+    "PortfolioSummaryResponse": {
+      "source": "crates/service/src/portfolio.rs",
+      "line": 405,
+      "kind": "struct",
+      "declaration": "/// Portfolio summary response body. Carries one entry per exchange\n/// the user has onboarded on; the FE renders them side by side.\n#[derive(Debug, Clone, PartialEq, Eq, Serialize, utoipa::ToSchema)]\npub struct PortfolioSummaryResponse {\n\t/// Per-exchange summaries.\n\tpub summaries: Vec<PortfolioSummaryEntry>,\n}"
+    },
+    "PortfolioTradesResponse": {
+      "source": "crates/service/src/portfolio.rs",
+      "line": 564,
+      "kind": "struct",
+      "declaration": "/// Trades response body.\n#[derive(Debug, Clone, Serialize, utoipa::ToSchema)]\npub struct PortfolioTradesResponse {\n\t/// Trade rows.\n\tpub trades: Vec<Fill>,\n\t/// Market display metadata keyed by outcome token id.\n\tpub markets: BTreeMap<String, MarketMeta>,\n\n\t/// Event display metadata keyed by event slug.\n\tpub events: BTreeMap<String, EventMeta>,\n\t/// Keyset pagination state.\n\tpub pagination: CursorPagination<PortfolioListLimit>,\n\t/// Backends whose trades couldn't be fetched for this page \u2014 their rows are\n\t/// temporarily absent rather than failing the whole request. Empty means\n\t/// every queried backend responded.\n\tpub unavailable_exchanges: Vec<agara_domain::Exchange>,\n\t/// Snapshot timestamp.\n\tpub as_of: DateTime<Utc>,\n}"
+    },
+    "PortfolioWithdrawalActivity": {
+      "source": "crates/service/src/portfolio.rs",
+      "line": 771,
+      "kind": "struct",
+      "declaration": "/// Completed withdrawal activity.\n#[derive(Debug, Clone, PartialEq, Eq, Serialize, utoipa::ToSchema)]\npub struct PortfolioWithdrawalActivity {\n\t/// Exchange this activity occurred on.\n\tpub exchange: agara_domain::Exchange,\n\n\t/// Namespaced activity id.\n\tpub id: PortfolioActivityId,\n\n\t/// Positive magnitude; the variant conveys direction.\n\tpub amount_micro: MicroAmount,\n\n\t/// Chain the transfer settled on.\n\tpub chain_id: i64,\n\n\t/// Lowercased collateral token address.\n\tpub token_address: String,\n\n\t/// On-chain transfer peer.\n\tpub counterparty_address: String,\n\n\t/// Settlement transaction hash.\n\tpub tx_hash: String,\n\n\t/// Ledger creation timestamp.\n\tpub created_at: DateTime<Utc>,\n}"
+    },
+    "PositionOperationAccepted": {
+      "source": "apps/router/src/handlers/portfolio.rs",
+      "line": 29,
+      "kind": "struct",
+      "declaration": "// Accepted Agara operations settle asynchronously through the account-batch pipeline.\n#[derive(Debug, Clone, serde::Serialize, utoipa::ToSchema)]\npub(crate) struct PositionOperationAccepted {\n\tpub batch_hash: String,\n\tpub status: String,\n\tpub as_of: chrono::DateTime<chrono::Utc>,\n}"
+    },
+    "PositionOperationRelayerState": {
+      "source": "crates/service/src/position_operations.rs",
+      "line": 81,
+      "kind": "enum",
+      "declaration": "/// Relayer state returned for a completed position operation.\n#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, utoipa::ToSchema)]\n#[serde(rename_all = \"SCREAMING_SNAKE_CASE\")]\npub enum PositionOperationRelayerState {\n\t/// Transaction was mined.\n\tMined,\n\t/// Transaction was confirmed.\n\tConfirmed,\n}"
+    },
+    "RealizedPnlBucketDto": {
+      "source": "crates/service/src/realized_pnl.rs",
+      "line": 107,
+      "kind": "struct",
+      "declaration": "/// One exact UTC bucket.\n#[derive(Debug, Clone, PartialEq, Eq, serde::Serialize, utoipa::ToSchema)]\n#[serde(rename_all = \"camelCase\")]\npub struct RealizedPnlBucketDto {\n\t/// Inclusive RFC 3339 UTC bucket start.\n\tpub timestamp: DateTime<Utc>,\n\n\t/// Ordinary and cross-order sale PnL.\n\tpub sales: String,\n\n\t/// Complete-set merge PnL.\n\tpub direct_merges: String,\n\n\t/// Resolution redemption PnL.\n\tpub redemptions: String,\n\n\t/// Sum of all realised-PnL categories.\n\tpub total: String,\n}"
+    },
+    "RealizedPnlCategoryTotalsDto": {
+      "source": "crates/service/src/realized_pnl.rs",
+      "line": 76,
+      "kind": "struct",
+      "declaration": "/// Exact category totals for one UTC window.\n#[derive(Debug, Clone, PartialEq, Eq, serde::Serialize, utoipa::ToSchema)]\n#[serde(rename_all = \"camelCase\")]\npub struct RealizedPnlCategoryTotalsDto {\n\t/// Ordinary and cross-order sale PnL.\n\tpub sales: String,\n\n\t/// Complete-set merge PnL.\n\tpub direct_merges: String,\n\n\t/// Resolution redemption PnL.\n\tpub redemptions: String,\n\n\t/// Sum of all realised-PnL categories.\n\tpub total: String,\n}"
+    },
+    "RealizedPnlReportDto": {
+      "source": "crates/service/src/realized_pnl.rs",
+      "line": 138,
+      "kind": "struct",
+      "declaration": "/// Complete exact realised-PnL report.\n#[derive(Debug, Clone, PartialEq, Eq, serde::Serialize, utoipa::ToSchema)]\n#[serde(rename_all = \"camelCase\")]\npub struct RealizedPnlReportDto {\n\t/// Report currency.\n\tpub currency: String,\n\n\t/// Decimal places in every amount string.\n\tpub amount_scale: u8,\n\n\t/// Bucket timezone.\n\tpub timezone: String,\n\n\t/// Recognition time of the durable source prefix.\n\tpub as_of: DateTime<Utc>,\n\n\t/// Earliest instant proven by activation.\n\tpub coverage_started_at: DateTime<Utc>,\n\n\t/// Earliest disposal recognition instant included in totals and buckets.\n\tpub reporting_started_at: DateTime<Utc>,\n\n\t/// Last contiguous source event included.\n\tpub through_event: RealizedPnlThroughEventDto,\n\n\t/// Recognised wallet operations not yet applied; zero does not prove the projector is current.\n\tpub pending_operations: u32,\n\n\t/// Requested UTC bucket resolution.\n\tpub granularity: RealizedPnlBucketGranularityDto,\n\n\t/// Requested UTC calendar window.\n\tpub window: RealizedPnlWindowDto,\n\n\t/// Whether the current UTC bucket can still receive disposals.\n\tpub current_bucket_partial: bool,\n\n\t/// Seven-day, thirty-day, and all-time totals.\n\tpub totals: RealizedPnlTotalsDto,\n\n\t/// Ascending zero-filled UTC buckets for the requested window.\n\tpub buckets: Vec<RealizedPnlBucketDto>,\n}"
+    },
+    "RealizedPnlThroughEventDto": {
+      "source": "crates/service/src/realized_pnl.rs",
+      "line": 127,
+      "kind": "struct",
+      "declaration": "/// Durable source frontier included by a report.\n#[derive(Debug, Clone, PartialEq, Eq, serde::Serialize, utoipa::ToSchema)]\n#[serde(rename_all = \"camelCase\")]\npub struct RealizedPnlThroughEventDto {\n\t/// Engine shard.\n\tpub shard_id: i32,\n\n\t/// Exact event sequence as a decimal string.\n\tpub event_seq: String,\n}"
+    },
+    "RealizedPnlTotalsDto": {
+      "source": "crates/service/src/realized_pnl.rs",
+      "line": 93,
+      "kind": "struct",
+      "declaration": "/// Exact realised-PnL totals.\n#[derive(Debug, Clone, PartialEq, Eq, serde::Serialize, utoipa::ToSchema)]\n#[serde(rename_all = \"camelCase\")]\npub struct RealizedPnlTotalsDto {\n\t/// Current UTC day plus the preceding six days.\n\tpub last_7_days: RealizedPnlCategoryTotalsDto,\n\n\t/// Current UTC day plus the preceding twenty-nine days.\n\tpub last_30_days: RealizedPnlCategoryTotalsDto,\n\n\t/// All realised PnL recognized at or after `reportingStartedAt` through `throughEvent`.\n\tpub all_time: RealizedPnlCategoryTotalsDto,\n}"
+    },
+    "RebatesSummaryResponse": {
+      "source": "crates/service/src/portfolio.rs",
+      "line": 1107,
+      "kind": "struct",
+      "declaration": "/// Accrued rebate balances across a user's wallets in micro-collateral units.\n#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, utoipa::ToSchema)]\npub struct RebatesSummaryResponse {\n\t/// Pending maker-rebate balance.\n\tpub maker_rebate_micro: MicroAmount,\n\n\t/// Pending VIP taker-rebate balance.\n\tpub vip_rebate_micro: MicroAmount,\n\n\t/// Pending LP-incentive balance.\n\tpub lp_incentive_micro: MicroAmount,\n\n\t/// Sum across all programs.\n\tpub total_micro: MicroAmount,\n}"
+    },
+    "StatusResponse": {
+      "source": "apps/router/src/api_docs.rs",
+      "line": 77,
+      "kind": "struct",
+      "declaration": "#[derive(Serialize, utoipa::ToSchema)]\npub(crate) struct StatusResponse {\n\tpub(crate) markets: i64,\n\tpub(crate) events: i64,\n}"
+    },
+    "WalletPnlHistoryDto": {
+      "source": "crates/service/src/settled_pnl.rs",
+      "line": 182,
+      "kind": "struct",
+      "declaration": "/// Bounded historical timeline plus exact step-held range boundaries.\n#[derive(Debug, Clone, PartialEq, Eq, serde::Serialize, utoipa::ToSchema)]\npub struct WalletPnlHistoryDto {\n\t/// Requested inclusive range start.\n\tpub from: DateTime<Utc>,\n\n\t/// Requested inclusive range end.\n\tpub to: DateTime<Utc>,\n\n\t/// Step-held snapshot at the range start, absent before the first completed run.\n\tpub start: Option<WalletPnlSnapshotDto>,\n\n\t/// Step-held snapshot at the range end, absent before the first completed run.\n\tpub end: Option<WalletPnlSnapshotDto>,\n\n\t/// End minus start lifetime PnL, present only with both boundaries; this is not attribution.\n\tpub lifetime_pnl_change_micro: Option<String>,\n\n\t/// Completed PnL buckets in the requested range.\n\tpub points: Vec<WalletPnlSnapshotDto>,\n\n\t/// Whether the range contains more completed buckets than returned.\n\tpub has_more: bool,\n}"
+    },
+    "WalletPnlSnapshotDto": {
+      "source": "crates/service/src/settled_pnl.rs",
+      "line": 133,
+      "kind": "struct",
+      "declaration": "/// One full-lifetime settled-PnL value with mark and custody provenance.\n#[derive(Debug, Clone, PartialEq, Eq, serde::Serialize, utoipa::ToSchema)]\npub struct WalletPnlSnapshotDto {\n\t/// Scheduled mark and PnL bucket.\n\tpub bucket_at: DateTime<Utc>,\n\n\t/// Exact completed mark run.\n\tpub mark_run_id: Uuid,\n\n\t/// When mark capture completed.\n\tpub mark_captured_at: DateTime<Utc>,\n\n\t/// Custody chain.\n\tpub chain_id: i64,\n\n\t/// Immutable custody classifier version.\n\tpub classification_version: i32,\n\n\t/// Wallet-universe generation included by the snapshot.\n\tpub wallet_universe_generation: i64,\n\n\t/// Last custody block included.\n\tpub custody_through_block: i64,\n\n\t/// Hash of the last custody block included.\n\tpub custody_through_block_hash: String,\n\n\t/// Timestamp of the last custody block included.\n\tpub custody_through_block_time: DateTime<Utc>,\n\n\t/// Current collateral in micro-collateral units.\n\tpub collateral_micro: String,\n\n\t/// Marked position value in micro-collateral units.\n\tpub positions_value_micro: String,\n\n\t/// Cumulative external inflows in micro-collateral units.\n\tpub cumulative_inflow_micro: String,\n\n\t/// Cumulative external outflows in micro-collateral units.\n\tpub cumulative_outflow_micro: String,\n\n\t/// Full-lifetime settled PnL in micro-collateral units.\n\tpub lifetime_pnl_micro: String,\n\n\t/// Positive custody positions included in valuation.\n\tpub position_count: i32,\n}"
+    }
+  },
+  "schemas": {
+    "recovery.schema.json": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "$id": "https://schemas.agara.com/problem-contracts/v1/recovery.schema.json",
+      "title": "Recovery",
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "strategy": {
+              "const": "none"
+            }
+          },
+          "required": [
+            "strategy"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "strategy": {
+              "const": "retry"
+            }
+          },
+          "required": [
+            "strategy"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "strategy": {
+              "const": "retry_after"
+            },
+            "after_seconds": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 86400
+            }
+          },
+          "required": [
+            "strategy",
+            "after_seconds"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "strategy": {
+              "const": "refresh_identity_token"
+            }
+          },
+          "required": [
+            "strategy"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "strategy": {
+              "const": "check_status"
+            },
+            "resource": {
+              "$ref": "https://schemas.agara.com/problem-contracts/v1/recovery-resource.schema.json"
+            }
+          },
+          "required": [
+            "strategy",
+            "resource"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "strategy": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9_]{0,63}$",
+              "not": {
+                "enum": [
+                  "none",
+                  "retry",
+                  "retry_after",
+                  "refresh_identity_token",
+                  "check_status"
+                ]
+              }
+            }
+          },
+          "required": [
+            "strategy"
+          ],
+          "maxProperties": 8,
+          "additionalProperties": true
+        }
+      ]
+    }
+  }
+}
