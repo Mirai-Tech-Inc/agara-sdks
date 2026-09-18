@@ -1,0 +1,87 @@
+{
+  "currency": "USDC",
+  "amountScale": 12,
+  "timezone": "UTC",
+  "asOf": "2026-09-17T12:30:00Z",
+  "coverageStartedAt": "2026-09-01T00:00:00Z",
+  "reportingStartedAt": "2026-09-01T00:00:00Z",
+  "throughEvent": {
+    "shardId": 1,
+    "eventSeq": "123"
+  },
+  "pendingOperations": 0,
+  "granularity": "day",
+  "window": "7d",
+  "currentBucketPartial": true,
+  "totals": {
+    "last7Days": {
+      "sales": "4.250000000000",
+      "directMerges": "-0.250000000000",
+      "redemptions": "0.000000000000",
+      "total": "4.000000000000"
+    },
+    "last30Days": {
+      "sales": "4.250000000000",
+      "directMerges": "-0.250000000000",
+      "redemptions": "0.000000000000",
+      "total": "4.000000000000"
+    },
+    "allTime": {
+      "sales": "4.250000000000",
+      "directMerges": "-0.250000000000",
+      "redemptions": "0.000000000000",
+      "total": "4.000000000000"
+    }
+  },
+  "buckets": [
+    {
+      "timestamp": "2026-09-11T00:00:00Z",
+      "sales": "0.000000000000",
+      "directMerges": "0.000000000000",
+      "redemptions": "0.000000000000",
+      "total": "0.000000000000"
+    },
+    {
+      "timestamp": "2026-09-12T00:00:00Z",
+      "sales": "0.000000000000",
+      "directMerges": "0.000000000000",
+      "redemptions": "0.000000000000",
+      "total": "0.000000000000"
+    },
+    {
+      "timestamp": "2026-09-13T00:00:00Z",
+      "sales": "0.000000000000",
+      "directMerges": "0.000000000000",
+      "redemptions": "0.000000000000",
+      "total": "0.000000000000"
+    },
+    {
+      "timestamp": "2026-09-14T00:00:00Z",
+      "sales": "0.000000000000",
+      "directMerges": "0.000000000000",
+      "redemptions": "0.000000000000",
+      "total": "0.000000000000"
+    },
+    {
+      "timestamp": "2026-09-15T00:00:00Z",
+      "sales": "0.000000000000",
+      "directMerges": "0.000000000000",
+      "redemptions": "0.000000000000",
+      "total": "0.000000000000"
+    },
+    {
+      "timestamp": "2026-09-16T00:00:00Z",
+      "sales": "0.000000000000",
+      "directMerges": "0.000000000000",
+      "redemptions": "0.000000000000",
+      "total": "0.000000000000"
+    },
+    {
+      "timestamp": "2026-09-17T00:00:00Z",
+      "sales": "4.250000000000",
+      "directMerges": "-0.250000000000",
+      "redemptions": "0.000000000000",
+      "total": "4.000000000000"
+    }
+  ]
+}
