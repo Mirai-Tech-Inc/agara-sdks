@@ -1,0 +1,477 @@
+{
+  "version": 1,
+  "fixtures": [
+    {
+      "name": "known origin problem",
+      "schema": "origin-problem-details.schema.json",
+      "schema_valid": true,
+      "contract_valid": true,
+      "value": {
+        "type": "urn:agara:problem:insufficient-balance",
+        "title": "Insufficient balance",
+        "status": 422,
+        "code": "insufficient_balance",
+        "detail": "Available balance is lower than the order value.",
+        "request_id": "8051f907-4eeb-4ca9-bd84-b447ea65a68c",
+        "recovery": { "strategy": "none" }
+      }
+    },
+    {
+      "name": "future origin code and recovery",
+      "schema": "origin-problem-details.schema.json",
+      "schema_valid": true,
+      "contract_valid": true,
+      "value": {
+        "type": "urn:agara:problem:future-capacity-state",
+        "title": "Future capacity state",
+        "status": 503,
+        "code": "future_capacity_state",
+        "request_id": "8051f907-4eeb-4ca9-bd84-b447ea65a68c",
+        "recovery": { "strategy": "wait_for_signal", "opaque": "discarded" }
+      }
+    },
+    {
+      "name": "future origin code with retry recovery",
+      "schema": "origin-problem-details.schema.json",
+      "schema_valid": true,
+      "contract_valid": true,
+      "value": {
+        "type": "urn:agara:problem:future-origin-retry",
+        "title": "Future origin retry",
+        "status": 503,
+        "code": "future_origin_retry",
+        "request_id": "8051f907-4eeb-4ca9-bd84-b447ea65a68c",
+        "recovery": { "strategy": "retry" }
+      }
+    },
+    {
+      "name": "known origin status mismatch",
+      "schema": "origin-problem-details.schema.json",
+      "schema_valid": true,
+      "contract_valid": false,
+      "value": {
+        "type": "urn:agara:problem:insufficient-balance",
+        "title": "Insufficient balance",
+        "status": 500,
+        "code": "insufficient_balance",
+        "request_id": "8051f907-4eeb-4ca9-bd84-b447ea65a68c",
+        "recovery": { "strategy": "none" }
+      }
+    },
+    {
+      "name": "malformed known retry-after recovery",
+      "schema": "origin-problem-details.schema.json",
+      "schema_valid": false,
+      "contract_valid": false,
+      "value": {
+        "type": "urn:agara:problem:rate-limited",
+        "title": "Too many requests",
+        "status": 429,
+        "code": "rate_limited",
+        "detail": "You are rate limited, please try again later.",
+        "request_id": "8051f907-4eeb-4ca9-bd84-b447ea65a68c",
+        "recovery": { "strategy": "retry_after" }
+      }
+    },
+    {
+      "name": "known unit recovery with extra property",
+      "schema": "origin-problem-details.schema.json",
+      "schema_valid": false,
+      "contract_valid": false,
+      "value": {
+        "type": "urn:agara:problem:insufficient-balance",
+        "title": "Insufficient balance",
+        "status": 422,
+        "code": "insufficient_balance",
+        "detail": "Available balance is lower than the order value.",
+        "request_id": "8051f907-4eeb-4ca9-bd84-b447ea65a68c",
+        "recovery": { "strategy": "none", "extra": 1 }
+      }
+    },
+    {
+      "name": "invalid request id",
+      "schema": "origin-problem-details.schema.json",
+      "schema_valid": false,
+      "contract_valid": false,
+      "value": {
+        "type": "urn:agara:problem:internal-error",
+        "title": "Something went wrong",
+        "status": 500,
+        "code": "internal_error",
+        "detail": "We hit an unexpected problem. Please try again in a moment.",
+        "request_id": "not-a-uuid",
+        "recovery": { "strategy": "none" }
+      }
+    },
+    {
+      "name": "noncanonical simple request id",
+      "schema": "origin-problem-details.schema.json",
+      "schema_valid": false,
+      "contract_valid": false,
+      "value": {
+        "type": "urn:agara:problem:internal-error",
+        "title": "Something went wrong",
+        "status": 500,
+        "code": "internal_error",
+        "detail": "We hit an unexpected problem. Please try again in a moment.",
+        "request_id": "8051f9074eeb4ca9bd84b447ea65a68c",
+        "recovery": { "strategy": "none" }
+      }
+    },
+    {
+      "name": "non-rfc request id",
+      "schema": "origin-problem-details.schema.json",
+      "schema_valid": false,
+      "contract_valid": false,
+      "value": {
+        "type": "urn:agara:problem:internal-error",
+        "title": "Something went wrong",
+        "status": 500,
+        "code": "internal_error",
+        "detail": "We hit an unexpected problem. Please try again in a moment.",
+        "request_id": "8051f907-4eeb-0ca9-0d84-b447ea65a68c",
+        "recovery": { "strategy": "none" }
+      }
+    },
+    {
+      "name": "multibyte safe title",
+      "schema": "origin-problem-details.schema.json",
+      "schema_valid": true,
+      "contract_valid": true,
+      "value": {
+        "type": "urn:agara:problem:future-price-state",
+        "title": "价格暂时不可用 — しばらくしてからもう一度お試しください",
+        "status": 503,
+        "code": "future_price_state",
+        "request_id": "8051f907-4eeb-4ca9-bd84-b447ea65a68c",
+        "recovery": { "strategy": "future_retry" }
+      }
+    },
+    {
+      "name": "known edge problem",
+      "schema": "edge-problem.schema.json",
+      "schema_valid": true,
+      "contract_valid": true,
+      "value": {
+        "type": "urn:agara:problem:rate-limited",
+        "title": "Too many requests",
+        "status": 429,
+        "code": "rate_limited",
+        "detail": "You are rate limited, please try again later.",
+        "recovery": { "strategy": "retry_after", "after_seconds": 60 }
+      }
+    },
+    {
+      "name": "future edge code with identity refresh recovery",
+      "schema": "edge-problem.schema.json",
+      "schema_valid": true,
+      "contract_valid": true,
+      "value": {
+        "type": "urn:agara:problem:future-edge-identity",
+        "title": "Future edge identity failure",
+        "status": 401,
+        "code": "future_edge_identity",
+        "recovery": { "strategy": "refresh_identity_token" }
+      }
+    },
+    {
+      "name": "edge cannot claim origin request id",
+      "schema": "edge-problem.schema.json",
+      "schema_valid": false,
+      "contract_valid": false,
+      "value": {
+        "type": "urn:agara:problem:rate-limited",
+        "title": "Too many requests",
+        "status": 429,
+        "code": "rate_limited",
+        "detail": "You are rate limited, please try again later.",
+        "request_id": "8051f907-4eeb-4ca9-bd84-b447ea65a68c",
+        "recovery": { "strategy": "retry_after", "after_seconds": 60 }
+      }
+    },
+    {
+      "name": "async terminal failure",
+      "schema": "public-failure.schema.json",
+      "schema_valid": true,
+      "contract_valid": true,
+      "value": {
+        "code": "settlement_divergent",
+        "title": "Settlement requires review",
+        "detail": "Settlement effects do not match the expected operation set.",
+        "recovery": { "strategy": "none" }
+      }
+    },
+    {
+      "name": "future public failure with retry recovery",
+      "schema": "public-failure.schema.json",
+      "schema_valid": true,
+      "contract_valid": true,
+      "value": {
+        "code": "future_public_retry",
+        "title": "Future public retry",
+        "recovery": { "strategy": "retry" }
+      }
+    },
+    {
+      "name": "known async title mismatch",
+      "schema": "public-failure.schema.json",
+      "schema_valid": true,
+      "contract_valid": false,
+      "value": {
+        "code": "settlement_divergent",
+        "title": "Raw provider failure",
+        "recovery": { "strategy": "none" }
+      }
+    },
+    {
+      "name": "known omit-policy detail",
+      "schema": "public-failure.schema.json",
+      "schema_valid": true,
+      "contract_valid": false,
+      "value": {
+        "code": "order_not_found",
+        "title": "Order not found",
+        "detail": "Raw upstream diagnostic",
+        "recovery": { "strategy": "none" }
+      }
+    },
+    {
+      "name": "known allowlisted detail mismatch",
+      "schema": "public-failure.schema.json",
+      "schema_valid": true,
+      "contract_valid": false,
+      "value": {
+        "code": "order_not_fillable",
+        "title": "Order cannot be filled",
+        "detail": "Raw upstream diagnostic",
+        "recovery": { "strategy": "none" }
+      }
+    },
+    {
+      "name": "websocket expiry frame",
+      "schema": "websocket-failure-frame.schema.json",
+      "schema_valid": true,
+      "contract_valid": true,
+      "value": {
+        "op": "error",
+        "failure": {
+          "code": "identity_token_expired",
+          "title": "Your session has expired",
+          "detail": "Please log in again to continue.",
+          "recovery": { "strategy": "refresh_identity_token" }
+        },
+        "action": "reconnect",
+        "channel": "account_events"
+      }
+    },
+    {
+      "name": "event-scoped stream unavailable frame",
+      "schema": "websocket-failure-frame.schema.json",
+      "schema_valid": true,
+      "contract_valid": true,
+      "value": {
+        "op": "error",
+        "failure": {
+          "code": "stream_subject_unavailable",
+          "title": "Stream subject temporarily unavailable",
+          "detail": "This stream subject is temporarily unavailable.",
+          "recovery": { "strategy": "none" }
+        },
+        "action": "resubscribe",
+        "channel": "market_status",
+        "event_id": "10000000-0000-4000-8000-000000000001"
+      }
+    },
+    {
+      "name": "event-scoped subscription limit frame",
+      "schema": "websocket-failure-frame.schema.json",
+      "schema_valid": true,
+      "contract_valid": true,
+      "value": {
+        "op": "error",
+        "failure": {
+          "code": "subscription_limit_exceeded",
+          "title": "Subscription limit exceeded",
+          "recovery": { "strategy": "none" }
+        },
+        "action": "none",
+        "channel": "market_status",
+        "event_id": "10000000-0000-4000-8000-000000000001"
+      }
+    },
+    {
+      "name": "future websocket code with reconnect action",
+      "schema": "websocket-failure-frame.schema.json",
+      "schema_valid": true,
+      "contract_valid": true,
+      "value": {
+        "op": "error",
+        "failure": {
+          "code": "future_ws_reconnect",
+          "title": "Future WebSocket reconnect",
+          "recovery": { "strategy": "refresh_identity_token" }
+        },
+        "action": "reconnect",
+        "channel": "account_events"
+      }
+    },
+    {
+      "name": "websocket action mismatch",
+      "schema": "websocket-failure-frame.schema.json",
+      "schema_valid": true,
+      "contract_valid": false,
+      "value": {
+        "op": "error",
+        "failure": {
+          "code": "identity_token_expired",
+          "title": "Your session has expired",
+          "detail": "Please log in again to continue.",
+          "recovery": { "strategy": "refresh_identity_token" }
+        },
+        "action": "none",
+        "channel": "account_events"
+      }
+    },
+    {
+      "name": "websocket operation mismatch",
+      "schema": "websocket-failure-frame.schema.json",
+      "schema_valid": false,
+      "contract_valid": false,
+      "value": {
+        "op": "failure",
+        "failure": {
+          "code": "internal_error",
+          "title": "Something went wrong",
+          "detail": "We hit an unexpected problem. Please try again in a moment.",
+          "recovery": { "strategy": "none" }
+        },
+        "action": "reconnect"
+      }
+    },
+    {
+      "name": "unknown recovery property overflow",
+      "schema": "public-failure.schema.json",
+      "schema_valid": false,
+      "contract_valid": false,
+      "value": {
+        "code": "future_failure",
+        "title": "Future failure",
+        "recovery": {
+          "strategy": "future_strategy",
+          "one": 1,
+          "two": 2,
+          "three": 3,
+          "four": 4,
+          "five": 5,
+          "six": 6,
+          "seven": 7,
+          "eight": 8
+        }
+      }
+    },
+    {
+      "name": "invalid check-status batch hash",
+      "schema": "public-failure.schema.json",
+      "schema_valid": false,
+      "contract_valid": false,
+      "value": {
+        "code": "dependency_outcome_unknown",
+        "title": "Submission status is uncertain",
+        "recovery": {
+          "strategy": "check_status",
+          "resource": { "kind": "batch", "batch_hash": "0x1234" }
+        }
+      }
+    },
+    {
+      "name": "multibyte scalar exact boundaries",
+      "schema": "origin-problem-details.schema.json",
+      "schema_valid": true,
+      "contract_valid": true,
+      "value": {
+        "type": "urn:agara:problem:future-unicode-boundary",
+        "title": "\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c",
+        "status": 422,
+        "code": "future_unicode_boundary",
+        "detail": "\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c",
+        "request_id": "8051f907-4eeb-4ca9-bd84-b447ea65a68c",
+        "recovery": { "strategy": "future_retry" },
+        "field_errors": [
+          {
+            "path": ["\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c"],
+            "code": "invalid_value",
+            "message": "\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c"
+          }
+        ]
+      }
+    },
+    {
+      "name": "multibyte scalar title overflow",
+      "schema": "origin-problem-details.schema.json",
+      "schema_valid": false,
+      "contract_valid": false,
+      "value": {
+        "type": "urn:agara:problem:future-unicode-overflow",
+        "title": "\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c",
+        "status": 422,
+        "code": "future_unicode_overflow",
+        "request_id": "8051f907-4eeb-4ca9-bd84-b447ea65a68c",
+        "recovery": { "strategy": "future_retry" }
+      }
+    },
+    {
+      "name": "multibyte websocket context exact boundary",
+      "schema": "websocket-failure-frame.schema.json",
+      "schema_valid": true,
+      "contract_valid": true,
+      "value": {
+        "op": "error",
+        "failure": {
+          "code": "future_ws_failure",
+          "title": "Future WebSocket failure",
+          "recovery": { "strategy": "future_retry" }
+        },
+        "action": "none",
+        "token_id": "\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c",
+        "condition_id": "\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c"
+      }
+    },
+    {
+      "name": "multibyte websocket context overflow",
+      "schema": "websocket-failure-frame.schema.json",
+      "schema_valid": false,
+      "contract_valid": false,
+      "value": {
+        "op": "error",
+        "failure": {
+          "code": "future_ws_failure",
+          "title": "Future WebSocket failure",
+          "recovery": { "strategy": "future_retry" }
+        },
+        "action": "none",
+        "token_id": "\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c"
+      }
+    },
+    {
+      "name": "field path index exceeds schema maximum",
+      "schema": "origin-problem-details.schema.json",
+      "schema_valid": false,
+      "contract_valid": false,
+      "value": {
+        "type": "urn:agara:problem:future-field-error",
+        "title": "Future field error",
+        "status": 422,
+        "code": "future_field_error",
+        "request_id": "8051f907-4eeb-4ca9-bd84-b447ea65a68c",
+        "recovery": { "strategy": "future_retry" },
+        "field_errors": [
+          {
+            "path": [2147483648],
+            "code": "invalid_value",
+            "message": "Value is invalid"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,491 @@
+[
+  {
+    "name": "orderbook_snapshot",
+    "value": {
+      "op": "update",
+      "channel": "orderbook",
+      "sequence": 42,
+      "token_id": "123",
+      "data": {
+        "kind": "snapshot",
+        "bids": [
+          [
+            600000,
+            1000000
+          ]
+        ],
+        "asks": [],
+        "tick_size": 10000,
+        "price_scale": 1000000,
+        "size_scale": 1000000
+      }
+    }
+  },
+  {
+    "name": "orderbook_delta",
+    "value": {
+      "op": "update",
+      "channel": "orderbook",
+      "sequence": 42,
+      "token_id": "123",
+      "data": {
+        "kind": "delta",
+        "bids": [
+          [
+            600000,
+            0
+          ]
+        ],
+        "asks": [],
+        "price_scale": 1000000,
+        "size_scale": 1000000
+      }
+    }
+  },
+  {
+    "name": "best_quote",
+    "value": {
+      "op": "update",
+      "channel": "best_quote",
+      "sequence": 42,
+      "token_id": "123",
+      "data": {
+        "bid": null,
+        "ask": null,
+        "price_scale": 1000000,
+        "size_scale": 1000000
+      }
+    }
+  },
+  {
+    "name": "market_created",
+    "value": {
+      "op": "update",
+      "channel": "market_status",
+      "sequence": 42,
+      "condition_id": "0x3333333333333333333333333333333333333333333333333333333333333333",
+      "data": {
+        "kind": "market_created",
+        "num_outcomes": 2,
+        "tick_size": 10000,
+        "price_scale": 1000000,
+        "size_scale": 1000000,
+        "min_price": 10000,
+        "max_price": 990000,
+        "cross_match_enabled": true
+      }
+    }
+  },
+  {
+    "name": "market_halted",
+    "value": {
+      "op": "update",
+      "channel": "market_status",
+      "sequence": 42,
+      "condition_id": "0x3333333333333333333333333333333333333333333333333333333333333333",
+      "data": {
+        "kind": "market_halted"
+      }
+    }
+  },
+  {
+    "name": "market_resumed",
+    "value": {
+      "op": "update",
+      "channel": "market_status",
+      "sequence": 42,
+      "condition_id": "0x3333333333333333333333333333333333333333333333333333333333333333",
+      "data": {
+        "kind": "market_resumed"
+      }
+    }
+  },
+  {
+    "name": "outcome_proposed",
+    "value": {
+      "op": "update",
+      "channel": "market_status",
+      "sequence": 42,
+      "condition_id": "0x3333333333333333333333333333333333333333333333333333333333333333",
+      "data": {
+        "kind": "outcome_proposed",
+        "proposed_token_id": "123"
+      }
+    }
+  },
+  {
+    "name": "market_resolved",
+    "value": {
+      "op": "update",
+      "channel": "market_status",
+      "sequence": 42,
+      "condition_id": "0x3333333333333333333333333333333333333333333333333333333333333333",
+      "data": {
+        "kind": "market_resolved",
+        "winning_token_id": "123"
+      }
+    }
+  },
+  {
+    "name": "fee_policy_updated",
+    "value": {
+      "op": "update",
+      "channel": "market_status",
+      "sequence": 42,
+      "condition_id": "0x3333333333333333333333333333333333333333333333333333333333333333",
+      "data": {
+        "kind": "fee_policy_updated"
+      }
+    }
+  },
+  {
+    "name": "cross_match_toggled",
+    "value": {
+      "op": "update",
+      "channel": "market_status",
+      "sequence": 42,
+      "condition_id": "0x3333333333333333333333333333333333333333333333333333333333333333",
+      "data": {
+        "kind": "cross_match_toggled",
+        "enabled": false
+      }
+    }
+  },
+  {
+    "name": "trade",
+    "value": {
+      "op": "update",
+      "channel": "trades",
+      "sequence": 42,
+      "condition_id": "0x3333333333333333333333333333333333333333333333333333333333333333",
+      "data": {
+        "kind": "trade",
+        "fill_id": "20",
+        "taker_token_id": "123",
+        "maker_token_id": "123",
+        "side": "BUY",
+        "price": 600000,
+        "size": 1000000,
+        "settlement_mode": "NORMAL",
+        "price_scale": 1000000,
+        "size_scale": 1000000
+      }
+    }
+  },
+  {
+    "name": "fill",
+    "value": {
+      "op": "update",
+      "channel": "account_events",
+      "sequence": 42,
+      "data": {
+        "kind": "fill",
+        "token_id": "123",
+        "order_id": "8051f907-4eeb-4ca9-bd84-b447ea65a68c",
+        "order_hash": "0x1111111111111111111111111111111111111111111111111111111111111111",
+        "side": "BUY",
+        "price": 600000,
+        "price_scale": 1000000,
+        "size_scale": 1000000,
+        "fill_id": "20",
+        "role": "TAKER",
+        "size": 1000000,
+        "settlement_mode": "NORMAL",
+        "fee_micro": "100"
+      }
+    }
+  },
+  {
+    "name": "order_accepted",
+    "value": {
+      "op": "update",
+      "channel": "account_events",
+      "sequence": 42,
+      "data": {
+        "kind": "order_accepted",
+        "token_id": "123",
+        "order_id": "8051f907-4eeb-4ca9-bd84-b447ea65a68c",
+        "order_hash": "0x1111111111111111111111111111111111111111111111111111111111111111",
+        "side": "BUY",
+        "price": 600000,
+        "price_scale": 1000000,
+        "size_scale": 1000000,
+        "remaining_size": 600000,
+        "original_size": 1000000,
+        "tif": "GTC"
+      }
+    }
+  },
+  {
+    "name": "order_cancelled",
+    "value": {
+      "op": "update",
+      "channel": "account_events",
+      "sequence": 42,
+      "data": {
+        "kind": "order_cancelled",
+        "token_id": "123",
+        "order_id": "8051f907-4eeb-4ca9-bd84-b447ea65a68c",
+        "order_hash": "0x1111111111111111111111111111111111111111111111111111111111111111",
+        "side": "BUY",
+        "price": 600000,
+        "price_scale": 1000000,
+        "size_scale": 1000000,
+        "remaining_size": 600000,
+        "reason": "USER"
+      }
+    }
+  },
+  {
+    "name": "order_rejected",
+    "value": {
+      "op": "update",
+      "channel": "account_events",
+      "sequence": 0,
+      "data": {
+        "kind": "order_rejected",
+        "order_id": "8051f907-4eeb-4ca9-bd84-b447ea65a68c",
+        "order_hash": "0x1111111111111111111111111111111111111111111111111111111111111111",
+        "token_id": "123",
+        "failure": {
+          "code": "insufficient_balance",
+          "title": "Insufficient balance",
+          "recovery": {
+            "strategy": "none"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "tokens_minted",
+    "value": {
+      "op": "update",
+      "channel": "account_events",
+      "sequence": 42,
+      "data": {
+        "kind": "tokens_minted",
+        "condition_id": "0x3333333333333333333333333333333333333333333333333333333333333333",
+        "size": 1000000,
+        "size_scale": 1000000,
+        "batch_hash": "0x2222222222222222222222222222222222222222222222222222222222222222",
+        "batch_index": 0
+      }
+    }
+  },
+  {
+    "name": "tokens_merged",
+    "value": {
+      "op": "update",
+      "channel": "account_events",
+      "sequence": 42,
+      "data": {
+        "kind": "tokens_merged",
+        "condition_id": "0x3333333333333333333333333333333333333333333333333333333333333333",
+        "size": 1000000,
+        "size_scale": 1000000,
+        "batch_hash": "0x2222222222222222222222222222222222222222222222222222222222222222",
+        "batch_index": 0
+      }
+    }
+  },
+  {
+    "name": "tokens_redeemed",
+    "value": {
+      "op": "update",
+      "channel": "account_events",
+      "sequence": 42,
+      "data": {
+        "kind": "tokens_redeemed",
+        "condition_id": "0x3333333333333333333333333333333333333333333333333333333333333333",
+        "winning_token_id": "123",
+        "losing_token_id": "456",
+        "winning_shares_redeemed": "1000000",
+        "losing_shares_zeroed": "0",
+        "size_scale": 1000000,
+        "payout_micro": "1000000",
+        "batch_hash": "0x2222222222222222222222222222222222222222222222222222222222222222",
+        "batch_index": 0
+      }
+    }
+  },
+  {
+    "name": "collateral_deposited",
+    "value": {
+      "op": "update",
+      "channel": "account_events",
+      "sequence": 42,
+      "data": {
+        "kind": "collateral_deposited",
+        "amount_micro": "1000000",
+        "cash_balance_micro": "2000000",
+        "batch_hash": "0x2222222222222222222222222222222222222222222222222222222222222222",
+        "batch_index": 0
+      }
+    }
+  },
+  {
+    "name": "collateral_withdrawn",
+    "value": {
+      "op": "update",
+      "channel": "account_events",
+      "sequence": 42,
+      "data": {
+        "kind": "collateral_withdrawn",
+        "amount_micro": "1000000",
+        "cash_balance_micro": "2000000",
+        "batch_hash": "0x2222222222222222222222222222222222222222222222222222222222222222",
+        "batch_index": 0
+      }
+    }
+  },
+  {
+    "name": "current_market_changed",
+    "value": {
+      "op": "update",
+      "channel": "market_status",
+      "event_id": "8051f907-4eeb-4ca9-bd84-b447ea65a68c",
+      "data": {
+        "kind": "current_market_changed",
+        "changed_at": "2026-09-17T00:00:00Z",
+        "main_market_id": "10000000-0000-4000-8000-000000000001",
+        "market": {
+          "market_id": "10000000-0000-4000-8000-000000000001",
+          "condition_id": "0x2222222222222222222222222222222222222222222222222222222222222222",
+          "state": "ACTIVE",
+          "reference_price": "100.00",
+          "currency": "USD",
+          "reference_at": "2026-09-17T00:00:00Z",
+          "observe_at": "2026-09-18T00:00:00Z",
+          "outcomes": [
+            {
+              "token_id": "1",
+              "kind": "YES",
+              "label": "Yes",
+              "short_label": null
+            },
+            {
+              "token_id": "2",
+              "kind": "NO",
+              "label": "No",
+              "short_label": null
+            }
+          ]
+        }
+      }
+    }
+  },
+  {
+    "name": "market_resolution_completed",
+    "value": {
+      "op": "update",
+      "channel": "market_status",
+      "event_id": "8051f907-4eeb-4ca9-bd84-b447ea65a68c",
+      "data": {
+        "kind": "market_resolution_completed",
+        "main_market_id": null,
+        "resolved_market_id": "10000000-0000-4000-8000-000000000001",
+        "resolved_condition_id": "0x2222222222222222222222222222222222222222222222222222222222222222",
+        "winning_token_id": "1",
+        "resolved_at": "2026-09-17T00:00:00Z",
+        "replacement_status": "none",
+        "replacement": null
+      }
+    }
+  },
+  {
+    "name": "websocket expiry frame",
+    "schema": "websocket-failure-frame.schema.json",
+    "schema_valid": true,
+    "contract_valid": true,
+    "value": {
+      "op": "error",
+      "failure": {
+        "code": "identity_token_expired",
+        "title": "Your session has expired",
+        "detail": "Please log in again to continue.",
+        "recovery": {
+          "strategy": "refresh_identity_token"
+        }
+      },
+      "action": "reconnect",
+      "channel": "account_events"
+    }
+  },
+  {
+    "name": "event-scoped stream unavailable frame",
+    "schema": "websocket-failure-frame.schema.json",
+    "schema_valid": true,
+    "contract_valid": true,
+    "value": {
+      "op": "error",
+      "failure": {
+        "code": "stream_subject_unavailable",
+        "title": "Stream subject temporarily unavailable",
+        "detail": "This stream subject is temporarily unavailable.",
+        "recovery": {
+          "strategy": "none"
+        }
+      },
+      "action": "resubscribe",
+      "channel": "market_status",
+      "event_id": "10000000-0000-4000-8000-000000000001"
+    }
+  },
+  {
+    "name": "event-scoped subscription limit frame",
+    "schema": "websocket-failure-frame.schema.json",
+    "schema_valid": true,
+    "contract_valid": true,
+    "value": {
+      "op": "error",
+      "failure": {
+        "code": "subscription_limit_exceeded",
+        "title": "Subscription limit exceeded",
+        "recovery": {
+          "strategy": "none"
+        }
+      },
+      "action": "none",
+      "channel": "market_status",
+      "event_id": "10000000-0000-4000-8000-000000000001"
+    }
+  },
+  {
+    "name": "future websocket code with reconnect action",
+    "schema": "websocket-failure-frame.schema.json",
+    "schema_valid": true,
+    "contract_valid": true,
+    "value": {
+      "op": "error",
+      "failure": {
+        "code": "future_ws_reconnect",
+        "title": "Future WebSocket reconnect",
+        "recovery": {
+          "strategy": "refresh_identity_token"
+        }
+      },
+      "action": "reconnect",
+      "channel": "account_events"
+    }
+  },
+  {
+    "name": "multibyte websocket context exact boundary",
+    "schema": "websocket-failure-frame.schema.json",
+    "schema_valid": true,
+    "contract_valid": true,
+    "value": {
+      "op": "error",
+      "failure": {
+        "code": "future_ws_failure",
+        "title": "Future WebSocket failure",
+        "recovery": {
+          "strategy": "future_retry"
+        }
+      },
+      "action": "none",
+      "token_id": "\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c",
+      "condition_id": "\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c\u754c"
+    }
+  }
+]
