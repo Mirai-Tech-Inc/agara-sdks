@@ -1,0 +1,21 @@
+{
+  "eligible": true,
+  "epoch_date": "2026-09-17",
+  "epoch_ends_at": "2026-09-18T00:00:00Z",
+  "markets": [
+    {
+      "market_id": "11111111-1111-4111-8111-111111111111",
+      "question": "Market?",
+      "event_slug": "event",
+      "event_title": "Event",
+      "phase": "ACTIVE",
+      "pool_micro": "1000000",
+      "max_spread_micro": 10000,
+      "min_shares_micro": "1000000",
+      "epoch_score": 1.25,
+      "market_total_score": 2.5,
+      "projected_payout_micro": "500000",
+      "has_traded": true
+    }
+  ]
+}

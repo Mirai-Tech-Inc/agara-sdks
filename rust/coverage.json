@@ -1,0 +1,507 @@
+{
+  "platform_commit": "a7e8c2dc1ab3b16f4133d0952347d5cc1bbd1b71",
+  "scope": "All public/PAT trader REST operations including conditional PnL and core market/event/calendar/security/price discovery, router WebSocket and price SSE. Excludes browser signer-session configuration (Privy signer_id/policy_ids only), home/nav presentation, browser/JWT account administration/withdrawal, faucets, admin/internal protocols and retired redeem tombstones. Presigned batch helpers admit SPLIT/MERGE/WITHDRAW only; REDEEM is retired and Across variants are server-signed-only.",
+  "operations": [
+    {
+      "operation_id": "router GET /trade/v1/status",
+      "method": "GET",
+      "path": "/trade/v1/status",
+      "public_method": "get_status",
+      "response_fixture": "get_status.json",
+      "producer": "apps/router/src/handlers.rs",
+      "availability": "mounted"
+    },
+    {
+      "operation_id": "router POST /trade/v1/orders",
+      "method": "POST",
+      "path": "/trade/v1/orders",
+      "public_method": "place_limit_order",
+      "response_fixture": "place_limit_order.json",
+      "producer": "apps/router/src/handlers.rs",
+      "availability": "mounted"
+    },
+    {
+      "operation_id": "router POST /trade/v1/orders/signed",
+      "method": "POST",
+      "path": "/trade/v1/orders/signed",
+      "public_method": "place_signed_order",
+      "response_fixture": "place_signed_order.json",
+      "producer": "apps/router/src/handlers.rs",
+      "availability": "mounted"
+    },
+    {
+      "operation_id": "router POST /trade/v1/orders/signed/batch",
+      "method": "POST",
+      "path": "/trade/v1/orders/signed/batch",
+      "public_method": "place_signed_orders",
+      "response_fixture": "place_signed_orders.json",
+      "producer": "apps/router/src/handlers.rs",
+      "availability": "mounted"
+    },
+    {
+      "operation_id": "router POST /trade/v1/orders/list",
+      "method": "POST",
+      "path": "/trade/v1/orders/list",
+      "public_method": "list_orders",
+      "response_fixture": "list_orders.json",
+      "producer": "apps/router/src/handlers.rs",
+      "availability": "mounted"
+    },
+    {
+      "operation_id": "router GET /trade/v1/orders/{order_id}",
+      "method": "GET",
+      "path": "/trade/v1/orders/{order_id}",
+      "public_method": "get_order",
+      "response_fixture": "get_order.json",
+      "producer": "apps/router/src/handlers.rs",
+      "availability": "mounted"
+    },
+    {
+      "operation_id": "router DELETE /trade/v1/orders/{order_id}",
+      "method": "DELETE",
+      "path": "/trade/v1/orders/{order_id}",
+      "public_method": "cancel_order",
+      "response_fixture": "cancel_order.json",
+      "producer": "apps/router/src/handlers.rs",
+      "availability": "mounted"
+    },
+    {
+      "operation_id": "router GET /trade/v1/orders/by-hash/{order_hash}",
+      "method": "GET",
+      "path": "/trade/v1/orders/by-hash/{order_hash}",
+      "public_method": "get_order_by_hash",
+      "response_fixture": "get_order_by_hash.json",
+      "producer": "apps/router/src/handlers.rs",
+      "availability": "mounted"
+    },
+    {
+      "operation_id": "router GET /trade/v1/orders/{order_id}/trades",
+      "method": "GET",
+      "path": "/trade/v1/orders/{order_id}/trades",
+      "public_method": "get_order_trades",
+      "response_fixture": "get_order_trades.json",
+      "producer": "apps/router/src/handlers.rs",
+      "availability": "mounted"
+    },
+    {
+      "operation_id": "router POST /trade/v1/orders/cancel-all",
+      "method": "POST",
+      "path": "/trade/v1/orders/cancel-all",
+      "public_method": "cancel_all_orders",
+      "response_fixture": "cancel_all_orders.json",
+      "producer": "apps/router/src/handlers.rs",
+      "availability": "mounted"
+    },
+    {
+      "operation_id": "router POST /trade/v1/batches",
+      "method": "POST",
+      "path": "/trade/v1/batches",
+      "public_method": "submit_batch",
+      "response_fixture": "submit_batch.json",
+      "producer": "apps/router/src/batches.rs",
+      "availability": "mounted"
+    },
+    {
+      "operation_id": "router GET /trade/v1/batches/{batch_hash}",
+      "method": "GET",
+      "path": "/trade/v1/batches/{batch_hash}",
+      "public_method": "get_batch",
+      "response_fixture": "get_batch.json",
+      "producer": "apps/router/src/batches.rs",
+      "availability": "mounted"
+    },
+    {
+      "operation_id": "router POST /trade/v1/batches/{batch_hash}/supersede",
+      "method": "POST",
+      "path": "/trade/v1/batches/{batch_hash}/supersede",
+      "public_method": "supersede_batch",
+      "response_fixture": "supersede_batch.json",
+      "producer": "apps/router/src/batches.rs",
+      "availability": "mounted"
+    },
+    {
+      "operation_id": "router GET /trade/v1/batch-groups/{group_id}",
+      "method": "GET",
+      "path": "/trade/v1/batch-groups/{group_id}",
+      "public_method": "get_batch_group",
+      "response_fixture": "get_batch_group.json",
+      "producer": "apps/router/src/batch_groups.rs",
+      "availability": "mounted"
+    },
+    {
+      "operation_id": "router GET /trade/v1/orderbook/{token_id}",
+      "method": "GET",
+      "path": "/trade/v1/orderbook/{token_id}",
+      "public_method": "get_orderbook",
+      "response_fixture": "get_orderbook.json",
+      "producer": "apps/router/src/orderbook.rs",
+      "availability": "mounted"
+    },
+    {
+      "operation_id": "router GET /trade/v1/portfolio/activities",
+      "method": "GET",
+      "path": "/trade/v1/portfolio/activities",
+      "public_method": "list_activities",
+      "response_fixture": "list_activities.json",
+      "producer": "apps/router/src/handlers/portfolio.rs",
+      "availability": "mounted"
+    },
+    {
+      "operation_id": "router GET /trade/v1/portfolio/bridge/deposit/address",
+      "method": "GET",
+      "path": "/trade/v1/portfolio/bridge/deposit/address",
+      "public_method": "get_deposit_address",
+      "response_fixture": "get_deposit_address.json",
+      "producer": "apps/router/src/handlers/portfolio.rs",
+      "availability": "mounted"
+    },
+    {
+      "operation_id": "router GET /trade/v1/portfolio/bridge/deposit/supported-assets",
+      "method": "GET",
+      "path": "/trade/v1/portfolio/bridge/deposit/supported-assets",
+      "public_method": "get_deposit_assets",
+      "response_fixture": "get_deposit_assets.json",
+      "producer": "apps/router/src/handlers/portfolio.rs",
+      "availability": "mounted"
+    },
+    {
+      "operation_id": "router POST /trade/v1/portfolio/bridge/deposit/quote",
+      "method": "POST",
+      "path": "/trade/v1/portfolio/bridge/deposit/quote",
+      "public_method": "get_deposit_quote",
+      "response_fixture": "get_deposit_quote.json",
+      "producer": "apps/router/src/handlers/portfolio.rs",
+      "availability": "mounted"
+    },
+    {
+      "operation_id": "router GET /trade/v1/portfolio/bridge/withdraw/supported-assets",
+      "method": "GET",
+      "path": "/trade/v1/portfolio/bridge/withdraw/supported-assets",
+      "public_method": "get_withdraw_assets",
+      "response_fixture": "get_withdraw_assets.json",
+      "producer": "apps/router/src/handlers/portfolio.rs",
+      "availability": "mounted"
+    },
+    {
+      "operation_id": "router POST /trade/v1/portfolio/bridge/withdraw/quote",
+      "method": "POST",
+      "path": "/trade/v1/portfolio/bridge/withdraw/quote",
+      "public_method": "get_withdraw_quote",
+      "response_fixture": "get_withdraw_quote.json",
+      "producer": "apps/router/src/handlers/portfolio.rs",
+      "availability": "mounted"
+    },
+    {
+      "operation_id": "router POST /trade/v1/portfolio/open-orders/list",
+      "method": "POST",
+      "path": "/trade/v1/portfolio/open-orders/list",
+      "public_method": "get_open_orders_page",
+      "response_fixture": "get_open_orders_page.json",
+      "producer": "apps/router/src/handlers/portfolio.rs",
+      "availability": "mounted"
+    },
+    {
+      "operation_id": "router POST /trade/v1/portfolio/positions/list",
+      "method": "POST",
+      "path": "/trade/v1/portfolio/positions/list",
+      "public_method": "get_positions",
+      "response_fixture": "get_positions.json",
+      "producer": "apps/router/src/handlers.rs",
+      "availability": "mounted"
+    },
+    {
+      "operation_id": "router POST /trade/v1/portfolio/positions/split",
+      "method": "POST",
+      "path": "/trade/v1/portfolio/positions/split",
+      "public_method": "split_position",
+      "response_fixture": "split_position.json",
+      "producer": "apps/router/src/handlers/portfolio.rs",
+      "availability": "mounted"
+    },
+    {
+      "operation_id": "router POST /trade/v1/portfolio/positions/merge",
+      "method": "POST",
+      "path": "/trade/v1/portfolio/positions/merge",
+      "public_method": "merge_position",
+      "response_fixture": "merge_position.json",
+      "producer": "apps/router/src/handlers/portfolio.rs",
+      "availability": "mounted"
+    },
+    {
+      "operation_id": "router GET /trade/v1/portfolio/summary",
+      "method": "GET",
+      "path": "/trade/v1/portfolio/summary",
+      "public_method": "get_portfolio_summary",
+      "response_fixture": "get_portfolio_summary.json",
+      "producer": "apps/router/src/handlers.rs",
+      "availability": "mounted"
+    },
+    {
+      "operation_id": "router GET /trade/v1/portfolio/trades",
+      "method": "GET",
+      "path": "/trade/v1/portfolio/trades",
+      "public_method": "list_trades",
+      "response_fixture": "list_trades.json",
+      "producer": "apps/router/src/handlers/portfolio.rs",
+      "availability": "mounted"
+    },
+    {
+      "operation_id": "router GET /trade/v1/portfolio/rebates",
+      "method": "GET",
+      "path": "/trade/v1/portfolio/rebates",
+      "public_method": "get_rebates",
+      "response_fixture": "get_rebates.json",
+      "producer": "apps/router/src/handlers/portfolio.rs",
+      "availability": "mounted"
+    },
+    {
+      "operation_id": "router GET /trade/v1/lp-incentives",
+      "method": "GET",
+      "path": "/trade/v1/lp-incentives",
+      "public_method": "list_lp_incentives",
+      "response_fixture": "list_lp_incentives.json",
+      "producer": "apps/router/src/handlers/portfolio.rs",
+      "availability": "mounted"
+    },
+    {
+      "operation_id": "router GET /trade/v1/lp-incentives/categories",
+      "method": "GET",
+      "path": "/trade/v1/lp-incentives/categories",
+      "public_method": "get_lp_categories",
+      "response_fixture": "get_lp_categories.json",
+      "producer": "apps/router/src/handlers/portfolio.rs",
+      "availability": "mounted"
+    },
+    {
+      "operation_id": "router GET /trade/v1/lp-incentives/closed",
+      "method": "GET",
+      "path": "/trade/v1/lp-incentives/closed",
+      "public_method": "get_closed_lp_incentives",
+      "response_fixture": "get_closed_lp_incentives.json",
+      "producer": "apps/router/src/handlers/portfolio.rs",
+      "availability": "mounted"
+    },
+    {
+      "operation_id": "router GET /trade/v1/lp-incentives/closed/categories",
+      "method": "GET",
+      "path": "/trade/v1/lp-incentives/closed/categories",
+      "public_method": "get_closed_lp_categories",
+      "response_fixture": "get_closed_lp_categories.json",
+      "producer": "apps/router/src/handlers/portfolio.rs",
+      "availability": "mounted"
+    },
+    {
+      "operation_id": "router GET /trade/v1/lp-incentives/earnings",
+      "method": "GET",
+      "path": "/trade/v1/lp-incentives/earnings",
+      "public_method": "get_lp_earnings",
+      "response_fixture": "get_lp_earnings.json",
+      "producer": "apps/router/src/handlers/portfolio.rs",
+      "availability": "mounted"
+    },
+    {
+      "operation_id": "router GET /trade/v1/portfolio/pnl",
+      "method": "GET",
+      "path": "/trade/v1/portfolio/pnl",
+      "public_method": "get_pnl",
+      "response_fixture": "get_pnl.json",
+      "producer": "apps/router/src/handlers/pnl.rs",
+      "availability": "conditional: SETTLED_PNL_ENABLED"
+    },
+    {
+      "operation_id": "router GET /trade/v1/portfolio/pnl/history",
+      "method": "GET",
+      "path": "/trade/v1/portfolio/pnl/history",
+      "public_method": "get_pnl_history",
+      "response_fixture": "get_pnl_history.json",
+      "producer": "apps/router/src/handlers/pnl.rs",
+      "availability": "conditional: SETTLED_PNL_ENABLED"
+    },
+    {
+      "operation_id": "router GET /trade/v1/portfolio/pnl/realized",
+      "method": "GET",
+      "path": "/trade/v1/portfolio/pnl/realized",
+      "public_method": "get_realized_pnl",
+      "response_fixture": "get_realized_pnl.json",
+      "producer": "apps/router/src/handlers/realized_pnl.rs",
+      "availability": "conditional: REALIZED_PNL_READ_ENABLED"
+    },
+    {
+      "operation_id": "api GET /api/v1/calendars/{mic}/days/{date}",
+      "method": "GET",
+      "path": "/api/v1/calendars/{mic}/days/{date}",
+      "public_method": "get_trading_day",
+      "response_fixture": "get_trading_day.json",
+      "producer": "apps/api/src/routes/calendars/days.ts",
+      "availability": "mounted"
+    },
+    {
+      "operation_id": "api GET /api/v1/calendars/{mic}/days",
+      "method": "GET",
+      "path": "/api/v1/calendars/{mic}/days",
+      "public_method": "get_trading_days",
+      "response_fixture": "get_trading_days.json",
+      "producer": "apps/api/src/routes/calendars/days.ts",
+      "availability": "mounted"
+    },
+    {
+      "operation_id": "api GET /api/v1/calendars/{mic}/next-session",
+      "method": "GET",
+      "path": "/api/v1/calendars/{mic}/next-session",
+      "public_method": "get_next_session",
+      "response_fixture": "get_next_session.json",
+      "producer": "apps/api/src/routes/calendars/days.ts",
+      "availability": "mounted"
+    },
+    {
+      "operation_id": "api GET /api/v1/calendars",
+      "method": "GET",
+      "path": "/api/v1/calendars",
+      "public_method": "list_calendars",
+      "response_fixture": "list_calendars.json",
+      "producer": "apps/api/src/routes/calendars/venues.ts",
+      "availability": "mounted"
+    },
+    {
+      "operation_id": "api GET /api/v1/calendars/{mic}",
+      "method": "GET",
+      "path": "/api/v1/calendars/{mic}",
+      "public_method": "get_calendar",
+      "response_fixture": "get_calendar.json",
+      "producer": "apps/api/src/routes/calendars/venues.ts",
+      "availability": "mounted"
+    },
+    {
+      "operation_id": "api GET /api/v1/categories/{slug}",
+      "method": "GET",
+      "path": "/api/v1/categories/{slug}",
+      "public_method": "get_category",
+      "response_fixture": "get_category.json",
+      "producer": "apps/api/src/routes/categories/detail.ts",
+      "availability": "mounted"
+    },
+    {
+      "operation_id": "api GET /api/v1/events/{slug}/canonical-url",
+      "method": "GET",
+      "path": "/api/v1/events/{slug}/canonical-url",
+      "public_method": "get_canonical_event_url",
+      "response_fixture": "get_canonical_event_url.json",
+      "producer": "apps/api/src/routes/events/canonical-url.ts",
+      "availability": "mounted"
+    },
+    {
+      "operation_id": "api GET /api/v1/events/{slug}",
+      "method": "GET",
+      "path": "/api/v1/events/{slug}",
+      "public_method": "get_event",
+      "response_fixture": "get_event.json",
+      "producer": "apps/api/src/routes/events/detail.ts",
+      "availability": "mounted"
+    },
+    {
+      "operation_id": "api GET /api/v1/events",
+      "method": "GET",
+      "path": "/api/v1/events",
+      "public_method": "list_events",
+      "response_fixture": "list_events.json",
+      "producer": "apps/api/src/routes/events/list.ts",
+      "availability": "mounted"
+    },
+    {
+      "operation_id": "api GET /api/v1/markets/{id}",
+      "method": "GET",
+      "path": "/api/v1/markets/{id}",
+      "public_method": "get_market",
+      "response_fixture": "get_market.json",
+      "producer": "apps/api/src/routes/markets/detail.ts",
+      "availability": "mounted"
+    },
+    {
+      "operation_id": "api GET /api/v1/markets",
+      "method": "GET",
+      "path": "/api/v1/markets",
+      "public_method": "list_markets",
+      "response_fixture": "list_markets.json",
+      "producer": "apps/api/src/routes/markets/list.ts",
+      "availability": "mounted"
+    },
+    {
+      "operation_id": "api GET /api/v1/prices/point",
+      "method": "GET",
+      "path": "/api/v1/prices/point",
+      "public_method": "get_price_point",
+      "response_fixture": "get_price_point.json",
+      "producer": "apps/api/src/routes/prices/point.ts",
+      "availability": "mounted"
+    },
+    {
+      "operation_id": "api GET /api/v1/prices/ticks",
+      "method": "GET",
+      "path": "/api/v1/prices/ticks",
+      "public_method": "get_price_ticks",
+      "response_fixture": "get_price_ticks.json",
+      "producer": "apps/api/src/routes/prices/ticks.ts",
+      "availability": "mounted"
+    },
+    {
+      "operation_id": "api GET /api/v1/prices/token-history",
+      "method": "GET",
+      "path": "/api/v1/prices/token-history",
+      "public_method": "get_token_history",
+      "response_fixture": "get_token_history.json",
+      "producer": "apps/api/src/routes/prices/token-history.ts",
+      "availability": "mounted"
+    },
+    {
+      "operation_id": "api GET /api/v1/search",
+      "method": "GET",
+      "path": "/api/v1/search",
+      "public_method": "search",
+      "response_fixture": "search.json",
+      "producer": "apps/api/src/routes/search/list.ts",
+      "availability": "mounted"
+    },
+    {
+      "operation_id": "api GET /api/v1/securities",
+      "method": "GET",
+      "path": "/api/v1/securities",
+      "public_method": "list_securities",
+      "response_fixture": "list_securities.json",
+      "producer": "apps/api/src/routes/securities/securities.ts",
+      "availability": "mounted"
+    },
+    {
+      "operation_id": "api GET /api/v1/securities/{symbol}",
+      "method": "GET",
+      "path": "/api/v1/securities/{symbol}",
+      "public_method": "get_security",
+      "response_fixture": "get_security.json",
+      "producer": "apps/api/src/routes/securities/securities.ts",
+      "availability": "mounted"
+    }
+  ],
+  "streams": [
+    {
+      "path": "/trade/v1/market-stream",
+      "public_method": "AgaraStreamClient::subscribe",
+      "protocol": "WebSocket",
+      "subscription_forms": 5
+    },
+    {
+      "path": "/trade/v1/account-stream",
+      "public_method": "AgaraStreamClient::subscribe",
+      "protocol": "WebSocket",
+      "subscription_forms": 1
+    },
+    {
+      "path": "/api/v1/prices/pyth-pro/stream",
+      "public_method": "AgaraClient::stream_price",
+      "protocol": "SSE"
+    },
+    {
+      "path": "/api/v1/prices/stream",
+      "public_method": "AgaraClient::stream_prices",
+      "protocol": "SSE"
+    }
+  ]
+}

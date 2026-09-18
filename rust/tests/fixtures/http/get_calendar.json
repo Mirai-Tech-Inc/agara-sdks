@@ -1,0 +1,14 @@
+{
+  "mic": "XNAS",
+  "name": "Nasdaq",
+  "timezone": "America/New_York",
+  "country": "US",
+  "currency": "USD",
+  "default_segments": [
+    {
+      "open": "09:30",
+      "close": "16:00"
+    }
+  ],
+  "active": true
+}

@@ -5,10 +5,14 @@
 
 use core::fmt;
 
-use rust_decimal::Decimal;
-use rust_decimal::prelude::ToPrimitive;
-use serde::de::{self, Deserializer, Visitor};
-use serde::{Deserialize, Serialize, Serializer};
+use crate::validation::{AmountReason, Field, ValidationError};
+
+use rust_decimal::{Decimal, prelude::ToPrimitive};
+
+use serde::{
+	Deserialize, Serialize, Serializer,
+	de::{self, Deserializer, Visitor},
+};
 
 /// Micro-units per whole unit (dollar or share).
 pub const MICRO: i64 = 1_000_000;
@@ -17,6 +21,8 @@ pub const MICRO: i64 = 1_000_000;
 /// dollars / shares with [`Micro::as_decimal`].
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct Micro(i64);
+
+struct MicroVisitor;
 
 impl Micro {
 	/// Wrap a raw micro-unit integer.
@@ -29,19 +35,28 @@ impl Micro {
 		self.0
 	}
 
-	/// Convert whole units (dollars / shares) to micro-units, rounding
-	/// to the nearest integer. `Decimal` keeps this exact for the 2–6
-	/// decimal-place values the API uses.
-	pub fn from_units(units: Decimal) -> Self {
-		let scaled = (units * Decimal::from(MICRO)).round();
-		// Saturate rather than wrap-to-zero: a fat-finger amount then reads as
-		// an out-of-range value the server rejects, not a silent zero-size order.
-		let saturated = if scaled.is_sign_negative() {
-			i64::MIN
-		} else {
-			i64::MAX
-		};
-		Self(scaled.to_i64().unwrap_or(saturated))
+	/// Convert whole units exactly, rejecting fractional micro-units and overflow.
+	pub fn from_units(units: Decimal) -> crate::Result<Self> {
+		let scaled = units
+			.checked_mul(Decimal::from(MICRO))
+			.ok_or_else(|| ValidationError::amount(Field::Amount, AmountReason::Overflow))?;
+		if !scaled.fract().is_zero() {
+			return Err(ValidationError::amount(Field::Amount, AmountReason::Precision).into());
+		}
+		scaled
+			.to_i64()
+			.map(Self)
+			.ok_or_else(|| ValidationError::amount(Field::Amount, AmountReason::OutOfRange).into())
+	}
+
+	/// Add amounts without overflow.
+	pub fn checked_add(self, other: Self) -> Option<Self> {
+		self.0.checked_add(other.0).map(Self)
+	}
+
+	/// Subtract amounts without overflow.
+	pub fn checked_sub(self, other: Self) -> Option<Self> {
+		self.0.checked_sub(other.0).map(Self)
 	}
 
 	/// Convert micro-units back to whole units (dollars / shares).
@@ -58,13 +73,13 @@ impl Micro {
 
 impl fmt::Debug for Micro {
 	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-		write!(f, "Micro({})", self.0)
+		core::write!(f, "Micro({})", self.0)
 	}
 }
 
 impl fmt::Display for Micro {
 	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-		write!(f, "{}", self.0)
+		core::write!(f, "{}", self.0)
 	}
 }
 
@@ -79,8 +94,6 @@ impl<'de> Deserialize<'de> for Micro {
 		deserializer.deserialize_any(MicroVisitor)
 	}
 }
-
-struct MicroVisitor;
 
 impl Visitor<'_> for MicroVisitor {
 	type Value = Micro;
@@ -102,6 +115,8 @@ impl Visitor<'_> for MicroVisitor {
 	}
 
 	fn visit_f64<E: de::Error>(self, v: f64) -> Result<Micro, E> {
-		Ok(Micro(v as i64))
+		Err(de::Error::custom(std::format!(
+			"floating-point micro amount {v} is not accepted; use an integer string"
+		)))
 	}
 }

@@ -1,39 +1,52 @@
-//! The async HTTP trading client.
+//! Public and authenticated HTTP clients with validated request boundaries.
+
+mod transport;
 
 use core::time::Duration;
 
-use reqwest::header::{ACCEPT, AUTHORIZATION, CONTENT_TYPE, HeaderMap, HeaderValue};
-use reqwest::{Method, RequestBuilder, Response};
-use rust_decimal::Decimal;
-use serde::Serialize;
-use serde::de::DeserializeOwned;
+use std::borrow::Cow;
 
-use crate::error::{AgaraError, Result};
-use crate::ids::{
-	ConditionId, Exchange, OrderHash, OrderId, OrderType, Side, TimeInForce, TokenId,
+use reqwest::{
+	Response,
+	header::{ACCEPT, AUTHORIZATION, CONTENT_TYPE, HeaderMap, HeaderValue},
 };
-use crate::models::{
-	ActivitiesResponse, CancelAllOrdersResponse, CancelOrderResponse, CreateClobOrderResponse,
-	CreateOrderRequest, LpIncentivesResponse, MergeRequest, OpenOrdersListRequest,
-	OpenOrdersResponse, Order, OrderResponse, OrderTradesResponse, Orderbook, OrdersListRequest,
-	OrdersListResponse, PortfolioSummaryEntry, PortfolioSummaryResponse, Position,
-	PositionOperationResponse, PositionsListRequest, PositionsResponse, RebatesSummaryResponse,
-	SignedOrderBatchRequest, SignedOrderBatchResponse, SignedOrderRequest, SplitRequest,
-	StatusResponse, TradesResponse,
+
+use rust_decimal::Decimal;
+
+use crate::{
+	error::{AgaraError, PaginationError, PollError, ResponseError, Result},
+	ids::{ConditionId, Exchange, OrderHash, OrderId, OrderType, Side, TimeInForce, TokenId},
+	input,
+	models::{
+		ActivitiesResponse, CancelAllOrdersResponse, CancelOrderResponse, CreateClobOrderResponse,
+		CreateOrderRequest, LpIncentivesResponse, MergeRequest, OpenOrdersListRequest,
+		OpenOrdersResponse, Order, OrderResponse, OrderTradesResponse, Orderbook,
+		OrdersListRequest, OrdersListResponse, PortfolioSummaryEntry, PortfolioSummaryResponse,
+		Position, PositionOperationResponse, PositionsListRequest, PositionsResponse,
+		RebatesSummaryResponse, SignedOrderBatchRequest, SignedOrderBatchResponse,
+		SignedOrderRequest, SplitRequest, StatusResponse, TradesResponse,
+	},
+	retry::RetryPolicy,
+	units::Micro,
+	validation::{ConfigurationError, Field, OrderInputReason, ValidationError},
 };
-use crate::retry::RetryPolicy;
-use crate::units::Micro;
 
 /// The default trading API host (the agara sandbox).
 pub const DEFAULT_BASE_URL: &str = "https://app.sandbox.agara.xyz";
 
-/// Page size used when walking keyset pagination internally. Matches the
-/// server's max page size so a full set comes back in the fewest calls.
 const LIST_PAGE_SIZE: u32 = 500;
 
-/// Consecutive transient 5xx tolerated inside `wait_for_terminal` before
-/// it gives up.
+const MAX_AUTO_PAGES: usize = 1000;
+
 const MAX_CONSECUTIVE_SERVER_ERRORS: u32 = 3;
+
+/// Client state with access to authenticated trader operations.
+#[derive(Clone, Debug)]
+pub struct Authenticated;
+
+/// Client state restricted to public reads.
+#[derive(Clone, Debug)]
+pub struct Anonymous;
 
 /// Async client for the agara trading API.
 ///
@@ -41,88 +54,179 @@ const MAX_CONSECUTIVE_SERVER_ERRORS: u32 = 3;
 /// keep-alive HTTP/2 connection — clone it freely across tasks (it is
 /// cheap: the inner `reqwest::Client` is an `Arc`).
 #[derive(Clone, Debug)]
-pub struct AgaraClient {
-	base_url: String,
+pub struct AgaraClient<A = Authenticated> {
+	auth: core::marker::PhantomData<A>,
+	authorization: Option<HeaderValue>,
+	base_url: reqwest::Url,
 	http: reqwest::Client,
+	timeout: Duration,
 	retry: RetryPolicy,
 }
 
+pub(crate) fn parse_retry_after(resp: &Response) -> Option<crate::error::RetryAfter> {
+	let mut delay: Option<Duration> = None;
+	for key in ["retry-after", "x-ratelimit-reset"] {
+		for raw in resp.headers().get_all(key) {
+			let parsed = raw
+				.to_str()
+				.ok()
+				.and_then(|text| text.trim().parse::<f64>().ok())
+				.filter(|value| value.is_finite() && *value >= 0.0)
+				.and_then(|seconds| Duration::try_from_secs_f64(seconds).ok());
+			let Some(parsed) = parsed else {
+				return Some(crate::error::RetryAfter::Unusable { value: raw.clone() });
+			};
+			delay = Some(delay.map_or(parsed, |current| current.max(parsed)));
+		}
+	}
+
+	delay.map(crate::error::RetryAfter::Delay)
+}
+
+pub(crate) fn validate_limit_options(
+	side: Side,
+	tif: TimeInForce,
+	post_only: bool,
+	expiration: Option<i64>,
+) -> Result<()> {
+	if side == Side::Unspecified {
+		return Err(ValidationError::order(Field::Side, OrderInputReason::Unsupported).into());
+	}
+	if tif == TimeInForce::Unspecified {
+		return Err(
+			ValidationError::order(Field::TimeInForce, OrderInputReason::Unsupported).into(),
+		);
+	}
+	if post_only && core::matches!(tif, TimeInForce::Fak | TimeInForce::Fok) {
+		return Err(
+			ValidationError::order(Field::PostOnly, OrderInputReason::PostOnlyTimeInForce).into(),
+		);
+	}
+	match (tif, expiration) {
+		(TimeInForce::Gtd, None) => {
+			return Err(
+				ValidationError::order(Field::Expiration, OrderInputReason::Required).into(),
+			);
+		},
+		(TimeInForce::Gtd, Some(expiration)) if expiration < 0 => {
+			return Err(ValidationError::order(
+				Field::Expiration,
+				OrderInputReason::NegativeExpiration,
+			)
+			.into());
+		},
+		(TimeInForce::Gtd, Some(_)) => {},
+		(_, Some(_)) => {
+			return Err(
+				ValidationError::order(Field::Expiration, OrderInputReason::Forbidden).into(),
+			);
+		},
+		_ => {},
+	}
+
+	Ok(())
+}
+
+fn exchanges_query(exchanges: &[Exchange]) -> Result<Vec<(&'static str, String)>> {
+	input::exchanges(exchanges)?;
+	if exchanges.is_empty() {
+		return Ok(Vec::new());
+	}
+
+	let csv = exchanges.iter().map(|e| e.to_string()).collect::<Vec<_>>().join(",");
+	Ok(std::vec![("exchanges", csv)])
+}
+
+fn limit_cursor_query(limit: u32, cursor: Option<String>) -> Result<Vec<(&'static str, String)>> {
+	input::number(i64::from(limit), Field::Limit, 1, input::MAX_LIST_LIMIT)?;
+	input::cursor(cursor.as_deref())?;
+	let mut query = std::vec![("limit", limit.to_string())];
+	if let Some(c) = cursor {
+		query.push(("cursor", c));
+	}
+
+	Ok(query)
+}
+
 #[bon::bon]
-impl AgaraClient {
-	/// Build a client. `token` is a personal access token (`agt_…`).
+impl AgaraClient<Authenticated> {
+	/// Build an authenticated trader client using a PAT or supported identity bearer credential.
+	/// Injected HTTP client configuration remains caller-owned; SDK request validation and deadlines
+	/// still apply.
 	#[builder]
 	pub fn new(
-		token: String,
-		#[builder(default = DEFAULT_BASE_URL.to_owned())] base_url: String,
+		token: Cow<'static, str>,
+		http: Option<reqwest::Client>,
+		#[builder(default = Cow::Borrowed(DEFAULT_BASE_URL))] base_url: Cow<'static, str>,
 		#[builder(default = Duration::from_secs(10))] timeout: Duration,
 		#[builder(default = RetryPolicy::none())] retry: RetryPolicy,
 	) -> Result<Self> {
+		if token.trim().is_empty() {
+			return Err(ValidationError::from(ConfigurationError::EmptyToken).into());
+		}
+
+		if token.chars().any(char::is_whitespace) {
+			return Err(ValidationError::identifier(
+				Field::ApiToken,
+				crate::validation::IdentifierReason::Whitespace,
+			)
+			.into());
+		}
+		let base_url = input::base_url(&base_url)?;
+		input::duration(timeout, Field::Timeout)?;
 		let mut headers = HeaderMap::new();
-		let mut auth = HeaderValue::from_str(&format!("Bearer {token}"))
-			.map_err(|_| AgaraError::Validation("token is not a valid header value".to_owned()))?;
+		let mut auth = HeaderValue::from_str(&std::format!("Bearer {token}")).map_err(|error| {
+			ValidationError::from(ConfigurationError::InvalidTokenHeader(error))
+		})?;
 		auth.set_sensitive(true);
-		headers.insert(AUTHORIZATION, auth);
+		headers.insert(AUTHORIZATION, auth.clone());
 		headers.insert(CONTENT_TYPE, HeaderValue::from_static("application/json"));
 		headers.insert(ACCEPT, HeaderValue::from_static("application/json"));
 
-		let http = reqwest::Client::builder().timeout(timeout).default_headers(headers).build()?;
+		let http = match http {
+			Some(http) => http,
+			None => reqwest::Client::builder()
+				.redirect(reqwest::redirect::Policy::none())
+				.connect_timeout(timeout)
+				.default_headers(headers)
+				.build()?,
+		};
 
-		Ok(Self { base_url: base_url.trim_end_matches('/').to_owned(), http, retry })
+		Ok(Self {
+			base_url,
+			http,
+			timeout,
+			retry,
+			authorization: Some(auth),
+			auth: core::marker::PhantomData,
+		})
 	}
 
-	/// Place a limit order. Pass exactly one of `shares` or
-	/// `collateral_amount` (the latter is BUY-only, a USDC budget).
-	/// Returns the accepted-order ack; poll [`AgaraClient::get_order`] or
-	/// [`AgaraClient::wait_for_terminal`] to track progression.
+	/// Place a LIMIT order with an exact share quantity. Market tick and notional rules are enforced by the server.
 	#[builder]
 	pub async fn place_limit_order(
 		&self,
 		token_id: TokenId,
 		side: Side,
 		price: Decimal,
-		shares: Option<Decimal>,
-		collateral_amount: Option<Decimal>,
+		shares: Decimal,
 		#[builder(default = TimeInForce::Gtc)] time_in_force: TimeInForce,
 		#[builder(default = false)] post_only: bool,
 		expiration_unix_seconds: Option<i64>,
 	) -> Result<CreateClobOrderResponse> {
-		if shares.is_some() == collateral_amount.is_some() {
-			return Err(AgaraError::Validation(
-				"set exactly one of shares or collateral_amount".to_owned(),
-			));
-		}
-
-		if collateral_amount.is_some() && side == Side::Sell {
-			return Err(AgaraError::Validation(
-				"collateral_amount is BUY-only; use shares for SELL".to_owned(),
-			));
-		}
-
-		if time_in_force == TimeInForce::Gtd && expiration_unix_seconds.is_none() {
-			return Err(AgaraError::Validation(
-				"GTD orders require expiration_unix_seconds".to_owned(),
-			));
-		}
-
-		if price <= Decimal::ZERO {
-			return Err(AgaraError::Validation("price must be > 0".to_owned()));
-		}
-
-		client_validate_positive("shares", shares)?;
-		client_validate_positive("collateral_amount", collateral_amount)?;
-
+		let price_micro = Micro::from_units(price)?;
+		let shares_micro = Micro::from_units(shares)?;
 		let body = CreateOrderRequest {
 			token_id,
 			side,
 			order_type: OrderType::Limit,
 			time_in_force,
-			price_micro: Some(Micro::from_units(price)),
-			collateral_amount_micro: collateral_amount.map(Micro::from_units),
-			shares_micro: shares.map(Micro::from_units),
+			price_micro: Some(price_micro),
+			collateral_amount_micro: None,
+			shares_micro: Some(shares_micro),
 			post_only,
 			expiration_unix_seconds,
 		};
-
 		self.post("/trade/v1/orders", &body).await
 	}
 
@@ -139,55 +243,19 @@ impl AgaraClient {
 		collateral_amount: Option<Decimal>,
 		#[builder(default = TimeInForce::Fak)] time_in_force: TimeInForce,
 	) -> Result<CreateClobOrderResponse> {
-		if !matches!(time_in_force, TimeInForce::Fak | TimeInForce::Fok) {
-			return Err(AgaraError::Validation(
-				"market orders require FAK or FOK time_in_force".to_owned(),
-			));
-		}
-
-		match side {
-			Side::Buy => {
-				if collateral_amount.is_none() || shares.is_some() {
-					return Err(AgaraError::Validation(
-						"market BUY requires collateral_amount and no shares".to_owned(),
-					));
-				}
-			},
-			Side::Sell => {
-				if shares.is_none() || collateral_amount.is_some() {
-					return Err(AgaraError::Validation(
-						"market SELL requires shares and no collateral_amount".to_owned(),
-					));
-				}
-			},
-			Side::Unspecified => {
-				return Err(AgaraError::Validation(
-					"side must be BUY or SELL".to_owned(),
-				));
-			},
-		}
-
-		client_validate_positive("shares", shares)?;
-		client_validate_positive("collateral_amount", collateral_amount)?;
-
 		let body = CreateOrderRequest {
 			token_id,
 			side,
 			order_type: OrderType::Market,
 			time_in_force,
 			price_micro: None,
-			collateral_amount_micro: collateral_amount.map(Micro::from_units),
-			shares_micro: shares.map(Micro::from_units),
+			collateral_amount_micro: collateral_amount.map(Micro::from_units).transpose()?,
+			shares_micro: shares.map(Micro::from_units).transpose()?,
 			post_only: false,
 			expiration_unix_seconds: None,
 		};
 
 		self.post("/trade/v1/orders", &body).await
-	}
-
-	/// Snapshot of bid/ask depth for one outcome (public — no scope).
-	pub async fn get_orderbook(&self, token_id: &TokenId) -> Result<Orderbook> {
-		self.get(&format!("/trade/v1/orderbook/{token_id}"), &[]).await
 	}
 
 	/// Submit a pre-signed LIMIT order. Build `request` with
@@ -200,18 +268,13 @@ impl AgaraClient {
 		self.post("/trade/v1/orders/signed", request).await
 	}
 
-	/// Submit up to 32 pre-signed LIMIT orders in one call. Each is
-	/// accepted or rejected independently. Scope `orders:place_signed`.
+	/// Submit one to thirty-two independently validated signed LIMIT orders. Shared wallet/provider
+	/// failures may reject the entire request; inspect each nested failure. Scope:
+	/// orders:place_signed.
 	pub async fn place_signed_orders(
 		&self,
 		orders: Vec<SignedOrderRequest>,
 	) -> Result<SignedOrderBatchResponse> {
-		if orders.is_empty() || orders.len() > 32 {
-			return Err(AgaraError::Validation(
-				"signed-order batch must hold 1..=32 orders".to_owned(),
-			));
-		}
-
 		let body = SignedOrderBatchRequest { orders };
 		self.post("/trade/v1/orders/signed/batch", &body).await
 	}
@@ -230,23 +293,48 @@ impl AgaraClient {
 
 	/// Look up one order by its internal UUID. Scope `orders:read`.
 	pub async fn get_order(&self, order_id: &OrderId) -> Result<OrderResponse> {
-		self.get(&format!("/trade/v1/orders/{order_id}"), &[]).await
+		self.get(
+			&std::format!(
+				"/trade/v1/orders/{}",
+				crate::endpoints::path_segment(order_id.as_str())?
+			),
+			&[],
+		)
+		.await
 	}
 
 	/// Look up one order by its EIP-712 hash. Scope `orders:read`.
 	pub async fn get_order_by_hash(&self, order_hash: &OrderHash) -> Result<OrderResponse> {
-		self.get(&format!("/trade/v1/orders/by-hash/{order_hash}"), &[]).await
+		self.get(
+			&std::format!(
+				"/trade/v1/orders/by-hash/{}",
+				crate::endpoints::path_segment(order_hash.as_str())?
+			),
+			&[],
+		)
+		.await
 	}
 
 	/// The fills for one order, newest-first. Scope `orders:read`.
 	pub async fn get_order_trades(&self, order_id: &OrderId) -> Result<OrderTradesResponse> {
-		self.get(&format!("/trade/v1/orders/{order_id}/trades"), &[]).await
+		self.get(
+			&std::format!(
+				"/trade/v1/orders/{}/trades",
+				crate::endpoints::path_segment(order_id.as_str())?
+			),
+			&[],
+		)
+		.await
 	}
 
 	/// Cancel one order. Async on the engine — poll [`AgaraClient::get_order`]
-	/// until the status is `CANCELLED`. Scope `orders:cancel`.
+	/// until `is_terminal` is true. Scope `orders:cancel`.
 	pub async fn cancel_order(&self, order_id: &OrderId) -> Result<CancelOrderResponse> {
-		self.delete(&format!("/trade/v1/orders/{order_id}")).await
+		self.delete(&std::format!(
+			"/trade/v1/orders/{}",
+			crate::endpoints::path_segment(order_id.as_str())?
+		))
+		.await
 	}
 
 	/// Cancel every open order across all your wallets. Scope
@@ -255,8 +343,8 @@ impl AgaraClient {
 		self.post_empty("/trade/v1/orders/cancel-all").await
 	}
 
-	/// Split USDC collateral into a YES + NO pair on-chain. Blocks until
-	/// the transaction confirms. Scope `positions:split`.
+	/// Split USDC collateral into a YES + NO pair. The
+	/// accepted response carries a batch hash on AGARA. Scope `positions:split`.
 	pub async fn split_position(
 		&self,
 		condition_id: ConditionId,
@@ -266,8 +354,8 @@ impl AgaraClient {
 		self.post("/trade/v1/portfolio/positions/split", &body).await
 	}
 
-	/// Merge a complete YES + NO pair back into USDC on-chain. Scope
-	/// `positions:merge`.
+	/// Merge a complete YES/NO set back into collateral. AGARA returns an asynchronous batch
+	/// acceptance; Polymarket returns a relayer receipt. Scope: positions:merge.
 	pub async fn merge_position(
 		&self,
 		condition_id: ConditionId,
@@ -283,18 +371,16 @@ impl AgaraClient {
 		&self,
 		exchanges: &[Exchange],
 	) -> Result<Vec<PortfolioSummaryEntry>> {
-		let query = exchanges_query(exchanges);
+		let query = exchanges_query(exchanges)?;
 		let resp: PortfolioSummaryResponse =
 			self.get("/trade/v1/portfolio/summary", &query).await?;
 
 		Ok(resp.summaries)
 	}
 
-	/// Every current position across both backends, in one shot.
-	/// `condition_ids` filters server-side; `exchanges` restricts the
-	/// fan-out. If you scoped to specific `exchanges` and a requested one
-	/// is unavailable, this errors rather than returning a partial set.
-	/// Scope `portfolio:read`.
+	/// Read current positions across requested exchanges, with empty filters selecting all onboarded
+	/// exchanges. Any requested unavailable exchange produces PartialData; use get_positions to retain
+	/// a partial envelope and its metadata. Scope: portfolio:read.
 	pub async fn list_positions(
 		&self,
 		condition_ids: Vec<ConditionId>,
@@ -305,42 +391,46 @@ impl AgaraClient {
 		let resp: PositionsResponse =
 			self.post("/trade/v1/portfolio/positions/list", &body).await?;
 
-		let blocked: Vec<Exchange> =
-			resp.unavailable_exchanges.iter().copied().filter(|e| requested.contains(e)).collect();
+		let blocked: Vec<Exchange> = resp
+			.unavailable_exchanges
+			.iter()
+			.copied()
+			.filter(|e| requested.is_empty() || requested.contains(e))
+			.collect();
 		if !blocked.is_empty() {
-			let names: Vec<String> = blocked.iter().map(|e| e.to_string()).collect();
-			return Err(AgaraError::Server {
-				status: 502,
-				message: format!(
-					"positions unavailable for requested exchange(s): {}",
-					names.join(", ")
-				),
-			});
+			return Err(ResponseError::PartialData { exchanges: blocked }.into());
 		}
 
 		Ok(resp.positions)
 	}
 
-	/// Every resting order across both backends, newest-first — walks the
-	/// server's pagination internally and returns the complete set. Scope
-	/// `portfolio:read`.
+	/// Walk every cursor page of nonterminal orders, newest first, up to the configured safety bound.
+	/// An empty page with a cursor does not end the walk. Scope: portfolio:read.
 	pub async fn list_open_orders(
 		&self,
 		token_ids: Vec<TokenId>,
 		exchanges: Vec<Exchange>,
 	) -> Result<Vec<Order>> {
-		// The filter vecs are invariant across pages; only the cursor
-		// advances, so build the body once and move the cursor in place.
 		let mut body =
 			OpenOrdersListRequest { token_ids, exchanges, limit: LIST_PAGE_SIZE, cursor: None };
 		let mut orders = Vec::new();
+		let mut seen = std::collections::HashSet::new();
 		loop {
+			if seen.len() >= MAX_AUTO_PAGES {
+				return Err(PaginationError::PageLimitExceeded { limit: MAX_AUTO_PAGES }.into());
+			}
+
 			let page: OpenOrdersResponse =
 				self.post("/trade/v1/portfolio/open-orders/list", &body).await?;
 			orders.extend(page.orders);
 			match page.pagination.next_cursor {
-				Some(next) if Some(&next) != body.cursor.as_ref() => body.cursor = Some(next),
-				_ => break,
+				Some(next) => {
+					if !seen.insert(next.clone()) {
+						return Err(PaginationError::CursorCycle.into());
+					}
+					body.cursor = Some(next);
+				},
+				None => break,
 			}
 		}
 
@@ -349,18 +439,18 @@ impl AgaraClient {
 
 	/// One page of recent fills, newest-first. Scope `portfolio:read`.
 	pub async fn list_trades(&self, limit: u32, cursor: Option<String>) -> Result<TradesResponse> {
-		let query = limit_cursor_query(limit, cursor);
+		let query = limit_cursor_query(limit, cursor)?;
 		self.get("/trade/v1/portfolio/trades", &query).await
 	}
 
-	/// One page of the activity feed (fills + realized P&L), newest-first.
-	/// Scope `portfolio:read`.
+	/// Read one newest-first page of orders with fills, splits, merges, redemptions, deposits,
+	/// withdrawals and LP payouts. Realized PnL is a separate report; scope: portfolio:read.
 	pub async fn list_activities(
 		&self,
 		limit: u32,
 		cursor: Option<String>,
 	) -> Result<ActivitiesResponse> {
-		let query = limit_cursor_query(limit, cursor);
+		let query = limit_cursor_query(limit, cursor)?;
 		self.get("/trade/v1/portfolio/activities", &query).await
 	}
 
@@ -370,40 +460,44 @@ impl AgaraClient {
 		self.get("/trade/v1/portfolio/rebates", &[]).await
 	}
 
-	/// LP-incentive eligibility and per-market standing. Scope
-	/// `portfolio:read`.
-	pub async fn get_lp_incentives(&self) -> Result<LpIncentivesResponse> {
-		self.get("/trade/v1/lp-incentives", &[]).await
-	}
-
-	/// Public market/event counts — a cheap liveness probe. No scope.
-	pub async fn get_status(&self) -> Result<StatusResponse> {
-		self.get("/trade/v1/status", &[]).await
-	}
-
-	/// Poll until the order reaches a terminal status or `timeout`
-	/// elapses; returns the final order either way (check
-	/// [`OrderStatus::is_terminal`]). Transient 5xx is retried up to 3
-	/// consecutive times.
+	/// Poll until the authoritative is_terminal flag is true, within an absolute deadline. Up to three
+	/// consecutive explicitly retryable failures are tolerated; order completion is separate from
+	/// trade settlement.
 	pub async fn wait_for_terminal(
 		&self,
 		order_id: &OrderId,
 		timeout: Duration,
 		poll_interval: Duration,
 	) -> Result<Order> {
-		let deadline = tokio::time::Instant::now() + timeout;
+		let deadline = input::deadline(timeout, poll_interval)?;
 		let mut consecutive_server_errors = 0u32;
 		loop {
-			match self.get_order(order_id).await {
+			if tokio::time::Instant::now() >= deadline {
+				return Err(PollError::DeadlineElapsed.into());
+			}
+
+			let mut delay = poll_interval;
+			match tokio::time::timeout_at(deadline, self.get_order(order_id))
+				.await
+				.map_err(|_| AgaraError::from(PollError::DeadlineElapsed))?
+			{
 				Ok(resp) => {
+					if tokio::time::Instant::now() >= deadline {
+						return Err(PollError::DeadlineElapsed.into());
+					}
+
 					consecutive_server_errors = 0;
-					let terminal = resp.order.status.is_terminal();
-					if terminal || tokio::time::Instant::now() >= deadline {
+					let terminal = resp.order.is_terminal;
+					if terminal {
 						return Ok(resp.order);
 					}
 				},
-				Err(e) if matches!(e, AgaraError::Server { .. }) => {
+				Err(e) if e.is_retryable() => {
 					consecutive_server_errors += 1;
+					if let Some(retry_after) = e.retry_after() {
+						delay = delay.max(retry_after);
+					}
+
 					if consecutive_server_errors >= MAX_CONSECUTIVE_SERVER_ERRORS
 						|| tokio::time::Instant::now() >= deadline
 					{
@@ -413,126 +507,59 @@ impl AgaraClient {
 				Err(e) => return Err(e),
 			}
 
-			tokio::time::sleep(poll_interval).await;
+			let next =
+				tokio::time::Instant::now().checked_add(delay).unwrap_or(deadline).min(deadline);
+			tokio::time::sleep_until(next).await;
 		}
 	}
 }
 
-impl AgaraClient {
-	async fn get<T: DeserializeOwned>(&self, path: &str, query: &[(&str, String)]) -> Result<T> {
-		let req = self.http.request(Method::GET, self.url(path)).query(query);
-		self.execute(req).await
-	}
-
-	async fn delete<T: DeserializeOwned>(&self, path: &str) -> Result<T> {
-		let req = self.http.request(Method::DELETE, self.url(path));
-		self.execute(req).await
-	}
-
-	async fn post<B: Serialize, T: DeserializeOwned>(&self, path: &str, body: &B) -> Result<T> {
-		let req = self.http.request(Method::POST, self.url(path)).json(body);
-		self.execute(req).await
-	}
-
-	async fn post_empty<T: DeserializeOwned>(&self, path: &str) -> Result<T> {
-		let req = self.http.request(Method::POST, self.url(path));
-		self.execute(req).await
-	}
-
-	fn url(&self, path: &str) -> String {
-		format!("{}{path}", self.base_url)
-	}
-
-	async fn execute<T: DeserializeOwned>(&self, req: RequestBuilder) -> Result<T> {
-		// Common case (retries disabled): send the request directly, no clone.
-		if self.retry.max_retries == 0 {
-			return self.try_once(req).await;
-		}
-
-		let mut attempt = 0u32;
-		loop {
-			attempt += 1;
-			let cloned = req.try_clone().expect("request bodies are always cloneable");
-			match self.try_once(cloned).await {
-				Ok(v) => return Ok(v),
-				Err(e) => {
-					if attempt > self.retry.max_retries || !e.is_retryable() {
-						return Err(e);
-					}
-
-					let delay = e
-						.retry_after()
-						.filter(|_| self.retry.respect_retry_after)
-						.unwrap_or_else(|| self.retry.backoff(attempt));
-					tokio::time::sleep(delay).await;
-				},
-			}
-		}
-	}
-
-	async fn try_once<T: DeserializeOwned>(&self, req: RequestBuilder) -> Result<T> {
-		let resp = req.send().await?;
-		let status = resp.status();
-		if status.is_success() {
-			let bytes = resp.bytes().await?;
-			return serde_json::from_slice(&bytes)
-				.map_err(|e| AgaraError::Decode(format!("{e} (body: {} bytes)", bytes.len())));
-		}
-
-		let retry_after = parse_retry_after(&resp);
-		let bytes = resp.bytes().await.unwrap_or_default();
-		let message = serde_json::from_slice::<serde_json::Value>(&bytes)
-			.ok()
-			.and_then(|v| v.get("error").and_then(|e| e.as_str()).map(str::to_owned))
-			.unwrap_or_else(|| String::from_utf8_lossy(&bytes).trim().chars().take(300).collect());
-
-		Err(AgaraError::from_status(
-			status.as_u16(),
-			message,
-			retry_after,
-		))
+#[bon::bon]
+impl AgaraClient<Anonymous> {
+	/// Build an anonymous client that sends no credentials.
+	#[builder]
+	pub fn anonymous(
+		#[builder(default = Cow::Borrowed(DEFAULT_BASE_URL))] base_url: Cow<'static, str>,
+		#[builder(default = Duration::from_secs(10))] timeout: Duration,
+		#[builder(default = RetryPolicy::none())] retry: RetryPolicy,
+	) -> Result<Self> {
+		let base_url = input::base_url(&base_url)?;
+		input::duration(timeout, Field::Timeout)?;
+		let http = reqwest::Client::builder()
+			.redirect(reqwest::redirect::Policy::none())
+			.connect_timeout(timeout)
+			.build()?;
+		Ok(Self {
+			base_url,
+			http,
+			timeout,
+			retry,
+			authorization: None,
+			auth: core::marker::PhantomData,
+		})
 	}
 }
 
-fn client_validate_positive(name: &str, value: Option<Decimal>) -> Result<()> {
-	if let Some(v) = value
-		&& v <= Decimal::ZERO
-	{
-		return Err(AgaraError::Validation(format!("{name} must be > 0")));
+impl<A> AgaraClient<A> {
+	/// Read whole-unit REST book depth and its decimal sequence hash. Use the hash as a state fence
+	/// when rebuilding a live book; configured credentials are retained.
+	pub async fn get_orderbook(&self, token_id: &TokenId) -> Result<Orderbook> {
+		self.get(
+			&std::format!(
+				"/trade/v1/orderbook/{}",
+				crate::endpoints::path_segment(token_id.as_str())?
+			),
+			&[],
+		)
+		.await
 	}
-
-	Ok(())
-}
-
-fn exchanges_query(exchanges: &[Exchange]) -> Vec<(&'static str, String)> {
-	if exchanges.is_empty() {
-		return Vec::new();
+	/// Read public current/upcoming LP opportunities; configured credentials enable the caller’s
+	/// personal standing.
+	pub async fn get_lp_incentives(&self) -> Result<LpIncentivesResponse> {
+		self.get("/trade/v1/lp-incentives", &[]).await
 	}
-
-	let csv = exchanges.iter().map(|e| e.to_string()).collect::<Vec<_>>().join(",");
-	vec![("exchanges", csv)]
-}
-
-fn limit_cursor_query(limit: u32, cursor: Option<String>) -> Vec<(&'static str, String)> {
-	let mut query = vec![("limit", limit.to_string())];
-	if let Some(c) = cursor {
-		query.push(("cursor", c));
+	/// Read public platform market/event counts; configured credentials are retained.
+	pub async fn get_status(&self) -> Result<StatusResponse> {
+		self.get("/trade/v1/status", &[]).await
 	}
-
-	query
-}
-
-fn parse_retry_after(resp: &Response) -> Option<Duration> {
-	for key in ["retry-after", "x-ratelimit-reset"] {
-		if let Some(raw) = resp.headers().get(key)
-			&& let Ok(text) = raw.to_str()
-			&& let Ok(secs) = text.trim().parse::<f64>()
-			&& secs.is_finite()
-			&& secs >= 0.0
-		{
-			return Some(Duration::from_secs_f64(secs));
-		}
-	}
-
-	None
 }

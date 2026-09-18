@@ -1,122 +1,173 @@
-//! EIP-712 order signing for the agara CTF exchange (feature `signing`).
-//!
-//! Mirrors `crates/chain-client/src/eip712.rs`: domain
-//! `("Agara CTF Exchange", "1")` and a nine-field `Order` (no `signer`,
-//! no `signatureType`). The digest produced here is byte-for-byte the one
-//! the on-chain `CTFExchange.hashOrder` view and the maker
-//! `AgaraAccount.isValidSignature` verify, so a bot's pre-signed order
-//! validates on-chain. LIMIT orders only; MARKET orders go through the
-//! regular place-order endpoint.
+#![cfg(feature = "signing")]
 
-use alloy::hex;
-use alloy::primitives::{Address, B256, U256};
-use alloy::signers::SignerSync;
-use alloy::signers::local::PrivateKeySigner;
-use alloy::sol;
-use alloy::sol_types::{Eip712Domain, SolStruct};
+//! Domain-bound EIP-712 order signing and verification.
 
-use crate::error::{AgaraError, Result};
-use crate::ids::{OrderHash, Side, TimeInForce, TokenId};
-use crate::models::SignedOrderRequest;
-use crate::units::{MICRO, Micro};
+mod hashable;
+mod tests;
+
+use core::num::NonZeroU64;
+
+use self::hashable::Order;
+
+use alloy::{
+	hex,
+	primitives::{Address, B256, Signature, SignatureError, U256},
+	signers::{
+		SignerSync,
+		local::{LocalSignerError, PrivateKeySigner},
+	},
+	sol_types::{Eip712Domain, SolStruct},
+};
+
+use crate::{
+	batch_signing::compose::ComposeError,
+	batches::{self, BatchValidationError, WireValueError},
+	ids::{OrderHash, OrderType, Side, TimeInForce, TokenId},
+	models::{OrderField, OrderValidationError, SignedOrderRequest},
+	units::Micro,
+};
 
 const DOMAIN_NAME: &str = "Agara CTF Exchange";
 const DOMAIN_VERSION: &str = "1";
-
 const SIDE_BUY: u8 = 0;
 const SIDE_SELL: u8 = 1;
 
-const ZERO_BYTES32: &str = "0x0000000000000000000000000000000000000000000000000000000000000000";
+/// Domain component that cannot be zero.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum DomainField {
+	/// EVM chain identifier.
+	ChainId,
 
-sol! {
-	/// EIP-712 typed shape of the CTFExchange Order — field order is
-	/// load-bearing for the typehash; mirror the contract exactly.
-	struct Order {
-		uint256 salt;
-		address maker;
-		uint256 tokenId;
-		uint256 makerAmount;
-		uint256 takerAmount;
-		uint8 side;
-		uint256 timestamp;
-		bytes32 metadata;
-		bytes32 builder;
-	}
+	/// Exchange contract verifying an order signature.
+	ExchangeContract,
+
+	/// Account owning the order.
+	Maker,
+
+	/// Account executing a batch.
+	Account,
+
+	/// Installed account implementation version.
+	ImplementationVersion,
+
+	/// Expected holder externally owned account.
+	Holder,
 }
 
-/// EIP-712 domain binding a signature to a specific engine deployment.
-#[derive(Clone, Copy, Debug)]
+/// Structural reason that an account-batch call cannot be signed.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum CallFailure {
+	/// An EVM call must name a nonzero target.
+	ZeroTarget,
+
+	/// The account contract rejects calls targeting itself.
+	SelfTarget,
+}
+
+/// A cryptographic or domain validation failure with its original typed source retained.
+#[derive(Debug, thiserror::Error)]
+#[non_exhaustive]
+pub enum SigningError {
+	/// A required signing-domain component is zero.
+	#[error("signing domain requires nonzero {0:?}")]
+	Domain(DomainField),
+
+	/// The public and signed order envelopes do not satisfy the order contract.
+	#[error(transparent)]
+	Order(#[from] OrderValidationError),
+
+	/// The batch violates operation, binding, or deadline policy.
+	#[error(transparent)]
+	Batch(#[from] BatchValidationError),
+
+	/// Canonical call composition failed.
+	#[error(transparent)]
+	Compose(#[from] ComposeError),
+
+	/// A call target violates account execution rules.
+	#[error("invalid batch call {index}: {reason:?}")]
+	Call {
+		/// Zero-based call index.
+		index: usize,
+
+		/// Exact target constraint that failed.
+		reason: CallFailure,
+	},
+
+	/// Operating-system entropy was unavailable while creating a random salt.
+	#[error("operating-system entropy is unavailable")]
+	Entropy(#[source] rand::rand_core::OsError),
+
+	/// The private key could not be decoded; its input is never included in the error message.
+	#[error("invalid private key")]
+	PrivateKey(#[source] LocalSignerError),
+
+	/// The configured local signer could not produce a signature.
+	#[error("cryptographic signing failed")]
+	Signer(#[source] alloy::signers::Error),
+
+	/// Signature parsing or public-key recovery failed.
+	#[error("signature recovery failed")]
+	Signature(#[source] SignatureError),
+
+	/// Uint256 decoding failed after structural checks.
+	#[error("Uint256 decoding failed")]
+	Uint256(#[source] alloy::primitives::ruint::ParseError),
+
+	/// ABI calldata must retain its unambiguous hexadecimal prefix.
+	#[error("batch calldata must be 0x-prefixed")]
+	CallDataPrefix,
+
+	/// ABI calldata contains malformed hexadecimal.
+	#[error("batch calldata hexadecimal decoding failed")]
+	CallData(#[source] hex::FromHexError),
+
+	/// The supplied order hash differs from the deployment-bound EIP-712 hash.
+	#[error("order hash differs from the deployment-bound digest")]
+	OrderHashMismatch,
+
+	/// The recovered signer differs from the expected account holder.
+	#[error("signature does not recover to the expected holder")]
+	HolderMismatch,
+}
+
+/// A validated chain and exchange address for the `Agara CTF Exchange` signing domain.
+///
+/// Domain construction cannot be bypassed by deserializing raw fields:
+/// ```compile_fail
+/// let _: agara_sdk::signing::EngineDomain = serde_json::from_str("{}").unwrap();
+/// ```
+#[derive(Clone, Copy, Debug, dissolve_derive::Dissolve)]
+#[dissolve(visibility = "pub(crate)")]
 pub struct EngineDomain {
-	/// The chain the exchange contract lives on.
-	pub chain_id: u64,
-	/// The exchange contract that verifies the signature via ERC-1271.
-	pub exchange_contract: Address,
+	chain_id: NonZeroU64,
+	exchange_contract: Address,
 }
 
-/// Output of [`sign_limit_order`]. Serialize with
-/// [`SignedOrder::to_request_body`] for
-/// [`crate::AgaraClient::place_signed_order`].
-#[derive(Clone, Debug)]
+/// A validated, immutable signed order. Build a checked wire envelope with `to_request_body`.
+#[derive(Clone, Debug, dissolve_derive::Dissolve)]
+#[dissolve(visibility = "pub(crate)")]
 pub struct SignedOrder {
 	order_hash: B256,
-	signature: String,
+	signature: Signature,
 	salt: U256,
 	maker: Address,
 	token_id: U256,
 	maker_amount: U256,
 	taker_amount: U256,
-	side: u8,
+	side: SignedSide,
+	timestamp: U256,
+	metadata: B256,
+	builder: B256,
+	price_micro: Micro,
+	shares_micro: Micro,
 }
 
-impl SignedOrder {
-	/// The EIP-712 order hash — your correlation key before the router
-	/// assigns an `order_id`.
-	pub fn order_hash(&self) -> OrderHash {
-		OrderHash::new(hex::encode_prefixed(self.order_hash))
-	}
-
-	/// Build the request body for `POST /trade/v1/orders/signed`.
-	/// `token_id` is the human-facing outcome id the router looks up; the
-	/// chain envelope carries the same value as a u256 decimal string.
-	#[allow(clippy::too_many_arguments)]
-	pub fn to_request_body(
-		&self,
-		token_id: TokenId,
-		side: Side,
-		price_micro: Micro,
-		shares_micro: Micro,
-		time_in_force: TimeInForce,
-		post_only: bool,
-		expiration_unix_seconds: Option<i64>,
-	) -> SignedOrderRequest {
-		SignedOrderRequest {
-			token_id,
-			side,
-			order_type: crate::ids::OrderType::Limit,
-			time_in_force,
-			price_micro,
-			shares_micro,
-			post_only,
-			expiration_unix_seconds,
-			order_hash: self.order_hash(),
-			signature: self.signature.clone(),
-			salt: self.salt.to_string(),
-			maker: hex::encode_prefixed(self.maker),
-			chain_token_id: self.token_id.to_string(),
-			maker_amount: self.maker_amount.to_string(),
-			taker_amount: self.taker_amount.to_string(),
-			side_u8: self.side,
-			timestamp: "0".to_owned(),
-			metadata: ZERO_BYTES32.to_owned(),
-			builder: ZERO_BYTES32.to_owned(),
-		}
-	}
-}
-
-/// Sign a LIMIT order. `deposit_wallet_address` is the maker on the
-/// envelope (the AgaraAccount address); the holder EOA behind
-/// `private_key` signs the order hash flat, and `isValidSignature`
-/// recovers it on-chain.
+/// Sign a LIMIT order using exact integer micro-units and the nine-field exchange order type.
+///
+/// Rejects invalid domain/maker/salt, nonpositive shares, price outside `(0, 1)`, and notionals
+/// outside the platform's $0.10–$100,000 bounds. Market-specific tick rules remain server-authoritative.
+/// The private key is parsed locally and is never included in an error message.
 #[bon::builder]
 pub fn sign_limit_order(
 	private_key: &str,
@@ -127,156 +178,257 @@ pub fn sign_limit_order(
 	price_micro: Micro,
 	shares_micro: Micro,
 	salt: Option<U256>,
-) -> Result<SignedOrder> {
-	let price = price_micro.raw();
-	let shares = shares_micro.raw();
-	if price <= 0 || price >= MICRO {
-		return Err(AgaraError::Validation(
-			"price_micro must be in (0, 1_000_000)".to_owned(),
-		));
+	#[builder(default)] timestamp: U256,
+	#[builder(default)] metadata: B256,
+	#[builder(default)] builder: B256,
+) -> Result<SignedOrder, SigningError> {
+	let collateral = crate::models::limit_collateral(price_micro, shares_micro)?;
+	let side = SignedSide::new(side)?;
+	if deposit_wallet_address.is_zero() {
+		return Err(SigningError::Domain(DomainField::Maker));
 	}
 
-	if shares <= 0 {
-		return Err(AgaraError::Validation(
-			"shares_micro must be > 0".to_owned(),
-		));
-	}
-
-	let collateral = (shares as i128 * price as i128) / MICRO as i128;
-	if collateral <= 0 {
-		return Err(AgaraError::Validation(
-			"collateral rounds to zero — order too small".to_owned(),
-		));
-	}
-
-	let (side_u8, maker_amount, taker_amount) = match side {
-		Side::Buy => (SIDE_BUY, collateral as u64, shares as u64),
-		Side::Sell => (SIDE_SELL, shares as u64, collateral as u64),
-		Side::Unspecified => {
-			return Err(AgaraError::Validation(
-				"side must be BUY or SELL".to_owned(),
-			));
-		},
+	let salt = match salt {
+		Some(salt) => salt,
+		None => random_salt()?,
 	};
+	if salt.is_zero() {
+		return Err(OrderValidationError::Field {
+			field: OrderField::Salt,
+			source: WireValueError::Zero,
+		}
+		.into());
+	}
 
-	let salt = salt.unwrap_or_else(|| U256::from(rand::random::<u128>()));
-	let maker_amount = U256::from(maker_amount);
-	let taker_amount = U256::from(taker_amount);
-
+	let shares = U256::from(shares_micro.raw().unsigned_abs());
+	let collateral = U256::from(collateral.unsigned_abs());
+	let (maker_amount, taker_amount) = match side {
+		SignedSide::Buy => (collateral, shares),
+		SignedSide::Sell => (shares, collateral),
+	};
 	let order = Order {
 		salt,
 		maker: deposit_wallet_address,
 		tokenId: token_id,
 		makerAmount: maker_amount,
 		takerAmount: taker_amount,
-		side: side_u8,
-		timestamp: U256::ZERO,
-		metadata: B256::ZERO,
-		builder: B256::ZERO,
+		side: side.raw(),
+		timestamp,
+		metadata,
+		builder,
 	};
-	let eip712_domain = Eip712Domain {
-		name: Some(DOMAIN_NAME.into()),
-		version: Some(DOMAIN_VERSION.into()),
-		chain_id: Some(U256::from(domain.chain_id)),
-		verifying_contract: Some(domain.exchange_contract),
-		salt: None,
-	};
-	let order_hash = order.eip712_signing_hash(&eip712_domain);
-
-	let signer: PrivateKeySigner = private_key
-		.parse()
-		.map_err(|e| AgaraError::Validation(format!("invalid private key: {e}")))?;
-	let signature = signer
-		.sign_hash_sync(&order_hash)
-		.map_err(|e| AgaraError::Validation(format!("signing failed: {e}")))?;
-
-	let mut bytes = signature.as_bytes();
-	if bytes[64] < 27 {
-		bytes[64] += 27;
-	}
+	let order_hash = order.eip712_signing_hash(&domain.as_eip712());
+	let signature = sign_digest(private_key, &order_hash)?;
 
 	Ok(SignedOrder {
 		order_hash,
-		signature: hex::encode_prefixed(bytes),
+		signature,
 		salt,
 		maker: deposit_wallet_address,
 		token_id,
 		maker_amount,
 		taker_amount,
-		side: side_u8,
+		side,
+		timestamp,
+		metadata,
+		builder,
+		price_micro,
+		shares_micro,
 	})
 }
 
-#[cfg(test)]
-mod tests {
-	use super::*;
+#[derive(Clone, Copy, Debug)]
+pub(crate) enum SignedSide {
+	Buy,
+	Sell,
+}
 
-	use alloy::primitives::{address, b256};
+fn random_salt() -> Result<U256, SigningError> {
+	loop {
+		let mut bytes = [0; 32];
+		rand::TryRngCore::try_fill_bytes(&mut rand::rngs::OsRng, &mut bytes)
+			.map_err(SigningError::Entropy)?;
+		let salt = U256::from_be_bytes(bytes);
+		if !salt.is_zero() {
+			return Ok(salt);
+		}
+	}
+}
 
-	// Fixed vector shared with chain-client's eip712 golden and the
-	// Python SDK's signing test.
-	const ACCOUNT: Address = address!("279640887C3806d4FBd424bb0B58F0430CE661C1");
-	const EXCHANGE: Address = address!("1b42FF8DdB251074637d3A9872D72f51e3AbB23d");
-	const CHAIN_ID: u64 = 84532;
-	const GOLDEN_HASH: B256 =
-		b256!("f5cbbd057896816a0be9a705a90bf1f094b01af05f977658791b3e65c862c961");
+pub(crate) fn sign_digest(private_key: &str, digest: &B256) -> Result<Signature, SigningError> {
+	let signer: PrivateKeySigner = private_key.parse().map_err(SigningError::PrivateKey)?;
 
-	#[test]
-	fn order_hash_matches_cross_repo_golden() {
-		// Arrange — the fixed order from chain-client's eip712 golden.
-		let order = Order {
-			salt: U256::from(1u64),
-			maker: ACCOUNT,
-			tokenId: U256::from(2u64),
-			makerAmount: U256::from(100u64),
-			takerAmount: U256::from(100u64),
-			side: 0,
-			timestamp: U256::ZERO,
-			metadata: B256::ZERO,
-			builder: B256::ZERO,
-		};
-		let domain = Eip712Domain {
-			name: Some(DOMAIN_NAME.into()),
-			version: Some(DOMAIN_VERSION.into()),
-			chain_id: Some(U256::from(CHAIN_ID)),
-			verifying_contract: Some(EXCHANGE),
-			salt: None,
-		};
+	signer.sign_hash_sync(digest).map_err(SigningError::Signer)
+}
 
-		// Act
-		let hash = order.eip712_signing_hash(&domain);
+pub(crate) fn decode_uint256(value: &str) -> Result<U256, SigningError> {
+	U256::from_str_radix(value, 10).map_err(SigningError::Uint256)
+}
 
-		// Assert — equals the cast-derived digest shared with chain-client.
-		assert_eq!(hash, GOLDEN_HASH);
+fn request_uint256(value: &str, field: OrderField) -> Result<U256, SigningError> {
+	let value = batches::uint256_decimal(value)
+		.map_err(|source| OrderValidationError::Field { field, source })?;
+
+	decode_uint256(value)
+}
+
+impl EngineDomain {
+	/// Require a nonzero chain ID and a nonzero exchange contract; no unchecked deserializer exists.
+	pub fn new(chain_id: u64, exchange_contract: Address) -> Result<Self, SigningError> {
+		let chain_id =
+			NonZeroU64::new(chain_id).ok_or(SigningError::Domain(DomainField::ChainId))?;
+		if exchange_contract.is_zero() {
+			return Err(SigningError::Domain(DomainField::ExchangeContract));
+		}
+
+		Ok(Self { chain_id, exchange_contract })
 	}
 
-	#[test]
-	fn sign_limit_order_produces_recoverable_signature() {
-		// Arrange — deterministic key; recover the signer to prove the
-		// 65-byte (r||s||v) signature is well-formed and eth-shaped.
-		let key = "0x1111111111111111111111111111111111111111111111111111111111111111";
-		let signer: PrivateKeySigner = key.parse().unwrap();
+	/// Chain ID cryptographically bound into every order digest.
+	pub fn chain_id(&self) -> u64 {
+		self.chain_id.get()
+	}
 
-		// Act
-		let signed = sign_limit_order()
-			.private_key(key)
-			.domain(EngineDomain { chain_id: CHAIN_ID, exchange_contract: EXCHANGE })
-			.deposit_wallet_address(signer.address())
-			.token_id(U256::from(2u64))
-			.side(Side::Buy)
-			.price_micro(Micro::new(500_000))
-			.shares_micro(Micro::new(2_000_000))
-			.salt(U256::from(1u64))
-			.call()
-			.unwrap();
+	/// Nonzero exchange address cryptographically bound into every order digest.
+	pub fn exchange_contract(&self) -> Address {
+		self.exchange_contract
+	}
 
-		// Assert
-		let hash = signed.order_hash;
-		let bytes = hex::decode(signed.signature.trim_start_matches("0x")).unwrap();
-		assert_eq!(bytes.len(), 65);
-		assert!(bytes[64] == 27 || bytes[64] == 28);
-		let sig = alloy::primitives::Signature::from_raw(&bytes).unwrap();
-		let recovered = sig.recover_address_from_prehash(&hash).unwrap();
-		assert_eq!(recovered, signer.address());
+	fn as_eip712(&self) -> Eip712Domain {
+		let domain = (*self).dissolve();
+
+		Eip712Domain {
+			name: Some(DOMAIN_NAME.into()),
+			version: Some(DOMAIN_VERSION.into()),
+			chain_id: Some(U256::from(domain.chain_id.get())),
+			verifying_contract: Some(domain.exchange_contract),
+			salt: None,
+		}
+	}
+}
+
+#[bon::bon]
+impl SignedOrder {
+	/// The immutable EIP-712 order identity used for deduplication and reconciliation.
+	pub fn order_hash(&self) -> OrderHash {
+		OrderHash::from_bytes(self.order_hash.0)
+	}
+
+	/// Construct a validated submission without allowing its economics to differ from the signature.
+	///
+	/// GTD expiry is checked against the local clock. The signed timestamp, metadata and builder
+	/// bytes are copied exactly, and canonical 27/28 recovery parity is emitted.
+	#[builder]
+	pub fn to_request_body(
+		&self,
+		token_id: TokenId,
+		side: Side,
+		price_micro: Micro,
+		shares_micro: Micro,
+		time_in_force: TimeInForce,
+		post_only: bool,
+		expiration_unix_seconds: Option<i64>,
+	) -> Result<SignedOrderRequest, SigningError> {
+		let signed = self.clone().dissolve();
+		let requested_token = request_uint256(token_id.as_str(), OrderField::TokenId)?;
+		if requested_token != signed.token_id
+			|| price_micro != signed.price_micro
+			|| shares_micro != signed.shares_micro
+			|| SignedSide::new(side)?.raw() != signed.side.raw()
+		{
+			return Err(OrderValidationError::SignedEconomicsMismatch.into());
+		}
+
+		let request = SignedOrderRequest {
+			token_id,
+			side,
+			order_type: OrderType::Limit,
+			time_in_force,
+			price_micro: signed.price_micro,
+			shares_micro: signed.shares_micro,
+			post_only,
+			expiration_unix_seconds,
+			order_hash: OrderHash::from_bytes(signed.order_hash.0),
+			signature: hex::encode_prefixed(signed.signature.as_bytes()),
+			salt: signed.salt.to_string(),
+			maker: hex::encode_prefixed(signed.maker),
+			chain_token_id: signed.token_id.to_string(),
+			maker_amount: signed.maker_amount.to_string(),
+			taker_amount: signed.taker_amount.to_string(),
+			side_u8: signed.side.raw(),
+			timestamp: signed.timestamp.to_string(),
+			metadata: hex::encode_prefixed(signed.metadata),
+			builder: hex::encode_prefixed(signed.builder),
+		};
+		request.validate()?;
+
+		Ok(request)
+	}
+}
+
+impl SignedOrderRequest {
+	/// Validate the envelope, recompute its deployment-bound hash, and recover the expected holder.
+	///
+	/// `holder` is the EOA authorized by the maker account, not the maker account address itself.
+	pub fn verify(&self, domain: EngineDomain, holder: Address) -> Result<(), SigningError> {
+		self.validate()?;
+		if holder.is_zero() {
+			return Err(SigningError::Domain(DomainField::Holder));
+		}
+
+		let order = Order {
+			salt: request_uint256(&self.salt, OrderField::Salt)?,
+			maker: Address::from(batches::address_bytes(&self.maker).map_err(|source| {
+				OrderValidationError::Field { field: OrderField::Maker, source }
+			})?),
+			tokenId: request_uint256(&self.chain_token_id, OrderField::ChainTokenId)?,
+			makerAmount: request_uint256(&self.maker_amount, OrderField::MakerAmount)?,
+			takerAmount: request_uint256(&self.taker_amount, OrderField::TakerAmount)?,
+			side: self.side_u8,
+			timestamp: request_uint256(&self.timestamp, OrderField::Timestamp)?,
+			metadata: B256::from(batches::decode_hex(&self.metadata).map_err(|source| {
+				OrderValidationError::Field { field: OrderField::Metadata, source }
+			})?),
+			builder: B256::from(batches::decode_hex(&self.builder).map_err(|source| {
+				OrderValidationError::Field { field: OrderField::Builder, source }
+			})?),
+		};
+		let digest = order.eip712_signing_hash(&domain.as_eip712());
+		let supplied = batches::decode_hex::<32>(self.order_hash.as_str()).map_err(|source| {
+			OrderValidationError::Field { field: OrderField::OrderHash, source }
+		})?;
+		if digest.0 != supplied {
+			return Err(SigningError::OrderHashMismatch);
+		}
+
+		let signature = batches::signature_bytes(&self.signature).map_err(|source| {
+			OrderValidationError::Field { field: OrderField::Signature, source }
+		})?;
+		let recovered = Signature::from_raw(&signature)
+			.map_err(SigningError::Signature)?
+			.recover_address_from_prehash(&digest)
+			.map_err(SigningError::Signature)?;
+		if recovered != holder {
+			return Err(SigningError::HolderMismatch);
+		}
+
+		Ok(())
+	}
+}
+
+impl SignedSide {
+	fn new(side: Side) -> Result<Self, OrderValidationError> {
+		match side {
+			Side::Buy => Ok(Self::Buy),
+			Side::Sell => Ok(Self::Sell),
+			Side::Unspecified => Err(OrderValidationError::Side),
+		}
+	}
+
+	fn raw(self) -> u8 {
+		match self {
+			Self::Buy => SIDE_BUY,
+			Self::Sell => SIDE_SELL,
+		}
 	}
 }

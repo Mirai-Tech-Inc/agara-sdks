@@ -1,0 +1,26 @@
+{
+  "results": [
+    {
+      "index": 0,
+      "outcome": "accepted",
+      "order_id": "11111111-1111-4111-8111-111111111111",
+      "source": "AGARA",
+      "status": "PENDING",
+      "pending_operation": "SUBMIT",
+      "as_of": "2026-09-18T00:00:00Z"
+    },
+    {
+      "index": 1,
+      "outcome": "rejected",
+      "failure": {
+        "code": "duplicate_order",
+        "title": "Duplicate order",
+        "recovery": {
+          "strategy": "none"
+        },
+        "detail": "An order with this identity already exists."
+      }
+    }
+  ],
+  "as_of": "2026-09-18T00:00:00Z"
+}

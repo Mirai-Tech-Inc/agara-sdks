@@ -1,0 +1,21 @@
+{
+  "est_checkout_time_ms": 1200,
+  "est_fee_breakdown": {
+    "app_fee_label": "0",
+    "app_fee_percent": "0",
+    "app_fee_usd": "0",
+    "fill_cost_percent": "0",
+    "fill_cost_usd": "0",
+    "gas_usd": "0",
+    "max_slippage": "0",
+    "min_received": "0",
+    "swap_impact": "0",
+    "swap_impact_usd": "0",
+    "total_impact": "0",
+    "total_impact_usd": "0"
+  },
+  "est_input_usd": "1",
+  "est_output_usd": "0.99",
+  "est_to_token_base_unit": "990000",
+  "quote_id": "q1"
+}

@@ -1,0 +1,8 @@
+{
+  "wallet_address": "0x1",
+  "deposit_addresses": {
+    "evm": "0x2",
+    "svm": "sol",
+    "btc": "bc"
+  }
+}

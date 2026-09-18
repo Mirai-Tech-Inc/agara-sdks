@@ -1,0 +1,21 @@
+{
+  "symbol": "BTC-USD",
+  "label": "Bitcoin",
+  "mic": "XCRYPTO",
+  "asset_class": "crypto",
+  "active": true,
+  "providers": [
+    {
+      "provider": "pyth-pro",
+      "provider_symbol": "Crypto.BTC/USD",
+      "active": true
+    }
+  ],
+  "venue_timezone": "UTC",
+  "venue_default_segments": [
+    {
+      "open": "00:00",
+      "close": "23:59"
+    }
+  ]
+}

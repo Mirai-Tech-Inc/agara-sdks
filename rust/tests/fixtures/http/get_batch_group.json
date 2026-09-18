@@ -1,0 +1,16 @@
+{
+  "group_id": "11111111-1111-4111-8111-111111111111",
+  "op_count": 1,
+  "chunk_count": 1,
+  "completed_at": "2026-09-18T00:00:00Z",
+  "chunks": [
+    {
+      "chunk_index": 0,
+      "batch_hash": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "status": "SETTLED",
+      "tx_hash": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "failure": null
+    }
+  ],
+  "as_of": "2026-09-18T00:00:00Z"
+}

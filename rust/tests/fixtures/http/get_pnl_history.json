@@ -1,0 +1,59 @@
+{
+  "from": "now",
+  "to": "now",
+  "start": {
+    "bucket_at": "2026-09-18T00:00:00Z",
+    "mark_run_id": "mark1",
+    "mark_captured_at": "2026-09-18T00:00:00Z",
+    "chain_id": 8453,
+    "classification_version": 1,
+    "wallet_universe_generation": 1,
+    "custody_through_block": 123,
+    "custody_through_block_hash": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "custody_through_block_time": "2026-09-18T00:00:00Z",
+    "collateral_micro": "100",
+    "positions_value_micro": "20",
+    "cumulative_inflow_micro": "100",
+    "cumulative_outflow_micro": "0",
+    "lifetime_pnl_micro": "20",
+    "position_count": 1
+  },
+  "end": {
+    "bucket_at": "2026-09-18T00:00:00Z",
+    "mark_run_id": "mark1",
+    "mark_captured_at": "2026-09-18T00:00:00Z",
+    "chain_id": 8453,
+    "classification_version": 1,
+    "wallet_universe_generation": 1,
+    "custody_through_block": 123,
+    "custody_through_block_hash": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "custody_through_block_time": "2026-09-18T00:00:00Z",
+    "collateral_micro": "100",
+    "positions_value_micro": "20",
+    "cumulative_inflow_micro": "100",
+    "cumulative_outflow_micro": "0",
+    "lifetime_pnl_micro": "20",
+    "position_count": 1
+  },
+  "lifetime_pnl_change_micro": "0",
+  "points": [
+    {
+      "bucket_at": "2026-09-18T00:00:00Z",
+      "mark_run_id": "mark1",
+      "mark_captured_at": "2026-09-18T00:00:00Z",
+      "chain_id": 8453,
+      "classification_version": 1,
+      "wallet_universe_generation": 1,
+      "custody_through_block": 123,
+      "custody_through_block_hash": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "custody_through_block_time": "2026-09-18T00:00:00Z",
+      "collateral_micro": "100",
+      "positions_value_micro": "20",
+      "cumulative_inflow_micro": "100",
+      "cumulative_outflow_micro": "0",
+      "lifetime_pnl_micro": "20",
+      "position_count": 1
+    }
+  ],
+  "has_more": false
+}

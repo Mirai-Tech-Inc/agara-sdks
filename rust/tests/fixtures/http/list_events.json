@@ -1,0 +1,21 @@
+{
+  "events": [
+    {
+      "id": "event1",
+      "slug": "event",
+      "title": "Event",
+      "is_accepting_orders": true,
+      "is_live": false,
+      "is_group_root": false,
+      "volume_micro": "1000000",
+      "resolution_status": "ACTIVE",
+      "event_type": "PROPOSITION",
+      "display": {},
+      "market_count": 1
+    }
+  ],
+  "pagination": {
+    "next_cursor": null,
+    "limit": 50
+  }
+}

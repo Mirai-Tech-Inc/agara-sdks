@@ -1,0 +1,14 @@
+{
+  "summaries": [
+    {
+      "exchange": "AGARA",
+      "as_of": "2026-09-18T00:00:00Z",
+      "cash_balance_micro": "1",
+      "free_cash_micro": "1",
+      "positions_value_micro": "1",
+      "portfolio_value_micro": "1",
+      "open_cost_basis_micro": "1",
+      "open_unrealized_pnl_micro": "1"
+    }
+  ]
+}
