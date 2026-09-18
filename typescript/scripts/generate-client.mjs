@@ -1,4 +1,5 @@
 import fs from "node:fs/promises";
+import { endpointDocs } from "./endpoint-docs.mjs";
 
 const directory = new URL("../", import.meta.url);
 const names = {
@@ -89,7 +90,7 @@ for (const endpoint of manifest.operations.filter((o) => o.protocol === "HTTP"))
   args.push("options: RequestOptions = {}");
   const url = endpoint.path.replace(/\{(.*?)\}/g, (_, p) => `\${this.pathPart(${p})}`);
   const auth = !endpoint.auth.startsWith("anonymous");
-  const wrapper = `  ${name}(${args.join(", ")}): Promise<Success<${operationType}>> {\n    return this.request("${endpoint.method}", \`${url}\`, ${operation.requestBody ? "body" : "undefined"}, ${query.length ? "query" : "undefined"}, options, ${auth}, "${name}");\n  }\n`;
+  const wrapper = `${methodComment(name, endpoint, operation, params, query)}  ${name}(${args.join(", ")}): Promise<Success<${operationType}>> {\n    return this.request("${endpoint.method}", \`${url}\`, ${operation.requestBody ? "body" : "undefined"}, ${query.length ? "query" : "undefined"}, options, ${auth}, "${name}");\n  }\n`;
   wrappers[auth ? "private" : "public"].push(wrapper);
   inventory.push({ name, ...endpoint, operationId: id });
   runtime[name] = renameRefs(
@@ -107,8 +108,37 @@ for (const endpoint of manifest.operations.filter((o) => o.protocol === "HTTP"))
     family,
   );
 }
-output += `export class PublicClient extends Transport {\n${wrappers.public.join("\n")}\n}\n`;
-output += `export class TraderClient extends PublicClient {\n constructor(options: ClientOptions & { token: string }) { super(options); }\n${wrappers.private.join("\n")}\n}\n`;
+if (inventory.length !== Object.keys(endpointDocs).length)
+  throw new Error("Endpoint documentation inventory differs from generated client methods");
+output += `${docComment(
+  [
+    "Public discovery and trading-data client; construction does not require credentials.",
+    "",
+    "@remarks",
+    "Configure service URLs, request deadlines and optional credentials through ClientOptions.",
+    "Methods preserve full response envelopes. HTTP requests are sent once with redirects disabled;",
+    "server failures, transport failures and malformed success responses have distinct error classes.",
+    "An optional PAT personalizes eligible trading-data routes such as LP standing.",
+  ],
+  "",
+)}export class PublicClient extends Transport {\n${wrappers.public.join("\n")}\n}\n`;
+output += `${docComment(
+  [
+    "Personal-access-token client for order, portfolio and account-batch operations.",
+    "",
+    "@remarks",
+    "Each method documents its required PAT scope. Acceptance of an asynchronous operation is not",
+    "proof of a fill or settlement. Reconcile uncertain submissions using their existing identities;",
+    "this client never automatically replays HTTP mutations. AgaraClient adds polling and pagination.",
+  ],
+  "",
+)}export class TraderClient extends PublicClient {\n${docComment([
+  "Configure an authenticated client without sending a request or validating the token remotely.",
+  "",
+  "@param options - Required PAT plus optional URLs, fetch transport, deadlines and response observers.",
+  "@throws TypeError for invalid URL or token text.",
+  "@throws RangeError for invalid default timeout or byte limit.",
+])} constructor(options: ClientOptions & { /** Personal access token with each requested operation's scopes. */ token: string }) { super(options); }\n${wrappers.private.join("\n")}\n}\n`;
 await fs.writeFile(new URL("src/endpoints.ts", directory), output);
 await fs.writeFile(
   new URL("contracts/endpoints.json", directory),
@@ -153,3 +183,90 @@ await fs.writeFile(
   new URL("src/generated/requests.ts", directory),
   `export const requestContracts = ${JSON.stringify(compact(runtime))};\nexport const definitions = ${JSON.stringify(compact(definitions))};\n`,
 );
+
+function methodComment(name, endpoint, operation, params, query) {
+  const docs = endpointDocs[name];
+  if (!docs?.summary || !docs.returns || !docs.remarks)
+    throw new Error(`Missing endpoint documentation for ${name}`);
+  const scopes = (operation.security ?? []).flatMap(
+    (security) => security.personal_access_token ?? [],
+  );
+  const fallbackScopes = {
+    OrdersPlace: "orders:place",
+    OrdersPlaceSigned: "orders:place_signed",
+    OrdersRead: "orders:read",
+    OrdersCancel: "orders:cancel",
+    OrdersCancelAll: "orders:cancel_all",
+    BatchesSubmit: "batches:submit",
+    PortfolioRead: "portfolio:read",
+    PositionsSplit: "positions:split",
+    PositionsMerge: "positions:merge",
+  };
+  if (!endpoint.auth.startsWith("anonymous") && !scopes.length) {
+    const scope = fallbackScopes[endpoint.auth.split(": ").at(-1)];
+    if (!scope) throw new Error(`Missing PAT scope documentation for ${name}`);
+    scopes.push(scope);
+  }
+  const authentication = endpoint.auth.startsWith("anonymous")
+    ? "Callable without credentials."
+    : `Requires a personal access token with scope ${scopes.map((scope) => `\`${scope}\``).join(", ")}.`;
+  const mutation =
+    !["GET", "HEAD"].includes(endpoint.method) &&
+    ![
+      "listOrders",
+      "listOpenOrders",
+      "listPositions",
+      "quoteBridgeDeposit",
+      "quoteBridgeWithdrawal",
+    ].includes(name);
+  const lines = [docs.summary, "", "@remarks", `${authentication} ${docs.remarks}`, ""];
+  for (const param of params.filter((param) => param.in === "path")) {
+    const description = docs.params?.[param.name];
+    if (!description) throw new Error(`Missing ${name}.${param.name} documentation`);
+    lines.push(`@param ${param.name} - ${description}`);
+  }
+  if (operation.requestBody) {
+    if (!docs.body) throw new Error(`Missing ${name} body documentation`);
+    lines.push(`@param body - ${docs.body}`);
+  }
+  if (query.length) {
+    if (!docs.query) throw new Error(`Missing ${name} query documentation`);
+    lines.push(`@param query - ${docs.query}`);
+  }
+  lines.push(
+    "@param options - Per-request abort signal, timeout override and successful-response observer.",
+    `@returns ${docs.returns}`,
+    "@throws TypeError for invalid local request shapes or text inputs.",
+    "@throws RangeError for invalid local numeric inputs or timeout overrides.",
+    "@throws AgaraError for an unsuccessful HTTP response; inspect its status and validated recovery.",
+    mutation
+      ? "@throws TransportError for failed or aborted I/O; a sent mutation may still complete."
+      : "@throws TransportError for failed or aborted I/O; inspect its cause for the underlying failure.",
+    "@throws ProtocolError when a successful response is malformed or exceeds the response-byte bound.",
+    "@throws ResponseObserverError when a callback throws after receiving a valid success response.",
+  );
+  return docComment(lines);
+}
+
+function docComment(paragraphs, indent = "  ") {
+  const lines = [];
+  const width = 100 - indent.length - 3;
+  for (const paragraph of paragraphs) {
+    if (paragraph.includes("*/"))
+      throw new Error("Endpoint documentation cannot terminate its comment");
+    if (!paragraph) {
+      lines.push("");
+      continue;
+    }
+    let line = "";
+    for (const word of paragraph.split(/\s+/)) {
+      if (line && line.length + word.length + 1 > width) {
+        lines.push(line);
+        line = "";
+      }
+      line += `${line ? " " : ""}${word}`;
+    }
+    lines.push(line);
+  }
+  return `${indent}/**\n${lines.map((line) => `${indent} *${line ? ` ${line}` : ""}`).join("\n")}\n${indent} */\n`;
+}
