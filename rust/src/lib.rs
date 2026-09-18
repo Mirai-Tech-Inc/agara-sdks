@@ -1,21 +1,37 @@
-//! Rust client for the agara prediction-markets trading API.
+#![doc = core::include_str!("../README.md")]
 
+pub mod activity;
+pub mod batch_signing;
+pub mod batches;
+pub mod bridge;
+pub mod catalogue;
 pub mod client;
 pub mod error;
-#[cfg(feature = "streaming")]
 pub mod frames;
 pub mod ids;
+pub mod incentives;
 pub mod models;
+pub mod pnl;
+pub mod prices;
+pub mod problem;
 pub mod retry;
-#[cfg(feature = "signing")]
 pub mod signing;
-#[cfg(feature = "streaming")]
 pub mod stream;
 pub mod units;
+pub mod validation;
+pub mod values;
+
+mod endpoints;
+mod input;
 
 pub use client::{AgaraClient, DEFAULT_BASE_URL};
+
 pub use error::{AgaraError, Result};
+
+pub use problem::{ProblemDetails, PublicFailure, Recovery};
+
 pub use retry::RetryPolicy;
+
 pub use units::{MICRO, Micro};
 
 #[cfg(feature = "signing")]
