@@ -1,13 +1,24 @@
 [workspace]
+resolver = "3"
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
+missing_docs = "deny"
+
+[workspace.lints.clippy]
+wildcard_imports = "deny"
+
+[lints]
+workspace = true
 
 [package]
 name = "agara-sdk"
-version = "0.2.0"
+version = "0.4.0"
 edition = "2024"
-rust-version = "1.95"
+rust-version = "1.97.0"
 license = "MIT"
 description = "Rust client for the agara prediction-markets trading API."
-repository = "https://github.com/Mirai-Tech-Inc/prediction-markets"
+repository = "https://github.com/Mirai-Tech-Inc/agara-sdks"
 readme = "README.md"
 
 [features]
@@ -18,11 +29,31 @@ streaming = ["dep:tokio-tungstenite", "dep:futures-util"]
 [lib]
 name = "agara_sdk"
 
+[[example]]
+name = "subscribe"
+required-features = ["streaming"]
+
+[[test]]
+name = "batch_goldens"
+required-features = ["signing"]
+
+[[test]]
+name = "stream_transport"
+required-features = ["streaming"]
+
+[[test]]
+name = "stream_validation"
+required-features = ["streaming"]
+
 [dependencies]
 reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls", "http2"] }
 tokio = { version = "1", features = ["rt-multi-thread", "macros", "time", "sync"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
+uuid = { version = "1.26.1", default-features = false }
+url = "2.5.8"
+chrono = { version = "0.4.45", default-features = false, features = ["std"] }
+dissolve-derive = "0.1.4"
 rust_decimal = "1"
 thiserror = "2"
 bon = "3"
@@ -32,5 +63,6 @@ tokio-tungstenite = { version = "0.28", default-features = false, features = ["c
 futures-util = { version = "0.3", optional = true }
 
 [dev-dependencies]
-tokio = { version = "1", features = ["rt-multi-thread", "macros", "time", "sync"] }
+rstest = "0.27"
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "time", "sync", "test-util"] }
 rust_decimal_macros = "1"
