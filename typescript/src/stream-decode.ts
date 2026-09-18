@@ -57,6 +57,16 @@ function validateSubject(raw: Record<string, unknown>): void {
   if (raw.channel === "trades" && typeof raw.condition_id !== "string")
     throw new ProtocolError("Missing condition_id", raw);
 }
+/**
+ * Check the local shape of one channel subscription without sending it to the server.
+ *
+ * @param spec - Channel name, subject, and optional depth or account credential.
+ * @throws TypeError - An account subscription has an empty token.
+ * @throws ProtocolError - The channel, subject fields, or unsigned 32-bit depth are invalid.
+ * @remarks
+ * This does not authenticate credentials, resolve identifiers, or check server permissions.
+ * Endpoint compatibility and the per-connection subscription count are checked by `AgaraStream`.
+ */
 export function validateSubscription(spec: ChannelSpec): void {
   const raw = spec as unknown as Record<string, unknown>;
   if (spec.name === "account_events") {
@@ -66,6 +76,21 @@ export function validateSubscription(spec: ChannelSpec): void {
   validateSubject({ ...raw, channel: spec.name });
   if (spec.name === "orderbook" && spec.depth !== undefined) scalar(spec.depth, "depth");
 }
+/**
+ * Decode a router WebSocket frame while preserving exact integer values and future frame variants.
+ *
+ * @param input - JSON text or an already parsed frame; use bigint for large pre-parsed integers.
+ * @returns A recognized frame, or an `unknown` frame retaining unrecognized operations, channels,
+ * update kinds, or reset reasons. Server failure actions are checked against the problem registry.
+ * @throws ProtocolError - A checked field in a recognized frame or its public failure is malformed.
+ * @throws SyntaxError - JSON text is invalid.
+ * @throws TypeError - JSON text contains a non-finite numeric value.
+ * @remarks
+ * Native JSON integers outside JavaScript's safe range become bigint. Pre-parsed inputs cannot
+ * recover precision already lost to `JSON.parse`. Unknown failure codes retain their details but
+ * cannot enable automatic recovery. This function does not enforce sequence continuity or reconcile
+ * application state, and is not an exhaustive validator for every server-side domain constraint.
+ */
 export function decodeFrame(input: string | unknown): ServerFrame {
   const raw = typeof input === "string" ? parseJson(input) : input;
   if (!isObject(raw) || typeof raw.op !== "string")
@@ -276,6 +301,16 @@ function validateLifecycle(data: Record<string, unknown>): void {
       throw new ProtocolError("Unknown lifecycle replacement", data);
   } else throw new ProtocolError("Invalid event lifecycle kind", data);
 }
+/**
+ * Decode the provider price payload carried in an SSE event's data field.
+ *
+ * @param input - JSON text containing a `parsed` price-entry array.
+ * @returns Entries whose price mantissas remain strings, with integer decimal exponents and Unix
+ * publication timestamps in milliseconds.
+ * @throws ProtocolError - The entry shape, integer price string, exponent, or timestamp is invalid.
+ * @throws SyntaxError - The input is not valid JSON.
+ * @throws TypeError - JSON text contains a non-finite numeric value.
+ */
 export function decodePriceFrame(input: string): PriceStreamFrame {
   const raw = parseJson(input);
   if (!isObject(raw) || !Array.isArray(raw.parsed))
