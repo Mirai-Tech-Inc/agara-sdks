@@ -1,0 +1,38 @@
+{
+  "orders": [
+    {
+      "internal_id": "11111111-1111-4111-8111-111111111111",
+      "exchange": "AGARA",
+      "token_id": "123",
+      "side": "BUY",
+      "type": "LIMIT",
+      "price_micro": "500000",
+      "original_size_micro": "1000000",
+      "size_matched_micro": "0",
+      "status": "OPEN",
+      "is_terminal": false,
+      "expiration": "1970-01-01T00:00:00Z",
+      "created_at": "2026-09-17T00:00:00Z"
+    }
+  ],
+  "markets": {
+    "123": {
+      "market_id": "11111111-1111-4111-8111-111111111111",
+      "market_title": "Market?",
+      "outcome_name": "Yes",
+      "logo_url": null,
+      "event_slug": "event",
+      "state": "ACTIVE",
+      "neg_risk_id": null,
+      "display": {
+        "market": {},
+        "outcome": {}
+      }
+    }
+  },
+  "pagination": {
+    "next_cursor": null,
+    "limit": 50
+  },
+  "as_of": "2026-09-18T00:00:00Z"
+}

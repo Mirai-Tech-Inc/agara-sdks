@@ -1,0 +1,12 @@
+{
+  "mic": "XNAS",
+  "date": "2026-09-17",
+  "is_trading_day": true,
+  "segments": [
+    {
+      "open": "09:30",
+      "close": "16:00"
+    }
+  ],
+  "reason": null
+}

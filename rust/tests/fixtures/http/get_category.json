@@ -1,0 +1,10 @@
+{
+  "id": "cat1",
+  "slug": "crypto",
+  "label": "Crypto",
+  "event_types": {
+    "game": false,
+    "multi_outcome": true,
+    "proposition": true
+  }
+}

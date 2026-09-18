@@ -1,0 +1,35 @@
+{
+  "activities": [
+    {
+      "type": "LP_PAYOUT",
+      "exchange": "AGARA",
+      "id": "lp1",
+      "amount_micro": "10",
+      "epoch_date": "2026-09-17",
+      "tx_hash": null,
+      "created_at": "2026-09-18T00:00:00Z"
+    }
+  ],
+  "markets": {
+    "123": {
+      "market_id": "11111111-1111-4111-8111-111111111111",
+      "market_title": "Market?",
+      "outcome_name": "Yes",
+      "logo_url": null,
+      "event_slug": "event",
+      "state": "ACTIVE",
+      "neg_risk_id": null,
+      "display": {
+        "market": {},
+        "outcome": {}
+      }
+    }
+  },
+  "events": {},
+  "conditions": {},
+  "pagination": {
+    "next_cursor": null,
+    "limit": 50
+  },
+  "as_of": "2026-09-18T00:00:00Z"
+}

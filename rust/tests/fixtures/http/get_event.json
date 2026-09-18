@@ -1,0 +1,49 @@
+{
+  "id": "event1",
+  "slug": "event",
+  "title": "Event",
+  "is_accepting_orders": true,
+  "is_live": false,
+  "is_group_root": false,
+  "volume_micro": "1000000",
+  "resolution_status": "ACTIVE",
+  "event_type": "PROPOSITION",
+  "display": {},
+  "market_count": 1,
+  "categories": [],
+  "markets": [
+    {
+      "id": "m1",
+      "exchange": "AGARA",
+      "slug": "m1",
+      "question": "Market?",
+      "outcomes": [
+        {
+          "id": "outcome1",
+          "index": 0,
+          "label": "Yes",
+          "token_id": "123",
+          "price_micro": "500000"
+        }
+      ],
+      "is_accepting_orders": true,
+      "volume_micro": "1000000",
+      "liquidity": "1.2",
+      "volume_24h_micro": "100000",
+      "display_label": "Market",
+      "display": {
+        "security_symbol": "BTC-USD",
+        "reference_price": "123.4"
+      },
+      "engine_config": {
+        "tick_size": 10000,
+        "price_scale": 1000000,
+        "size_scale": 1000000,
+        "min_price": 10000,
+        "max_price": 990000
+      },
+      "state": "ACTIVE"
+    }
+  ],
+  "related_events": []
+}

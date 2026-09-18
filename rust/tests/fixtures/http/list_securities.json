@@ -1,0 +1,11 @@
+{
+  "securities": [
+    {
+      "symbol": "BTC-USD",
+      "label": "Bitcoin",
+      "mic": "XCRYPTO",
+      "asset_class": "crypto",
+      "active": true
+    }
+  ]
+}

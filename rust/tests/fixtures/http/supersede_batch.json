@@ -1,0 +1,13 @@
+{
+  "outcome": "REFUSED",
+  "current": {
+    "batch_hash": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "status": "SETTLED",
+    "seq": 4,
+    "deadline_unix_seconds": 1784022000,
+    "origin": "PRESIGNED",
+    "tx_hash": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "executed_at": "2026-09-18T00:00:00Z",
+    "created_at": "2026-09-18T00:00:00Z"
+  }
+}

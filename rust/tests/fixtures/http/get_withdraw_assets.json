@@ -1,0 +1,17 @@
+{
+  "wallet_address": "0x1",
+  "supported_assets": [
+    {
+      "chain_id": "8453",
+      "chain_name": "Base",
+      "address_type": "EVM",
+      "token": {
+        "name": "USD Coin",
+        "symbol": "USDC",
+        "address": "0x2",
+        "decimals": 6
+      },
+      "min_checkout_usd": "1"
+    }
+  ]
+}

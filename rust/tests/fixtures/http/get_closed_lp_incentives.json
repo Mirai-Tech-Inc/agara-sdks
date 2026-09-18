@@ -1,0 +1,22 @@
+{
+  "eligible": true,
+  "markets": [
+    {
+      "market_id": "11111111-1111-4111-8111-111111111111",
+      "question": "Market?",
+      "event_slug": "event",
+      "event_title": "Event",
+      "pool_micro": "1000000",
+      "epoch_score": 1.25,
+      "market_total_score": 2.5,
+      "potential_payout_micro": "500000",
+      "earned_micro": "500000",
+      "epoch_date": "2026-09-17",
+      "credited": true,
+      "has_traded": true
+    }
+  ],
+  "limit": 20,
+  "page": 1,
+  "total": 1
+}

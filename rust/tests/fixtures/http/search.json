@@ -1,0 +1,46 @@
+{
+  "events": [
+    {
+      "id": "event1",
+      "slug": "event",
+      "title": "Event",
+      "is_accepting_orders": true,
+      "is_live": false,
+      "is_group_root": false,
+      "volume_micro": "1000000",
+      "resolution_status": "ACTIVE",
+      "event_type": "PROPOSITION",
+      "display": {},
+      "market_count": 1,
+      "relevance_score": 0.9
+    }
+  ],
+  "markets": [
+    {
+      "id": "m1",
+      "slug": "m1",
+      "question": "Market?",
+      "is_accepting_orders": true,
+      "volume_micro": "10",
+      "event": {
+        "slug": "event",
+        "title": "Event",
+        "image_url": null
+      },
+      "outcomes": [
+        {
+          "label": "Yes",
+          "price_micro": "400000"
+        }
+      ],
+      "relevance_score": 0.8
+    }
+  ],
+  "categories": [
+    {
+      "slug": "crypto",
+      "label": "Crypto",
+      "icon": null
+    }
+  ]
+}
