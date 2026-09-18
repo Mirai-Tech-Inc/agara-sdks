@@ -3,17 +3,19 @@
 //!     export AGARA_TOKEN="agt_..."
 //!     cargo run --example subscribe -- <token_id> <condition_id>
 
-use agara_sdk::ids::{ConditionId, TokenId};
-use agara_sdk::{AgaraStreamClient, Channel, Frame};
+use agara_sdk::{
+	AgaraStreamClient, Channel, Frame,
+	ids::{ConditionId, TokenId},
+};
 
 #[tokio::main]
 async fn main() -> agara_sdk::Result<()> {
 	let mut args = std::env::args().skip(1);
-	let token_id = TokenId::new(args.next().expect("usage: subscribe <token_id> <condition_id>"));
-	let condition_id = ConditionId::new(args.next().expect("missing <condition_id>"));
+	let token_id = TokenId::new(args.next().expect("usage: subscribe <token_id> <condition_id>"))?;
+	let condition_id = ConditionId::new(args.next().expect("missing <condition_id>"))?;
 	let token = std::env::var("AGARA_TOKEN").ok();
 
-	let mut client = AgaraStreamClient::builder().maybe_token(token).build();
+	let mut client = AgaraStreamClient::builder().maybe_token(token.map(Into::into)).build()?;
 	client.subscribe([
 		Channel::Orderbook(token_id.clone()),
 		Channel::BestQuote(token_id),
@@ -25,21 +27,40 @@ async fn main() -> agara_sdk::Result<()> {
 	while let Some(frame) = stream.next().await {
 		match frame {
 			Frame::OrderbookSnapshot(s) => {
-				println!(
+				std::println!(
 					"[snapshot] seq={} bids={} asks={}",
 					s.sequence,
 					s.bids.len(),
 					s.asks.len()
 				);
 			},
-			Frame::BestQuote(q) => println!("[best_quote] bid={:?} ask={:?}", q.bid, q.ask),
-			Frame::Trade(t) => println!(
+			Frame::BestQuote(q) => std::println!("[best_quote] bid={:?} ask={:?}", q.bid, q.ask),
+			Frame::Trade(t) => std::println!(
 				"[trade] {:?} {}@{} mode={:?}",
-				t.side, t.size, t.price, t.settlement_mode
+				t.side,
+				t.size,
+				t.price,
+				t.settlement_mode
 			),
-			Frame::Fill(f) => println!("[fill {:?}] {} order={}", f.role, f.fill_id, f.order_id),
-			Frame::SequenceReset(r) => eprintln!("[reset] {} — discard local state", r.channel),
-			Frame::Error(e) => eprintln!("[error] {}: {}", e.code, e.message),
+			Frame::Fill(f) => {
+				std::println!("[fill {:?}] {} order={}", f.role, f.fill_id, f.order_id)
+			},
+			Frame::OrderRejected(r) => {
+				std::eprintln!("[rejected] order={} code={}", r.order_id, r.failure.code);
+			},
+			Frame::SequenceReset(r) => {
+				std::eprintln!("[reset] {} — discard local state", r.channel)
+			},
+			Frame::Error(e) => {
+				std::eprintln!(
+					"[error] {}: {} action={:?}",
+					e.code(),
+					e.message(),
+					e.action
+				);
+			},
+			Frame::ClientError(error) => std::eprintln!("[client] {error}"),
+			Frame::Malformed { error, .. } => std::eprintln!("[malformed] {error}"),
 			_ => {},
 		}
 	}
