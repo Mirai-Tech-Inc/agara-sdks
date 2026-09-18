@@ -8,7 +8,7 @@ registry.
 | --- | --- | --- | --- |
 | Python | [`python/`](./python/) | alpha | `agara-sdk` on PyPI (when published) |
 | Rust | [`rust/`](./rust/) | alpha | `agara-sdk` on crates.io (when published) |
-| TypeScript | — | planned | `@agara/sdk` on npm |
+| TypeScript | [`typescript/`](./typescript/) | alpha | `@agara/sdk` on npm (when published) |
 
 All SDKs target the same HTTP API. The canonical reference for what
 each endpoint does — request shape, response shape, errors — lives at
@@ -25,11 +25,13 @@ hand-written ones.
 - **Naming.** Method names mirror the HTTP verb intent
   (`place_order`, `get_orderbook`, `cancel_order`, `list_trades`), not
   the raw URL path.
-- **Amounts.** Take dollars / shares in arguments, convert to micro
-  units internally; parse response micro strings back to floats for
-  consumers. Users think in dollars; the wire format stays hidden.
-- **Errors.** A small hierarchy keyed by HTTP status — `AuthError`,
-  `NotFoundError`, `ConflictError`, `RejectedError`, `ServerError`,
-  with a common base for catch-all handling.
-- **Auth.** Personal access tokens (`agt_…`) only; no Privy JWTs
+- **Amounts.** Prefer exact decimal strings or integer micro units for trading
+  and accounting. Floating-point conversion is an explicit display convenience,
+  not an exact amount representation. Each language documents its available APIs
+  and migration guidance: [Python](python/README.md), [Rust](rust/README.md),
+  [TypeScript](typescript/README.md).
+- **Errors.** Preserve HTTP status and structured problem information; use
+  documented recovery guidance rather than assuming every server failure is
+  retryable. See each language's exception and compatibility documentation.
+- **Auth.** Public reads and personal access tokens (`agt_…`); no Privy JWTs
   through the SDKs (those are browser-side).
