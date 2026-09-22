@@ -45,7 +45,8 @@
     "format": "biome check --write src test scripts examples",
     "check": "npm run typecheck && npm run lint && npm run docs:check && npm test && npm run build",
     "test:pack": "npm run build && node scripts/pack-smoke.mjs",
-    "docs:check": "node scripts/check-docs.mjs"
+    "docs:check": "node scripts/check-docs.mjs",
+    "drift:check": "node scripts/check-drift.mjs"
   },
   "dependencies": {
     "lossless-json": "^4.3.1"

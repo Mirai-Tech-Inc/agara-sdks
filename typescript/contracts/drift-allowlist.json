@@ -1,0 +1,25 @@
+{
+  "comment": "Differences between the committed snapshots and a deployment's OpenAPI that are deliberate. Each is explained in contracts/README.md. Entries match an operation name (or \"*\") plus an exact `difference` or a `pattern` regex. Keep this list small: it is the thing that stops check-drift.mjs from being read.",
+  "deliberate": [
+    {
+      "operation": "*",
+      "pattern": "#enum: snapshot AGARA\\|POLYMARKET, deployment AGARA$",
+      "reason": "The trading Exchange enum is restored to the actual domain (AGARA/POLYMARKET). Environment documentation projects it to AGARA even on shared multi-exchange DTOs, so a single-exchange deployment always looks narrower."
+    },
+    {
+      "operation": "*",
+      "pattern": "^request ops\\[\\]<(ACROSS_SWAP_APPROVE|WITHDRAW_ACROSS_SWAP_[A-Z0-9_]+)>",
+      "reason": "Across and CCTP batch operations require server signing. The snapshot keeps their variants so the types stay complete, and the presigned helpers reject them locally; a deployment without the bridge omits them."
+    },
+    {
+      "operation": "*",
+      "pattern": "^absent from the deployment \\(\\w+ /trade/v1/portfolio/bridge/deposit/",
+      "reason": "The three deposit paths are source-backed additions (apps/router/src/handlers/portfolio.rs, crates/service/src/portfolio.rs); the environment-projected document omits mounted multi-exchange paths even though the routes respond."
+    },
+    {
+      "operation": "*",
+      "pattern": "^response status#enum: snapshot PENDING, deployment absent$",
+      "reason": "AGARA split/merge acceptance status is PENDING (apps/router/src/handlers.rs); the projected document does not carry the enum."
+    }
+  ]
+}

@@ -19,6 +19,15 @@ Run `npm run generate` after deliberately updating contract snapshots. Generated
 preserve integer wire values as `number | bigint` for 64-bit numeric fields; unsafe
 JavaScript numbers are rejected and JSON parsing preserves large integers as bigint.
 
+Nothing in this repository notices when the platform changes a field, so
+`npm run drift:check` compares these snapshots against the OpenAPI a deployment serves
+(`AGARA_DRIFT_BASE_URL`, plus `AGARA_DRIFT_GATE_COOKIE` for a gated environment). It fails
+on a difference that breaks a correct exchange: a required response field the server no
+longer sends, a request field the server now requires, or a response enum carrying a value
+the snapshot rejects. Everything else prints as a warning. The deliberate deviations listed
+below are recorded in `drift-allowlist.json`; keep that list short, because it is what stops
+the report from being read.
+
 The trading `Exchange` enum is restored to AGARA/POLYMARKET from the actual domain;
 environment documentation projects it to AGARA even on shared multi-exchange DTOs.
 Runtime schema references are namespaced by service so catalogue and trading names

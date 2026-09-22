@@ -184,5 +184,17 @@ survive declaration emission and packing, so installed consumers receive Intelli
 
 Generation is offline from committed snapshots. Tests use mock transports, canonical
 problem fixtures, current wire payloads and signing goldens; no live trades are sent.
+
+Because generation is offline, a platform field rename is invisible here until a consumer hits
+it. `npm run drift:check` compares the committed contracts against the OpenAPI a deployment
+serves and fails on a difference that breaks a correct exchange:
+
+```sh
+AGARA_DRIFT_BASE_URL=https://app.sandbox.agara.xyz npm run drift:check
+```
+
+It needs network, so it is not part of `npm run check`; CI runs it on a schedule and on demand.
+Deliberate deviations live in [contracts/drift-allowlist.json](contracts/drift-allowlist.json).
+
 See [design references](docs/design.md), [migration notes](docs/migration.md), and
 [examples](examples/). Publishing is a separate explicit action.
