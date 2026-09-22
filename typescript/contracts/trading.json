@@ -2071,24 +2071,24 @@
       "LpIncentiveEarningsResponse": {
         "properties": {
           "all_time_micro": {
-            "description": "The current cycle's projection plus all rewards ever credited to the caller.",
-            "type": "string"
-          },
-          "current_cycle_micro": {
-            "description": "Rewards earned so far in the current reward cycle, projected live from today's\nscores before the minimum payout is applied, in micro-collateral units.",
+            "description": "All rewards ever credited to the caller.",
             "type": "string"
           },
           "last_30_days_micro": {
-            "description": "The current cycle's projection plus rewards credited over the 29 prior days.",
+            "description": "Rewards credited over the current reward date and the 29 prior ones.",
             "type": "string"
           },
           "last_7_days_micro": {
-            "description": "The current cycle's projection plus rewards credited over the 6 prior days.",
+            "description": "Rewards credited over the current reward date and the 6 prior ones.",
+            "type": "string"
+          },
+          "last_cycle_micro": {
+            "description": "Rewards credited for the previous reward date, in micro-collateral units.",
             "type": "string"
           }
         },
         "required": [
-          "current_cycle_micro",
+          "last_cycle_micro",
           "last_7_days_micro",
           "last_30_days_micro",
           "all_time_micro"
@@ -2116,10 +2116,6 @@
           "event_title": {
             "description": "Parent event title.",
             "type": "string"
-          },
-          "has_traded": {
-            "description": "Whether the caller has traded this market at least once.",
-            "type": "boolean"
           },
           "logo_url": {
             "description": "Market-level artwork, or `null` when none is configured.",
@@ -2175,15 +2171,13 @@
           "min_shares_micro",
           "epoch_score",
           "market_total_score",
-          "projected_payout_micro",
-          "has_traded"
+          "projected_payout_micro"
         ],
         "type": "object"
       },
       "LpIncentiveMarketPhase": {
         "enum": [
-          "ACTIVE",
-          "UPCOMING"
+          "ACTIVE"
         ],
         "type": "string"
       },

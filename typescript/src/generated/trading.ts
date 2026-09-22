@@ -1521,17 +1521,14 @@ export interface components {
             slug: string;
         };
         LpIncentiveEarningsResponse: {
-            /** @description The current cycle's projection plus all rewards ever credited to the caller. */
+            /** @description All rewards ever credited to the caller. */
             all_time_micro: string;
-            /**
-             * @description Rewards earned so far in the current reward cycle, projected live from today's
-             *     scores before the minimum payout is applied, in micro-collateral units.
-             */
-            current_cycle_micro: string;
-            /** @description The current cycle's projection plus rewards credited over the 29 prior days. */
+            /** @description Rewards credited over the current reward date and the 29 prior ones. */
             last_30_days_micro: string;
-            /** @description The current cycle's projection plus rewards credited over the 6 prior days. */
+            /** @description Rewards credited over the current reward date and the 6 prior ones. */
             last_7_days_micro: string;
+            /** @description Rewards credited for the previous reward date, in micro-collateral units. */
+            last_cycle_micro: string;
         };
         LpIncentiveMarket: {
             /** @description Event close time as RFC 3339, if set. */
@@ -1545,8 +1542,6 @@ export interface components {
             event_slug: string;
             /** @description Parent event title. */
             event_title: string;
-            /** @description Whether the caller has traded this market at least once. */
-            has_traded: boolean;
             /** @description Market-level artwork, or `null` when none is configured. */
             logo_url?: string | null;
             /** @description Agara market UUID. */
@@ -1573,7 +1568,7 @@ export interface components {
             question: string;
         };
         /** @enum {string} */
-        LpIncentiveMarketPhase: "ACTIVE" | "UPCOMING";
+        LpIncentiveMarketPhase: "ACTIVE";
         /** @enum {string} */
         LpIncentiveSortBy: "market" | "close_time" | "max_spread" | "min_shares" | "reward_pool" | "my_share" | "projected_payout";
         /** @enum {string} */

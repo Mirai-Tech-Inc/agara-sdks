@@ -1,6 +1,6 @@
 # Contract sources
 
-Platform `a7e8c2dc1ab3b16f4133d0952347d5cc1bbd1b71` (2026-09-17).
+Platform `8cf944265642737148bdb2ae128c697b776cebec` (2026-09-22).
 `trading.json` and `catalogue.json` are scoped snapshots of the platform's checked-in
 `apps/web/content/api-specs` documents, limited to the 53 operations in `manifest.json`.
 Unused component schemas are removed. Preserve arbitrary metadata within documented JSON fields.
