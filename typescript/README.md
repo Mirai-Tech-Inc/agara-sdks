@@ -37,7 +37,7 @@ response observers receive HTTP status, headers and request ID.
 
 ## Coverage and wire contracts
 
-All **46 REST operations**, both router WebSocket endpoints, and both price SSE feeds
+All **45 REST operations**, both router WebSocket endpoints, and both price SSE feeds
 in [the checked-in scope](contracts/manifest.json) have named APIs. The
 [method inventory](contracts/endpoints.json) maps each REST method to its path and auth.
 Concrete request/response types derive from scoped OpenAPI snapshots, with source-backed
@@ -106,7 +106,7 @@ implementation version, chain ID, contract context and each market's Ctf/NegRisk
 Helpers canonically encode SPLIT/MERGE/WITHDRAW calls and sign AgaraAccount's batch.
 Neg-risk splits, self withdrawals, zero salts and unsupported operations fail locally.
 The two published platform batch calldata/digest vectors are checked without reblessing.
-`submitBatch`, `getBatch` and `supersedeBatch` are typed wrappers. Supply
+`submitBatch` and `getBatch` are typed wrappers. Supply
 live sequence and deployment addresses from trusted configuration; the SDK never guesses.
 
 ## Errors and retries

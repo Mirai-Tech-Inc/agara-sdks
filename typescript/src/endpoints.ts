@@ -1,7 +1,6 @@
 import { type ClientOptions, type RequestOptions, Transport } from "./transport.js";
 import type {
   BatchSubmission,
-  BatchSupersedeSubmission,
   CatalogueOperations,
   OrderRequest,
   Query,
@@ -1085,44 +1084,6 @@ export class TraderClient extends PublicClient {
       options,
       true,
       "getBatch",
-    );
-  }
-
-  /**
-   * Request replacement of a still-pending account batch.
-   *
-   * @remarks
-   * Requires a personal access token with scope `batches:submit`. A successful HTTP response may
-   * contain a refusal. Branch on the returned result and reconcile the existing digest; this
-   * mutation is not automatically retried.
-   *
-   * @param batch_hash - Digest of the pending batch to replace, as 0x-prefixed 32-byte hex.
-   * @param body - Replacement operations, Unix-second deadline and signature bound to the inherited
-   * sequence.
-   * @param options - Per-request abort signal, timeout override and successful-response observer.
-   * @returns Either the accepted successor or a refusal carrying the current batch state.
-   * @throws TypeError for invalid local request shapes or text inputs.
-   * @throws RangeError for invalid local numeric inputs or timeout overrides.
-   * @throws AgaraError for an unsuccessful HTTP response; inspect its status and validated
-   * recovery.
-   * @throws TransportError for failed or aborted I/O; a sent mutation may still complete.
-   * @throws ProtocolError when a successful response is malformed or exceeds the response-byte
-   * bound.
-   * @throws ResponseObserverError when a callback throws after receiving a valid success response.
-   */
-  supersedeBatch(
-    batch_hash: string,
-    body: BatchSupersedeSubmission,
-    options: RequestOptions = {},
-  ): Promise<Success<TradingOperations["supersede_batch"]>> {
-    return this.request(
-      "POST",
-      `/trade/v1/batches/${this.pathPart(batch_hash)}/supersede`,
-      body,
-      undefined,
-      options,
-      true,
-      "supersedeBatch",
     );
   }
 

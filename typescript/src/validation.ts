@@ -187,7 +187,7 @@ export function validateRequest(name: string, body: unknown, query: unknown): vo
   }
   if ((name === "splitPosition" || name === "mergePosition") && isObject(body))
     micro(body.collateral_amount_micro ?? body.shares_micro, "position amount");
-  if ((name === "submitBatch" || name === "supersedeBatch") && isObject(body)) {
+  if (name === "submitBatch" && isObject(body)) {
     if (!Array.isArray(body.ops) || body.ops.length < 1 || body.ops.length > 20)
       throw new RangeError("Account batches need 1–20 operations");
     for (const op of body.ops) {
@@ -197,7 +197,7 @@ export function validateRequest(name: string, body: unknown, query: unknown): vo
     }
     if (!/^0x[0-9a-fA-F]{130}$/.test(String(body.signature)))
       throw new TypeError("Expected a 65-byte batch signature");
-    if (name === "submitBatch") integer(String(body.seq), "seq", (1n << 63n) - 1n);
+    integer(String(body.seq), "seq", (1n << 63n) - 1n);
     integer(String(body.deadline_unix_seconds), "deadline", (1n << 63n) - 1n);
   }
 }

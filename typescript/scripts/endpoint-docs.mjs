@@ -92,16 +92,6 @@ export const endpointDocs = {
       batch_hash: "Existing EIP-712 account-batch digest, as 0x-prefixed 32-byte hex.",
     },
   },
-  supersedeBatch: {
-    summary: "Request replacement of a still-pending account batch.",
-    returns: "Either the accepted successor or a refusal carrying the current batch state.",
-    remarks:
-      "A successful HTTP response may contain a refusal. Branch on the returned result and reconcile the existing digest; this mutation is not automatically retried.",
-    body: "Replacement operations, Unix-second deadline and signature bound to the inherited sequence.",
-    params: {
-      batch_hash: "Digest of the pending batch to replace, as 0x-prefixed 32-byte hex.",
-    },
-  },
   listActivities: {
     summary: "Read one page of account activity.",
     returns: "Activity variants with market, condition and event metadata plus an opaque cursor.",

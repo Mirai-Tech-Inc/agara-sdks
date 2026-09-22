@@ -32,7 +32,7 @@ const signed = await signOrder(
 );
 describe("complete named endpoint contract", () => {
   it("covers the scope exactly", () => {
-    expect(endpoints).toHaveLength(46);
+    expect(endpoints).toHaveLength(45);
     const scope = contract("manifest").operations as Endpoint[];
     expect(new Set(endpoints.map((e) => `${e.method} ${e.path}`))).toEqual(
       new Set(
@@ -98,7 +98,7 @@ describe("complete named endpoint contract", () => {
           };
         if (endpoint.name === "placeSignedOrder") body = signed;
         if (endpoint.name === "placeSignedOrders") body = { orders: [signed] };
-        if (endpoint.name === "submitBatch" || endpoint.name === "supersedeBatch")
+        if (endpoint.name === "submitBatch")
           body = {
             ops: [
               {
@@ -108,7 +108,7 @@ describe("complete named endpoint contract", () => {
                 shares_micro: 1000000n,
               },
             ],
-            ...(endpoint.name === "submitBatch" ? { seq: 0n } : {}),
+            seq: 0n,
             deadline_unix_seconds: 1900000000n,
             signature: `0x${"11".repeat(65)}`,
           };

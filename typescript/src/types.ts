@@ -61,14 +61,6 @@ export type BatchSubmission = Omit<TradingSchemas["AccountBatchSubmission"], "op
   /** One through 20 supported operations in the same execution order used for signing. */
   ops: BatchOperation[];
 };
-/** Replacement batch submission signed at the original batch's sequence. */
-export type BatchSupersedeSubmission = Omit<
-  TradingSchemas["AccountBatchSupersedeSubmission"],
-  "ops"
-> & {
-  /** One through 20 replacement operations in the same execution order used for signing. */
-  ops: BatchOperation[];
-};
 /** Request to submit multiple independently signed LIMIT orders. */
 export interface SignedOrderBatchRequest {
   /** One through 32 signed order bodies. */

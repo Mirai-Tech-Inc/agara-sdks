@@ -81,13 +81,6 @@
     {
       "service": "router",
       "protocol": "HTTP",
-      "method": "POST",
-      "path": "/trade/v1/batches/{batch_hash}/supersede",
-      "auth": "Privy JWT or PAT: BatchesSubmit"
-    },
-    {
-      "service": "router",
-      "protocol": "HTTP",
       "method": "GET",
       "path": "/trade/v1/orderbook/{token_id}",
       "auth": "anonymous"

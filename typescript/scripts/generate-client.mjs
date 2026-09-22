@@ -14,7 +14,6 @@ const names = {
   cancel_all_orders: "cancelAllOrders",
   create_batch: "submitBatch",
   get_batch: "getBatch",
-  supersede_batch: "supersedeBatch",
   agara_orderbook: "getOrderbook",
   portfolio_activities: "listActivities",
   portfolio_bridge_withdraw_supported_assets: "getBridgeWithdrawAssets",
@@ -59,7 +58,7 @@ for (const name of ["trading", "catalogue"])
     await fs.readFile(new URL(`contracts/${name}.json`, directory), "utf8"),
   );
 let output =
-  'import { Transport, type ClientOptions, type RequestOptions } from "./transport.js";\nimport type { TradingOperations, CatalogueOperations, RequestBody, Query, Success, OrderRequest, SignedOrderRequest, SignedOrderBatchRequest, BatchSubmission, BatchSupersedeSubmission } from "./types.js";\n';
+  'import { Transport, type ClientOptions, type RequestOptions } from "./transport.js";\nimport type { TradingOperations, CatalogueOperations, RequestBody, Query, Success, OrderRequest, SignedOrderRequest, SignedOrderBatchRequest, BatchSubmission } from "./types.js";\n';
 const wrappers = { public: [], private: [] };
 const inventory = [];
 const runtime = {};
@@ -75,7 +74,7 @@ for (const endpoint of manifest.operations.filter((o) => o.protocol === "HTTP"))
   for (const p of params.filter((p) => p.in === "path")) args.push(`${p.name}: string`);
   if (operation.requestBody)
     args.push(
-      `body: ${id === "create_signed_order_batch" ? "SignedOrderBatchRequest" : id === "create_batch" ? "BatchSubmission" : id === "supersede_batch" ? "BatchSupersedeSubmission" : id === "create_order" ? "OrderRequest" : id === "create_signed_order" ? "SignedOrderRequest" : `RequestBody<${operationType}>`}`,
+      `body: ${id === "create_signed_order_batch" ? "SignedOrderBatchRequest" : id === "create_batch" ? "BatchSubmission" : id === "create_order" ? "OrderRequest" : id === "create_signed_order" ? "SignedOrderRequest" : `RequestBody<${operationType}>`}`,
     );
   const query = params.filter((p) => p.in === "query");
   if (query.length)
