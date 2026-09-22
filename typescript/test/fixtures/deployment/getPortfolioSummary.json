@@ -1,15 +1,15 @@
 {
   "summaries": [
     {
-      "accounting_status": "PENDING",
+      "accounting_status": "UNAVAILABLE",
       "exchange": "AGARA",
-      "cash_balance_micro": "999994400000",
-      "free_cash_micro": "999994400000",
+      "cash_balance_micro": "999996050000",
+      "free_cash_micro": "999996050000",
       "positions_value_micro": null,
       "portfolio_value_micro": null,
       "open_cost_basis_micro": null,
       "open_unrealized_pnl_micro": null,
-      "as_of": "2026-09-22T17:27:16.904096112Z"
+      "as_of": "2026-09-22T19:17:26.331470009Z"
     }
   ]
 }

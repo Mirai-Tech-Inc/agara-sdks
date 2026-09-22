@@ -2,12 +2,12 @@
   "currency": "USDC",
   "amountScale": 12,
   "timezone": "UTC",
-  "asOf": "2026-09-22T17:27:01.129896Z",
+  "asOf": "2026-09-22T19:17:05.766251Z",
   "coverageStartedAt": "2026-09-21T01:03:32.262711Z",
   "reportingStartedAt": "2026-09-20T00:00:00Z",
   "throughEvent": {
     "shardId": 0,
-    "eventSeq": "7583"
+    "eventSeq": "7999"
   },
   "pendingOperations": 0,
   "granularity": "day",
@@ -15,22 +15,22 @@
   "currentBucketPartial": true,
   "totals": {
     "last7Days": {
-      "sales": "0.000000000000",
+      "sales": "0.050000000000",
       "directMerges": "-0.300000000000",
       "redemptions": "0.000000000000",
-      "total": "-0.300000000000"
+      "total": "-0.250000000000"
     },
     "last30Days": {
-      "sales": "0.000000000000",
+      "sales": "0.050000000000",
       "directMerges": "-0.300000000000",
       "redemptions": "0.000000000000",
-      "total": "-0.300000000000"
+      "total": "-0.250000000000"
     },
     "allTime": {
-      "sales": "0.000000000000",
+      "sales": "0.050000000000",
       "directMerges": "-0.300000000000",
       "redemptions": "0.000000000000",
-      "total": "-0.300000000000"
+      "total": "-0.250000000000"
     }
   },
   "buckets": [
@@ -239,10 +239,10 @@
     },
     {
       "timestamp": "2026-09-22T00:00:00Z",
-      "sales": "0.000000000000",
+      "sales": "0.050000000000",
       "directMerges": "-0.300000000000",
       "redemptions": "0.000000000000",
-      "total": "-0.300000000000"
+      "total": "-0.250000000000"
     }
   ]
 }

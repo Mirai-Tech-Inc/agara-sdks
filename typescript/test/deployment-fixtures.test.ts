@@ -67,11 +67,14 @@ const replay: Record<string, (client: AgaraClient) => Promise<unknown>> = {
   listEvents: (c) => c.listEvents({ limit: 5, include_markets: "true" }),
   listSecurities: (c) => c.listSecurities(),
   listCalendars: (c) => c.listCalendars(),
+  listTradingDays: (c) => c.listTradingDays("XHKG", { from: "2026-09-01", to: "2026-09-30" }),
   search: (c) => c.search({ q: "inflation", limit: 5 }),
   listLpIncentives: (c) => c.listLpIncentives({}),
   listLpIncentiveCategories: (c) => c.listLpIncentiveCategories(),
   getLpIncentiveEarnings: (c) => c.getLpIncentiveEarnings(),
   listClosedLpIncentives: (c) => c.listClosedLpIncentives({ limit: 5 }),
+  listClosedLpIncentiveCategories: (c) => c.listClosedLpIncentiveCategories(),
+  listPositions: (c) => c.listPositions({ condition_ids: [`0x${"11".repeat(32)}`] }),
   getPortfolioSummary: (c) => c.getPortfolioSummary(),
   listTrades: (c) => c.listTrades({ limit: 10 }),
   listActivities: (c) => c.listActivities({ limit: 10 }),
@@ -142,9 +145,16 @@ describe("recorded collections exercise their element schema", () => {
       .filter((r) => r.collection && (r.elements ?? 0) === 0)
       .map((r) => `${r.name}.${r.collection}`);
 
-    // Not a failure: these are empty on the recorded deployment. Asserted so the gap is visible in
-    // review rather than passing silently. contracts/drift-allowlist.json has no bearing here;
-    // `npm run drift:check` is what covers these element schemas against a live deployment.
-    expect(unpinned).toEqual(["listLpIncentives.markets", "listClosedLpIncentives.markets"]);
+    // Not a failure: no environment has LP incentive data, so these four cannot be recorded at all
+    // rather than merely not having been. Asserted so the gap is visible in review rather than
+    // passing silently, and so that the list shrinks the day rewards are configured somewhere.
+    // contracts/drift-allowlist.json has no bearing here; `npm run drift:check` is what covers these
+    // element schemas against a live deployment, and it is the only thing that does.
+    expect(unpinned).toEqual([
+      "listLpIncentives.markets",
+      "listLpIncentiveCategories.categories",
+      "listClosedLpIncentives.markets",
+      "listClosedLpIncentiveCategories.categories",
+    ]);
   });
 });

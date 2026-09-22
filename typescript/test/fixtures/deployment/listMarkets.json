@@ -57,7 +57,7 @@
       "is_accepting_orders": true,
       "halted_at": null,
       "halted_reason": null,
-      "volume_micro": "137000000",
+      "volume_micro": "138450000",
       "liquidity": "0",
       "volume_24h_micro": "0",
       "tick_size_micro": "10000",
@@ -94,19 +94,19 @@
       }
     },
     {
-      "id": "239cb547-0d72-4e9f-b681-84a19cc9757e",
+      "id": "1cca0116-ccc8-4611-8376-710b5e2c1eda",
       "exchange": "AGARA",
-      "slug": "ethereum-price-up-or-down-15-minutes-2026-09-22T17-15-00-000Z",
-      "question": "Ethereum Price Up or Down (15 Minutes) - Sep 22, 1:15PM-1:30PM ET",
+      "slug": "bitcoin-price-up-or-down-15-minutes-2026-09-22T19-15-00-000Z",
+      "question": "Bitcoin Price Up or Down (15 Minutes) - Sep 22, 3:15PM-3:30PM ET",
       "display_type": "BINARY",
       "source_market_type": null,
       "outcomes": [
         {
-          "id": "d7e6211e-af96-490f-8a12-a4e878ab599b",
+          "id": "fc4dfdcc-558a-412e-b9ba-ebe38c84e6b7",
           "index": 0,
           "label": "Up",
           "price_micro": null,
-          "token_id": "46820726173018489710592143085585302376954017162417250658652968457329109241577",
+          "token_id": "33231424087103601352900538585717167306820646175443179167996936797703020028788",
           "best_bid_micro": null,
           "best_ask_micro": null,
           "spread_micro": null,
@@ -115,20 +115,20 @@
           "side": "left",
           "threshold": null,
           "resolution_price_micro": null,
-          "resolution_label": "ETH Up",
+          "resolution_label": "BTC Up",
           "display": {
             "kind": "yes",
             "side": "left",
             "label": "Up",
-            "resolution_label": "ETH Up"
+            "resolution_label": "BTC Up"
           }
         },
         {
-          "id": "aea234ab-ec23-4a62-9407-cea392fb0722",
+          "id": "eba3ab72-249c-4f07-aa9c-3da8bc4865a9",
           "index": 1,
           "label": "Down",
           "price_micro": null,
-          "token_id": "75625769936335707207774720254412016940215782240778006762412738627786434167816",
+          "token_id": "100738980932050963470361957877548825119600273266136652438694686877435118962663",
           "best_bid_micro": null,
           "best_ask_micro": null,
           "spread_micro": null,
@@ -137,12 +137,12 @@
           "side": "right",
           "threshold": null,
           "resolution_price_micro": null,
-          "resolution_label": "ETH Down",
+          "resolution_label": "BTC Down",
           "display": {
             "kind": "no",
             "side": "right",
             "label": "Down",
-            "resolution_label": "ETH Down"
+            "resolution_label": "BTC Down"
           }
         }
       ],
@@ -168,43 +168,43 @@
       "resolved_at": null,
       "resolution": null,
       "archived_at": null,
-      "condition_id": "0x41f483009172f02122d5b3677604f8ff923d49edbb61ec3a2e6b7d5e2617ddf7",
+      "condition_id": "0xe5418dd31bbb679bb30c009e2425d161c798871c6ee5a19c284f34c6f2d904b8",
       "neg_risk_id": null,
       "three_way_role": null,
       "is_three_way": null,
       "game_number": null,
-      "display_label": "Ethereum Price Up or Down (15 Minutes) - Sep 22, 1:15PM-1:30PM ET",
+      "display_label": "Bitcoin Price Up or Down (15 Minutes) - Sep 22, 3:15PM-3:30PM ET",
       "display": {
         "currency": "USD",
-        "observe_at": "2026-09-22T17:30:00.000Z",
-        "description": "This market will resolve to \"Up\" if the closing price for Ethereum / USD at 1:30PM ET on Sep 22, 2026 is equal to or higher than its opening price at 1:15PM ET on Sep 22, 2026. A lower closing price resolves the market to \"Down\". Equal opening and closing prices resolve to \"Up\".\nOpening and closing prices are sourced exclusively from Pyth Pro using the timestamped Crypto.ETH/USD point-price feed. The timestamp provided by the source must be at or before the opening or closing instant, never later, and no more than 3 seconds old at that instant.\nPrices are compared at their original source precision, before any display rounding.\nIf no valid opening price is available, the market will not become Active. If no valid closing price is available, resolution may be delayed for manual review at the discretion of the Agara team.\nFinal settlement may occur after the closing instant, once any applicable review or dispute process has completed.",
-        "series_slug": "ethereum-price-up-or-down-15-minutes",
-        "reference_at": "2026-09-22T17:15:00.000Z",
-        "pyth_pro_symbol": "Crypto.ETH/USD",
-        "reference_price": "2747.45635185",
-        "resolution_source": "https://app.pyth.com/explore/Crypto.ETH%2FUSD"
+        "observe_at": "2026-09-22T19:30:00.000Z",
+        "description": "This market will resolve to \"Up\" if the closing price for Bitcoin / US Dollar at 3:30PM ET on Sep 22, 2026 is equal to or higher than its opening price at 3:15PM ET on Sep 22, 2026. A lower closing price resolves the market to \"Down\". Equal opening and closing prices resolve to \"Up\".\nOpening and closing prices are sourced exclusively from Pyth Pro using the timestamped Crypto.BTC/USD point-price feed. The timestamp provided by the source must be at or before the opening or closing instant, never later, and no more than 3 seconds old at that instant.\nPrices are compared at their original source precision, before any display rounding.\nIf no valid opening price is available, the market will not become Active. If no valid closing price is available, resolution may be delayed for manual review at the discretion of the Agara team.\nFinal settlement may occur after the closing instant, once any applicable review or dispute process has completed.",
+        "series_slug": "bitcoin-price-up-or-down-15-minutes",
+        "reference_at": "2026-09-22T19:15:00.000Z",
+        "pyth_pro_symbol": "Crypto.BTC/USD",
+        "reference_price": "86480.23180505",
+        "resolution_source": "https://app.pyth.com/explore/Crypto.BTC%2FUSD"
       },
       "event": {
-        "id": "8bc251bc-1299-4ef3-b874-63fad1f0233d",
-        "slug": "ethereum-price-up-or-down-15-minutes-event",
-        "title": "Ethereum Price Up or Down (15 Minutes) Series",
+        "id": "1933103a-7380-4981-a9c9-c1f19fc84e1f",
+        "slug": "bitcoin-price-up-or-down-15-minutes-event",
+        "title": "Bitcoin Price Up or Down (15 Minutes) Series",
         "active": true
       }
     },
     {
-      "id": "35848b06-bd6f-438e-a327-cb8debd731a5",
+      "id": "2cf3a795-dde1-4d71-9d37-15d946ee17fe",
       "exchange": "AGARA",
-      "slug": "ethereum-price-up-or-down-30-minutes-2026-09-22T17-00-00-000Z",
-      "question": "Ethereum Price Up or Down (30 Minutes) - Sep 22, 1:00PM-1:30PM ET",
+      "slug": "bitcoin-price-up-or-down-30-minutes-2026-09-22T19-00-00-000Z",
+      "question": "Bitcoin Price Up or Down (30 Minutes) - Sep 22, 3:00PM-3:30PM ET",
       "display_type": "BINARY",
       "source_market_type": null,
       "outcomes": [
         {
-          "id": "1339eb0b-0fba-46fd-b95c-a080b9eb96c2",
+          "id": "6af084ec-29e9-40cd-9c19-b8d4d5e23734",
           "index": 0,
           "label": "Up",
           "price_micro": null,
-          "token_id": "7303779153553473102275595378027568948955664723942670632463676870224370635120",
+          "token_id": "4509907702847552069692159697287101029901467844149875868186917038449414314564",
           "best_bid_micro": null,
           "best_ask_micro": null,
           "spread_micro": null,
@@ -213,20 +213,20 @@
           "side": "left",
           "threshold": null,
           "resolution_price_micro": null,
-          "resolution_label": "ETH Up",
+          "resolution_label": "BTC Up",
           "display": {
             "kind": "yes",
             "side": "left",
             "label": "Up",
-            "resolution_label": "ETH Up"
+            "resolution_label": "BTC Up"
           }
         },
         {
-          "id": "6f0486bb-7ed1-499a-a50d-eb0d6f8f0f21",
+          "id": "d8ccf7cf-f728-498a-a299-71a5f211f9c8",
           "index": 1,
           "label": "Down",
           "price_micro": null,
-          "token_id": "108119902410866097062834030321048383125219219662622196321913039390784223998278",
+          "token_id": "95873886427078516566146636760435616404639449000591986736576876539872773348036",
           "best_bid_micro": null,
           "best_ask_micro": null,
           "spread_micro": null,
@@ -235,12 +235,12 @@
           "side": "right",
           "threshold": null,
           "resolution_price_micro": null,
-          "resolution_label": "ETH Down",
+          "resolution_label": "BTC Down",
           "display": {
             "kind": "no",
             "side": "right",
             "label": "Down",
-            "resolution_label": "ETH Down"
+            "resolution_label": "BTC Down"
           }
         }
       ],
@@ -266,26 +266,26 @@
       "resolved_at": null,
       "resolution": null,
       "archived_at": null,
-      "condition_id": "0xf277dd2ca2daf43d937c5cff94564d7cb0b911fdaf1c4c71136d5b8693f31e65",
+      "condition_id": "0x484bcc79bc8c01ac40bd8cd03a88ffafe3142e0a34a91eabab44991f6dc4367b",
       "neg_risk_id": null,
       "three_way_role": null,
       "is_three_way": null,
       "game_number": null,
-      "display_label": "Ethereum Price Up or Down (30 Minutes) - Sep 22, 1:00PM-1:30PM ET",
+      "display_label": "Bitcoin Price Up or Down (30 Minutes) - Sep 22, 3:00PM-3:30PM ET",
       "display": {
         "currency": "USD",
-        "observe_at": "2026-09-22T17:30:00.000Z",
-        "description": "This market will resolve to \"Up\" if the closing price for Ethereum / USD at 1:30PM ET on Sep 22, 2026 is equal to or higher than its opening price at 1:00PM ET on Sep 22, 2026. A lower closing price resolves the market to \"Down\". Equal opening and closing prices resolve to \"Up\".\nOpening and closing prices are sourced exclusively from Pyth Pro using the timestamped Crypto.ETH/USD point-price feed. The timestamp provided by the source must be at or before the opening or closing instant, never later, and no more than 3 seconds old at that instant.\nPrices are compared at their original source precision, before any display rounding.\nIf no valid opening price is available, the market will not become Active. If no valid closing price is available, resolution may be delayed for manual review at the discretion of the Agara team.\nFinal settlement may occur after the closing instant, once any applicable review or dispute process has completed.",
-        "series_slug": "ethereum-price-up-or-down-30-minutes",
-        "reference_at": "2026-09-22T17:00:00.000Z",
-        "pyth_pro_symbol": "Crypto.ETH/USD",
-        "reference_price": "2745.91198849",
-        "resolution_source": "https://app.pyth.com/explore/Crypto.ETH%2FUSD"
+        "observe_at": "2026-09-22T19:30:00.000Z",
+        "description": "This market will resolve to \"Up\" if the closing price for Bitcoin / US Dollar at 3:30PM ET on Sep 22, 2026 is equal to or higher than its opening price at 3:00PM ET on Sep 22, 2026. A lower closing price resolves the market to \"Down\". Equal opening and closing prices resolve to \"Up\".\nOpening and closing prices are sourced exclusively from Pyth Pro using the timestamped Crypto.BTC/USD point-price feed. The timestamp provided by the source must be at or before the opening or closing instant, never later, and no more than 3 seconds old at that instant.\nPrices are compared at their original source precision, before any display rounding.\nIf no valid opening price is available, the market will not become Active. If no valid closing price is available, resolution may be delayed for manual review at the discretion of the Agara team.\nFinal settlement may occur after the closing instant, once any applicable review or dispute process has completed.",
+        "series_slug": "bitcoin-price-up-or-down-30-minutes",
+        "reference_at": "2026-09-22T19:00:00.000Z",
+        "pyth_pro_symbol": "Crypto.BTC/USD",
+        "reference_price": "86460.68638838",
+        "resolution_source": "https://app.pyth.com/explore/Crypto.BTC%2FUSD"
       },
       "event": {
-        "id": "10f54c3a-711f-46e1-a704-e4d4eef23fec",
-        "slug": "ethereum-price-up-or-down-30-minutes-event",
-        "title": "Ethereum Price Up or Down (30 Minutes) Series",
+        "id": "30310888-676a-42ed-af70-ff1cc119561e",
+        "slug": "bitcoin-price-up-or-down-30-minutes-event",
+        "title": "Bitcoin Price Up or Down (30 Minutes) Series",
         "active": true
       }
     },
@@ -383,19 +383,19 @@
       }
     },
     {
-      "id": "5520e115-0a7a-4bf0-8963-ceddb7c79768",
+      "id": "528d2c0a-8b87-4857-9549-3ef95b385935",
       "exchange": "AGARA",
-      "slug": "bitcoin-price-up-or-down-30-minutes-2026-09-22T17-00-00-000Z",
-      "question": "Bitcoin Price Up or Down (30 Minutes) - Sep 22, 1:00PM-1:30PM ET",
+      "slug": "solana-price-up-or-down-5-minutes-2026-09-22T19-15-00-000Z",
+      "question": "Solana Price Up or Down (5 Minutes) - Sep 22, 3:15PM-3:20PM ET",
       "display_type": "BINARY",
       "source_market_type": null,
       "outcomes": [
         {
-          "id": "0e75378e-62f1-4951-ad45-75644659d308",
+          "id": "680636b3-3946-4a97-acdf-2f30ff0e9892",
           "index": 0,
           "label": "Up",
           "price_micro": null,
-          "token_id": "92037500694843341151858928439317801062303391710229956750089856092041531372425",
+          "token_id": "2449282324328700957058913109898977425741547394116836244906593390171269507042",
           "best_bid_micro": null,
           "best_ask_micro": null,
           "spread_micro": null,
@@ -404,20 +404,20 @@
           "side": "left",
           "threshold": null,
           "resolution_price_micro": null,
-          "resolution_label": "BTC Up",
+          "resolution_label": "SOL Up",
           "display": {
             "kind": "yes",
             "side": "left",
             "label": "Up",
-            "resolution_label": "BTC Up"
+            "resolution_label": "SOL Up"
           }
         },
         {
-          "id": "364c4c03-2fb5-4439-be2f-7acbf97d6973",
+          "id": "c563b0b0-3df2-47dd-8350-eba507c386f2",
           "index": 1,
           "label": "Down",
           "price_micro": null,
-          "token_id": "83441186036107851270517717574288772057160791941902859038923922959106372680632",
+          "token_id": "114593387963607048219043426550079319883033188165419945065607168256653777543709",
           "best_bid_micro": null,
           "best_ask_micro": null,
           "spread_micro": null,
@@ -426,12 +426,12 @@
           "side": "right",
           "threshold": null,
           "resolution_price_micro": null,
-          "resolution_label": "BTC Down",
+          "resolution_label": "SOL Down",
           "display": {
             "kind": "no",
             "side": "right",
             "label": "Down",
-            "resolution_label": "BTC Down"
+            "resolution_label": "SOL Down"
           }
         }
       ],
@@ -457,32 +457,32 @@
       "resolved_at": null,
       "resolution": null,
       "archived_at": null,
-      "condition_id": "0x44079e3c5732ac75c41c7361bdac3d3359d3cd261db2d04f74839a8cd1e4c8e7",
+      "condition_id": "0xfe13e5a7c14daa5af85679bb53330e84eaf140703c71f0303652abaffd0799b2",
       "neg_risk_id": null,
       "three_way_role": null,
       "is_three_way": null,
       "game_number": null,
-      "display_label": "Bitcoin Price Up or Down (30 Minutes) - Sep 22, 1:00PM-1:30PM ET",
+      "display_label": "Solana Price Up or Down (5 Minutes) - Sep 22, 3:15PM-3:20PM ET",
       "display": {
         "currency": "USD",
-        "observe_at": "2026-09-22T17:30:00.000Z",
-        "description": "This market will resolve to \"Up\" if the closing price for Bitcoin / US Dollar at 1:30PM ET on Sep 22, 2026 is equal to or higher than its opening price at 1:00PM ET on Sep 22, 2026. A lower closing price resolves the market to \"Down\". Equal opening and closing prices resolve to \"Up\".\nOpening and closing prices are sourced exclusively from Pyth Pro using the timestamped Crypto.BTC/USD point-price feed. The timestamp provided by the source must be at or before the opening or closing instant, never later, and no more than 3 seconds old at that instant.\nPrices are compared at their original source precision, before any display rounding.\nIf no valid opening price is available, the market will not become Active. If no valid closing price is available, resolution may be delayed for manual review at the discretion of the Agara team.\nFinal settlement may occur after the closing instant, once any applicable review or dispute process has completed.",
-        "series_slug": "bitcoin-price-up-or-down-30-minutes",
-        "reference_at": "2026-09-22T17:00:00.000Z",
-        "pyth_pro_symbol": "Crypto.BTC/USD",
-        "reference_price": "86421.18806517",
-        "resolution_source": "https://app.pyth.com/explore/Crypto.BTC%2FUSD"
+        "observe_at": "2026-09-22T19:20:00.000Z",
+        "description": "This market will resolve to \"Up\" if the closing price for Solana / USD at 3:20PM ET on Sep 22, 2026 is equal to or higher than its opening price at 3:15PM ET on Sep 22, 2026. A lower closing price resolves the market to \"Down\". Equal opening and closing prices resolve to \"Up\".\nOpening and closing prices are sourced exclusively from Pyth Pro using the timestamped Crypto.SOL/USD point-price feed. The timestamp provided by the source must be at or before the opening or closing instant, never later, and no more than 3 seconds old at that instant.\nPrices are compared at their original source precision, before any display rounding.\nIf no valid opening price is available, the market will not become Active. If no valid closing price is available, resolution may be delayed for manual review at the discretion of the Agara team.\nFinal settlement may occur after the closing instant, once any applicable review or dispute process has completed.",
+        "series_slug": "solana-price-up-or-down-5-minutes",
+        "reference_at": "2026-09-22T19:15:00.000Z",
+        "pyth_pro_symbol": "Crypto.SOL/USD",
+        "reference_price": "118.17622004",
+        "resolution_source": "https://app.pyth.com/explore/Crypto.SOL%2FUSD"
       },
       "event": {
-        "id": "30310888-676a-42ed-af70-ff1cc119561e",
-        "slug": "bitcoin-price-up-or-down-30-minutes-event",
-        "title": "Bitcoin Price Up or Down (30 Minutes) Series",
+        "id": "19b7f64b-05b6-44b4-aad3-aa74038f97d2",
+        "slug": "solana-price-up-or-down-5-minutes-event",
+        "title": "Solana Price Up or Down (5 Minutes) Series",
         "active": true
       }
     }
   ],
   "pagination": {
-    "next_cursor": "eyJ2ZXIiOjEsImYiOiJlYjI0NTBhZWIzYjEiLCJhIjoxLCJ2IjoiMCIsImkiOiI1NTIwZTExNS0wYTdhLTRiZjAtODk2My1jZWRkYjdjNzk3NjgifQ",
+    "next_cursor": "eyJ2ZXIiOjEsImYiOiJlYjI0NTBhZWIzYjEiLCJhIjoxLCJ2IjoiMCIsImkiOiI1MjhkMmMwYS04Yjg3LTQ4NTctOTU0OS0zZWY5NWIzODU5MzUifQ",
     "limit": 5
   }
 }

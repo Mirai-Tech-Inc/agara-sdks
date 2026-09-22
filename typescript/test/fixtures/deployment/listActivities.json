@@ -1,6 +1,54 @@
 {
   "activities": [
     {
+      "type": "ORDER",
+      "exchange": "AGARA",
+      "id": "order:01a0ca2a-645d-71f0-8d79-646219caf970",
+      "order_id": "01a0ca2a-645d-71f0-8d79-646219caf970",
+      "status": "MATCHED",
+      "fill_status": "FULL",
+      "condition_id": "0x2dcfeea0061ce44d559bda09c89733bc7d1ba82d93572543132781737038abd3",
+      "token_id": "3080354623804693924140594680509310463211971617800178260199236136438405504979",
+      "side": "SELL",
+      "filled_shares_micro": "1000000",
+      "average_fill_price_micro": "600000",
+      "filled_amount_micro": "600000",
+      "fees_micro": "0",
+      "created_at": "2026-09-22T17:29:39.444265Z"
+    },
+    {
+      "type": "ORDER",
+      "exchange": "AGARA",
+      "id": "order:01a0ca29-e5e3-7a11-9443-4bbc510302f9",
+      "order_id": "01a0ca29-e5e3-7a11-9443-4bbc510302f9",
+      "status": "MATCHED",
+      "fill_status": "FULL",
+      "condition_id": "0x2dcfeea0061ce44d559bda09c89733bc7d1ba82d93572543132781737038abd3",
+      "token_id": "3080354623804693924140594680509310463211971617800178260199236136438405504979",
+      "side": "SELL",
+      "filled_shares_micro": "1000000",
+      "average_fill_price_micro": "500000",
+      "filled_amount_micro": "500000",
+      "fees_micro": "0",
+      "created_at": "2026-09-22T17:28:59.048200Z"
+    },
+    {
+      "type": "ORDER",
+      "exchange": "AGARA",
+      "id": "order:01a0ca29-a1af-7680-919b-c7af0a97f284",
+      "order_id": "01a0ca29-a1af-7680-919b-c7af0a97f284",
+      "status": "MATCHED",
+      "fill_status": "FULL",
+      "condition_id": "0x2dcfeea0061ce44d559bda09c89733bc7d1ba82d93572543132781737038abd3",
+      "token_id": "3080354623804693924140594680509310463211971617800178260199236136438405504979",
+      "side": "SELL",
+      "filled_shares_micro": "1000000",
+      "average_fill_price_micro": "550000",
+      "filled_amount_micro": "550000",
+      "fees_micro": "0",
+      "created_at": "2026-09-22T17:28:41.754450Z"
+    },
+    {
       "type": "WITHDRAWAL",
       "exchange": "AGARA",
       "id": "withdrawal:b492590d-e85d-4026-a6ac-c81f284d6562",
@@ -88,36 +136,6 @@
       "filled_amount_micro": "600000",
       "fees_micro": "0",
       "created_at": "2026-09-22T14:03:24.399335Z"
-    },
-    {
-      "type": "MERGE",
-      "exchange": "AGARA",
-      "id": "merge:0xce0c43319407f5168cf438d931f8fa13644a53c05e20f3a992411fdf807bab5d:0000000000",
-      "condition_id": "0x2dcfeea0061ce44d559bda09c89733bc7d1ba82d93572543132781737038abd3",
-      "shares_micro": "1000000",
-      "amount_micro": "1000000",
-      "tx_hash": "0x21924e9a1cd49beb967e3cd55ee260f9813d2aedc8637df301cc3eaf3f0eecf2",
-      "created_at": "2026-09-22T14:01:45.415400Z"
-    },
-    {
-      "type": "SPLIT",
-      "exchange": "AGARA",
-      "id": "split:0xf4e8a8c5d1838ec7475e03f14fd3da7d2ada2db2d2b6c31944f65919aef9fee5:0000000000",
-      "condition_id": "0x2dcfeea0061ce44d559bda09c89733bc7d1ba82d93572543132781737038abd3",
-      "shares_micro": "1000000",
-      "amount_micro": "1000000",
-      "tx_hash": "0x196b56c07cd08581934919138621f1bccd6f5c36e97bf897bff731740cfb41b0",
-      "created_at": "2026-09-22T14:01:40.953856Z"
-    },
-    {
-      "type": "MERGE",
-      "exchange": "AGARA",
-      "id": "merge:0xbe9c4cb1fb015c7506993095926c48fb7663cd628cf51d6cece0f2b8f0a831da:0000000000",
-      "condition_id": "0x2dcfeea0061ce44d559bda09c89733bc7d1ba82d93572543132781737038abd3",
-      "shares_micro": "1000000",
-      "amount_micro": "1000000",
-      "tx_hash": "0x64ad377094ea0952e7b2485eb380f45911b035961b882051c6ab06dc9a511b10",
-      "created_at": "2026-09-22T13:46:07.269544Z"
     }
   ],
   "markets": {
@@ -229,8 +247,8 @@
     }
   },
   "pagination": {
-    "next_cursor": "eyJ2IjozLCJyIjoicG9ydGZvbGlvL2FjdGl2aXRpZXMiLCJmIjoiY2JmMjljZTQ4NDIyMjMyNSIsInQiOjE3OTAwODQ3NjcyNjk1NDQsImkiOiI0ZDU1OTc2ZS05NTkzLTQ1NzAtOTliOS1jODcwMjAxNjljMTcifQ",
+    "next_cursor": "eyJ2IjozLCJyIjoicG9ydGZvbGlvL2FjdGl2aXRpZXMiLCJmIjoiY2JmMjljZTQ4NDIyMjMyNSIsInQiOjE3OTAwODU4MDQzOTkzMzUsImkiOiIwYjJlN2YwNy05ZjQ3LTRkMzEtYTEyMC1jMDVkYzI3MzhjYTAifQ",
     "limit": 10
   },
-  "as_of": "2026-09-22T17:27:19.159031Z"
+  "as_of": "2026-09-22T19:17:27.696273Z"
 }

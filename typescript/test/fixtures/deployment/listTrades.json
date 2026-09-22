@@ -2,6 +2,51 @@
   "trades": [
     {
       "exchange": "AGARA",
+      "trade_id": "01a0ca2a-8578-7152-9c40-304304c1d5ae",
+      "fill_id": "497287168",
+      "order_id": "01a0ca2a-645d-71f0-8d79-646219caf970",
+      "token_id": "3080354623804693924140594680509310463211971617800178260199236136438405504979",
+      "side": "SELL",
+      "shares_micro": "1000000",
+      "price_micro": "600000",
+      "fee_micro": "0",
+      "role": "MAKER",
+      "status": "MATCHED",
+      "transaction_hash": null,
+      "executed_at": "2026-09-22T17:29:39.444265Z"
+    },
+    {
+      "exchange": "AGARA",
+      "trade_id": "01a0ca29-e7d5-75c0-ad45-87c9c684ea09",
+      "fill_id": "497025024",
+      "order_id": "01a0ca29-e5e3-7a11-9443-4bbc510302f9",
+      "token_id": "3080354623804693924140594680509310463211971617800178260199236136438405504979",
+      "side": "SELL",
+      "shares_micro": "1000000",
+      "price_micro": "500000",
+      "fee_micro": "0",
+      "role": "TAKER",
+      "status": "MATCHED",
+      "transaction_hash": null,
+      "executed_at": "2026-09-22T17:28:59.048200Z"
+    },
+    {
+      "exchange": "AGARA",
+      "trade_id": "01a0ca29-a469-74a1-a767-a7ebfd1f0cc2",
+      "fill_id": "496893952",
+      "order_id": "01a0ca29-a1af-7680-919b-c7af0a97f284",
+      "token_id": "3080354623804693924140594680509310463211971617800178260199236136438405504979",
+      "side": "SELL",
+      "shares_micro": "1000000",
+      "price_micro": "550000",
+      "fee_micro": "0",
+      "role": "TAKER",
+      "status": "MATCHED",
+      "transaction_hash": null,
+      "executed_at": "2026-09-22T17:28:41.754450Z"
+    },
+    {
+      "exchange": "AGARA",
       "trade_id": "01a0c9e8-fb00-7223-8b2a-fa25a9d71311",
       "fill_id": "477757440",
       "order_id": "01a0c9e8-d8b1-7a43-b7b6-09a615fda34e",
@@ -171,5 +216,5 @@
     "limit": 10
   },
   "unavailable_exchanges": [],
-  "as_of": "2026-09-22T17:27:18.272665536Z"
+  "as_of": "2026-09-22T19:17:26.963865061Z"
 }

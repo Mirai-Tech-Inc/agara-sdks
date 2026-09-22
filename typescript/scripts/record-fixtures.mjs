@@ -10,7 +10,8 @@
 //
 // Usage:
 //   AGARA_RECORD_BASE_URL=https://app.dev.agara.xyz AGARA_RECORD_TOKEN=agt_... \
-//     [AGARA_RECORD_GATE_COOKIE=agara_gate=...] node scripts/record-fixtures.mjs
+//     AGARA_RECORD_CONDITION_IDS=0x...[,0x...] [AGARA_RECORD_GATE_COOKIE=agara_gate=...] \
+//     node scripts/record-fixtures.mjs
 
 import fs from "node:fs/promises";
 
@@ -20,7 +21,16 @@ const BASE_URL = (process.env.AGARA_RECORD_BASE_URL ?? "https://app.sandbox.agar
 );
 const TOKEN = process.env.AGARA_RECORD_TOKEN;
 const GATE = process.env.AGARA_RECORD_GATE_COOKIE;
+const CONDITION_IDS = (process.env.AGARA_RECORD_CONDITION_IDS ?? "").split(",").filter(Boolean);
 const OUT = new URL("../test/fixtures/deployment/", import.meta.url);
+// Trading days exist only around the present, so a pinned range would eventually record nothing.
+const day = (offset) => {
+  const now = new Date();
+
+  return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + offset, offset ? 0 : 1))
+    .toISOString()
+    .slice(0, 10);
+};
 
 // Collections whose element schema is worth pinning. `collection` is the response key the fixture
 // test asserts is non-empty; omit it for a non-list response.
@@ -33,6 +43,13 @@ const RECORDINGS = [
   { name: "listEvents", path: "/api/v1/events?limit=5&include_markets=true", collection: "events" },
   { name: "listSecurities", path: "/api/v1/securities", collection: "securities" },
   { name: "listCalendars", path: "/api/v1/calendars", collection: "venues" },
+  {
+    name: "listTradingDays",
+    // An equity venue: XCRYPTO trades continuously and has no trading-day rows at all.
+    path: `/api/v1/calendars/XHKG/days?from=${day(0)}&to=${day(1)}`,
+    collection: "days",
+    auth: false,
+  },
   { name: "search", path: "/api/v1/search?q=inflation&limit=5", auth: false },
   {
     name: "listLpIncentives",
@@ -40,13 +57,32 @@ const RECORDINGS = [
     collection: "markets",
     allowEmpty: true,
   },
-  { name: "listLpIncentiveCategories", path: "/trade/v1/lp-incentives/categories", auth: false },
+  {
+    name: "listLpIncentiveCategories",
+    path: "/trade/v1/lp-incentives/categories",
+    collection: "categories",
+    auth: false,
+    allowEmpty: true,
+  },
   { name: "getLpIncentiveEarnings", path: "/trade/v1/lp-incentives/earnings" },
   {
     name: "listClosedLpIncentives",
     path: "/trade/v1/lp-incentives/closed?limit=5",
     collection: "markets",
     allowEmpty: true,
+  },
+  {
+    name: "listClosedLpIncentiveCategories",
+    path: "/trade/v1/lp-incentives/closed/categories",
+    collection: "categories",
+    allowEmpty: true,
+  },
+  {
+    name: "listPositions",
+    path: "/trade/v1/portfolio/positions/list",
+    method: "POST",
+    body: { condition_ids: CONDITION_IDS },
+    collection: "positions",
   },
   { name: "getPortfolioSummary", path: "/trade/v1/portfolio/summary", collection: "summaries" },
   { name: "listTrades", path: "/trade/v1/portfolio/trades?limit=10", collection: "trades" },
@@ -75,6 +111,13 @@ const RECORDINGS = [
 
 if (!TOKEN) {
   console.error("AGARA_RECORD_TOKEN is required (a PAT with portfolio:read and orders:read).");
+  process.exit(2);
+}
+if (!CONDITION_IDS.length) {
+  console.error(
+    "AGARA_RECORD_CONDITION_IDS is required: listPositions refuses an empty filter, and a market " +
+      "the token's wallet holds nothing in records an empty fixture.",
+  );
   process.exit(2);
 }
 

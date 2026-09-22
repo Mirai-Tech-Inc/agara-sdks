@@ -1,6 +1,6 @@
 {
   "comment": "Responses recorded from a real deployment. Not derived from contracts/, so they fail offline when a snapshot drifts from what the server sends. Re-record with scripts/record-fixtures.mjs.",
-  "recorded_at": "2026-09-22T17:27:23.174Z",
+  "recorded_at": "2026-09-22T19:17:30.671Z",
   "deployment": "https://app.dev.agara.xyz",
   "platform_commit": "e136dacf2e5442d1a8e2a05d7c77bf70b8f3aa6f",
   "recordings": [
@@ -33,6 +33,13 @@
       "allowEmpty": false
     },
     {
+      "name": "listTradingDays",
+      "request": "GET /api/v1/calendars/XHKG/days?from=2026-09-01&to=2026-09-30",
+      "collection": "days",
+      "elements": 30,
+      "allowEmpty": false
+    },
+    {
       "name": "search",
       "request": "GET /api/v1/search?q=inflation&limit=5",
       "collection": null,
@@ -49,9 +56,9 @@
     {
       "name": "listLpIncentiveCategories",
       "request": "GET /trade/v1/lp-incentives/categories",
-      "collection": null,
-      "elements": null,
-      "allowEmpty": false
+      "collection": "categories",
+      "elements": 0,
+      "allowEmpty": true
     },
     {
       "name": "getLpIncentiveEarnings",
@@ -68,6 +75,20 @@
       "allowEmpty": true
     },
     {
+      "name": "listClosedLpIncentiveCategories",
+      "request": "GET /trade/v1/lp-incentives/closed/categories",
+      "collection": "categories",
+      "elements": 0,
+      "allowEmpty": true
+    },
+    {
+      "name": "listPositions",
+      "request": "POST /trade/v1/portfolio/positions/list",
+      "collection": "positions",
+      "elements": 2,
+      "allowEmpty": false
+    },
+    {
       "name": "getPortfolioSummary",
       "request": "GET /trade/v1/portfolio/summary",
       "collection": "summaries",
@@ -78,7 +99,7 @@
       "name": "listTrades",
       "request": "GET /trade/v1/portfolio/trades?limit=10",
       "collection": "trades",
-      "elements": 6,
+      "elements": 9,
       "allowEmpty": false
     },
     {
