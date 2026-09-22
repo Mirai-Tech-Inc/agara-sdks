@@ -15,7 +15,6 @@ const names = {
   create_batch: "submitBatch",
   get_batch: "getBatch",
   supersede_batch: "supersedeBatch",
-  get_batch_group: "getBatchGroup",
   agara_orderbook: "getOrderbook",
   portfolio_activities: "listActivities",
   portfolio_bridge_withdraw_supported_assets: "getBridgeWithdrawAssets",

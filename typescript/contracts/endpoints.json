@@ -108,15 +108,6 @@
     "operationId": "supersede_batch"
   },
   {
-    "name": "getBatchGroup",
-    "service": "router",
-    "protocol": "HTTP",
-    "method": "GET",
-    "path": "/trade/v1/batch-groups/{group_id}",
-    "auth": "Privy JWT or PAT: BatchesSubmit",
-    "operationId": "get_batch_group"
-  },
-  {
     "name": "getOrderbook",
     "service": "router",
     "protocol": "HTTP",

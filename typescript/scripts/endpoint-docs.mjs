@@ -102,15 +102,6 @@ export const endpointDocs = {
       batch_hash: "Digest of the pending batch to replace, as 0x-prefixed 32-byte hex.",
     },
   },
-  getBatchGroup: {
-    summary: "Read an existing account-batch group and its chunk attempts.",
-    returns: "Group metadata, completed_at and per-chunk batch state.",
-    remarks:
-      "A group read does not create merge-all work. Retain individual chunk states and failures when deciding how to reconcile.",
-    params: {
-      group_id: "UUID of the existing batch group.",
-    },
-  },
   listActivities: {
     summary: "Read one page of account activity.",
     returns: "Activity variants with market, condition and event metadata plus an opaque cursor.",

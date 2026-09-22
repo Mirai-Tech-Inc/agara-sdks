@@ -187,23 +187,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/trade/v1/batch-groups/{group_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get a batch group */
-        get: operations["get_batch_group"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/trade/v1/orderbook/{token_id}": {
         parameters: {
             query?: never;
@@ -612,36 +595,6 @@ export interface components {
              * @example 2026-05-12T10:23:45.678Z
              */
             timestamp: string;
-        };
-        /** @description Group status: the row plus its chunk rows in slot order. */
-        BatchGroupStatusDto: {
-            /**
-             * Format: date-time
-             * @description Response timestamp.
-             */
-            as_of: string;
-            /**
-             * Format: int32
-             * @description Chunks the confirmed plan mirrors; `null` while phase A runs.
-             */
-            chunk_count?: number | null;
-            /** @description Chunk rows, slot order; retaken slots list every attempt. */
-            chunks: components["schemas"]["GroupChunkDto"][];
-            /**
-             * Format: date-time
-             * @description Set when every chunk settled and the group closed.
-             */
-            completed_at?: string | null;
-            /**
-             * Format: uuid
-             * @description Group id.
-             */
-            group_id: string;
-            /**
-             * @description Ops in the stored plan (candidates before phase A confirms, the frozen
-             *     confirmed subset after).
-             */
-            op_count: number;
         };
         /**
          * @description One typed intent inside an account batch, in execution order.
@@ -1297,22 +1250,6 @@ export interface components {
          * @enum {string}
          */
         FillRole: "MAKER" | "TAKER";
-        /** @description One chunk row in the status read. */
-        GroupChunkDto: {
-            /** @description EIP-712 batch digest; pollable at `GET /trade/v1/batches/{batch_hash}`. */
-            batch_hash: string;
-            /**
-             * Format: int32
-             * @description Slot the row occupies.
-             */
-            chunk_index: number;
-            /** @description Safe failure classification, when failed. */
-            failure?: components["schemas"]["KnownPublicFailure"] | null;
-            /** @description Lifecycle status, as its db value. */
-            status: string;
-            /** @description Confirmed transaction hash, when settled. */
-            tx_hash?: string | null;
-        };
         /** @description Closed producer form of the static edge problem. */
         KnownEdgeProblem: {
             /** @description Registered machine code. */
@@ -3983,117 +3920,6 @@ export interface operations {
                 };
             };
             /** @description Account batches are not configured, or the engine or relayer is temporarily unavailable. */
-            503: {
-                headers: {
-                    /** @description Origin request identifier to retain when contacting support. Edge-generated 429 responses may omit it. */
-                    "X-Request-ID"?: string;
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["KnownOriginProblemDetails"];
-                };
-            };
-        };
-    };
-    get_batch_group: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description The batch group to read */
-                group_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Group state with its chunk rows in slot order. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BatchGroupStatusDto"];
-                };
-            };
-            /** @description The group_id path parameter is not a UUID. */
-            400: {
-                headers: {
-                    /** @description Origin request identifier to retain when contacting support. Edge-generated 429 responses may omit it. */
-                    "X-Request-ID"?: string;
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["KnownOriginProblemDetails"];
-                };
-            };
-            /** @description Missing or invalid access token. */
-            401: {
-                headers: {
-                    /** @description Origin request identifier to retain when contacting support. Edge-generated 429 responses may omit it. */
-                    "X-Request-ID"?: string;
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["KnownOriginProblemDetails"];
-                };
-            };
-            /** @description Token lacks the `batches:submit` scope. */
-            403: {
-                headers: {
-                    /** @description Origin request identifier to retain when contacting support. Edge-generated 429 responses may omit it. */
-                    "X-Request-ID"?: string;
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["KnownOriginProblemDetails"];
-                };
-            };
-            /** @description No such group for this caller. */
-            404: {
-                headers: {
-                    /** @description Origin request identifier to retain when contacting support. Edge-generated 429 responses may omit it. */
-                    "X-Request-ID"?: string;
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["KnownOriginProblemDetails"];
-                };
-            };
-            /** @description Rate limited. `Retry-After` carries the seconds to wait. When present, `X-RateLimit-*` describes the per-user bucket evaluated for the request; handler-level, limiter-unavailable, and edge-generated responses may omit it. The request was not processed, so the identical request is safe to resend after backing off. */
-            429: {
-                headers: {
-                    /** @description Whole seconds to wait before retrying the identical request. */
-                    "Retry-After"?: number;
-                    /** @description Per-user bucket evaluated for the request. Handler-level, limiter-unavailable, and edge-generated 429 responses may omit it. */
-                    "X-RateLimit-Bucket"?: "read" | "place" | "place_batch" | "cancel" | "cancel_all";
-                    /** @description Evaluated per-user bucket capacity. Handler-level, limiter-unavailable, and edge-generated 429 responses may omit it. */
-                    "X-RateLimit-Limit"?: number | bigint;
-                    /** @description Tightest remaining per-user budget. Handler-level, limiter-unavailable, and edge-generated 429 responses may omit it. */
-                    "X-RateLimit-Remaining"?: number | bigint;
-                    /** @description Whole seconds until the evaluated per-user bucket is full. Handler-level, limiter-unavailable, and edge-generated 429 responses may omit it. */
-                    "X-RateLimit-Reset"?: number | bigint;
-                    /** @description Origin request identifier to retain when contacting support. Edge-generated 429 responses may omit it. */
-                    "X-Request-ID"?: string;
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["KnownEdgeProblem"];
-                    "application/problem+json": components["schemas"]["KnownOriginProblemDetails"];
-                };
-            };
-            /** @description Unexpected server-side failure. Do not retry automatically; retain the request ID and contact support. */
-            500: {
-                headers: {
-                    /** @description Origin request identifier to retain when contacting support. Edge-generated 429 responses may omit it. */
-                    "X-Request-ID"?: string;
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["KnownOriginProblemDetails"];
-                };
-            };
-            /** @description Batch groups are not configured, or a required service is temporarily unavailable. */
             503: {
                 headers: {
                     /** @description Origin request identifier to retain when contacting support. Edge-generated 429 responses may omit it. */

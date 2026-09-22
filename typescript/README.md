@@ -37,7 +37,7 @@ response observers receive HTTP status, headers and request ID.
 
 ## Coverage and wire contracts
 
-All **47 REST operations**, both router WebSocket endpoints, and both price SSE feeds
+All **46 REST operations**, both router WebSocket endpoints, and both price SSE feeds
 in [the checked-in scope](contracts/manifest.json) have named APIs. The
 [method inventory](contracts/endpoints.json) maps each REST method to its path and auth.
 Concrete request/response types derive from scoped OpenAPI snapshots, with source-backed
@@ -84,7 +84,6 @@ AGARA split/merge returns 201 `{ batch_hash, status: 'PENDING', as_of }`; POLYMA
 returns its 202 operation receipt. `waitForPositionOperation` handles that union.
 `waitForBatch` returns on SETTLED, FAILED_DIVERGENT, or FAILED after `unwound_at` is
 present. Inspect the returned state/failure: completion does not imply success.
-`waitForBatchGroup` uses `completed_at` and preserves per-chunk attempts and failures.
 
 ## Signing
 
@@ -105,7 +104,7 @@ implementation version, chain ID, contract context and each market's Ctf/NegRisk
 Helpers canonically encode SPLIT/MERGE/WITHDRAW calls and sign AgaraAccount's batch.
 Neg-risk splits, self withdrawals, zero salts and unsupported operations fail locally.
 The two published platform batch calldata/digest vectors are checked without reblessing.
-`submitBatch`, `getBatch`, `supersedeBatch`, `getBatchGroup` are typed wrappers. Supply
+`submitBatch`, `getBatch` and `supersedeBatch` are typed wrappers. Supply
 live sequence and deployment addresses from trusted configuration; the SDK never guesses.
 
 ## Errors and retries

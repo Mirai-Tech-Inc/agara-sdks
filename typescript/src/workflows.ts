@@ -7,13 +7,7 @@ import {
   WaitTimeoutError,
 } from "./errors.js";
 import type { RequestOptions } from "./transport.js";
-import type {
-  BatchGroupStatus,
-  BatchStatus,
-  Order,
-  PositionOperationResult,
-  TradingSchemas,
-} from "./types.js";
+import type { BatchStatus, Order, PositionOperationResult, TradingSchemas } from "./types.js";
 /**
  * Polling settings; inherited `timeoutMs` is the overall positive deadline (default 30000 ms).
  * An inherited response observer runs for each successfully validated status read.
@@ -169,23 +163,6 @@ export class AgaraClient extends TraderClient {
         value.status === "SETTLED" ||
         value.status === "FAILED_DIVERGENT" ||
         (value.status === "FAILED" && value.unwound_at != null),
-      options,
-    );
-  }
-  /**
-   * Poll an existing batch group until the server reports a non-null `completed_at` timestamp.
-   *
-   * @param id - Batch-group UUID to reconcile.
-   * @param options - Overall wait timeout, polling interval, cancellation and transient-error budget.
-   * @returns The complete group envelope; inspect its chunk statuses and failures before acting.
-   * @throws `WaitTimeoutError` with the latest snapshot when the polling loop deadline expires.
-   * @throws `AgaraError` for nonrecoverable server failures or exhausted transient-error allowance.
-   * @throws `TransportError` for failed or aborted HTTP reads; cancellation between reads throws its reason.
-   */
-  async waitForBatchGroup(id: string, options: WaitOptions = {}): Promise<BatchGroupStatus> {
-    return this.wait(
-      (request) => this.getBatchGroup(id, request),
-      (value) => value.completed_at != null,
       options,
     );
   }

@@ -51,8 +51,6 @@ export type Side = TradingSchemas["Side"];
 export type TimeInForce = TradingSchemas["ClobOrderTimeInForce"];
 /** Account-batch state and failure details; reaching a completed state does not imply success. */
 export type BatchStatus = TradingSchemas["AccountBatchStatusDto"];
-/** Batch-group progress, including completion time, per-chunk attempts, and failures. */
-export type BatchGroupStatus = TradingSchemas["BatchGroupStatusDto"];
 /** SPLIT, MERGE, or WITHDRAW operation supported by presigned account-batch submissions. */
 export type BatchOperation = Extract<
   TradingSchemas["BatchOpDto"],

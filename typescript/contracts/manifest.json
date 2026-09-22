@@ -89,13 +89,6 @@
       "service": "router",
       "protocol": "HTTP",
       "method": "GET",
-      "path": "/trade/v1/batch-groups/{group_id}",
-      "auth": "Privy JWT or PAT: BatchesSubmit"
-    },
-    {
-      "service": "router",
-      "protocol": "HTTP",
-      "method": "GET",
       "path": "/trade/v1/orderbook/{token_id}",
       "auth": "anonymous"
     },

@@ -2,7 +2,7 @@
 
 Platform `8cf944265642737148bdb2ae128c697b776cebec` (2026-09-22).
 `trading.json` and `catalogue.json` are scoped snapshots of the platform's checked-in
-`apps/web/content/api-specs` documents, limited to the 47 operations in `manifest.json`.
+`apps/web/content/api-specs` documents, limited to the 46 operations in `manifest.json`.
 Unused component schemas are removed. Preserve arbitrary metadata within documented JSON fields.
 
 The environment-projected trading document omits mounted paths, including both bridge

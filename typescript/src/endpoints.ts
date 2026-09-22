@@ -1127,40 +1127,6 @@ export class TraderClient extends PublicClient {
   }
 
   /**
-   * Read an existing account-batch group and its chunk attempts.
-   *
-   * @remarks
-   * Requires a personal access token with scope `batches:submit`. A group read does not create
-   * merge-all work. Retain individual chunk states and failures when deciding how to reconcile.
-   *
-   * @param group_id - UUID of the existing batch group.
-   * @param options - Per-request abort signal, timeout override and successful-response observer.
-   * @returns Group metadata, completed_at and per-chunk batch state.
-   * @throws TypeError for invalid local request shapes or text inputs.
-   * @throws RangeError for invalid local numeric inputs or timeout overrides.
-   * @throws AgaraError for an unsuccessful HTTP response; inspect its status and validated
-   * recovery.
-   * @throws TransportError for failed or aborted I/O; inspect its cause for the underlying failure.
-   * @throws ProtocolError when a successful response is malformed or exceeds the response-byte
-   * bound.
-   * @throws ResponseObserverError when a callback throws after receiving a valid success response.
-   */
-  getBatchGroup(
-    group_id: string,
-    options: RequestOptions = {},
-  ): Promise<Success<TradingOperations["get_batch_group"]>> {
-    return this.request(
-      "GET",
-      `/trade/v1/batch-groups/${this.pathPart(group_id)}`,
-      undefined,
-      undefined,
-      options,
-      true,
-      "getBatchGroup",
-    );
-  }
-
-  /**
    * Read one page of account activity.
    *
    * @remarks
