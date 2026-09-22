@@ -243,9 +243,24 @@ it("preserves POLYMARKET availability and a complete positions envelope", async 
     ...traderOptions,
     fetch: async () => new Response(JSON.stringify(response)),
   });
-  expect(await c.listPositions({ condition_ids: [], exchanges: ["AGARA", "POLYMARKET"] })).toEqual(
-    response,
-  );
+  expect(
+    await c.listPositions({
+      condition_ids: [`0x${"aa".repeat(32)}`],
+      exchanges: ["AGARA", "POLYMARKET"],
+    }),
+  ).toEqual(response);
+});
+it("refuses a positions read that names no condition", async () => {
+  const fetcher = vi.fn<typeof fetch>();
+  const c = new AgaraClient({ ...traderOptions, fetch: fetcher });
+
+  // The server answers an empty list with an empty envelope, which reads exactly like holding
+  // nothing, so this has to fail before the request rather than return a believable zero.
+  await expect(c.listPositions({ condition_ids: [] })).rejects.toBeInstanceOf(TypeError);
+  await expect(
+    c.listPositions({ condition_ids: [] as unknown as string[], exchanges: ["AGARA"] }),
+  ).rejects.toThrow(/at least one condition_id/);
+  expect(fetcher).not.toHaveBeenCalled();
 });
 it.each(["splitPosition", "mergePosition"] as const)(
   "preserves %s's POLYMARKET 202 completed receipt",

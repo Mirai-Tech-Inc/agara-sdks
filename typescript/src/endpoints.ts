@@ -1338,10 +1338,12 @@ export class TraderClient extends PublicClient {
    * @remarks
    * Requires a personal access token with scope `portfolio:read`. An unavailable exchange must not
    * be treated as empty holdings. Call assertComplete before making decisions that require all
-   * requested exchanges.
+   * requested exchanges. At least one condition identifier is required: the server answers an empty
+   * array with an empty envelope, which cannot be told apart from holding nothing, so this client
+   * rejects it instead.
    *
-   * @param body - Optional condition identifiers and exchange filters; omitted filters use server
-   * defaults.
+   * @param body - One or more condition identifiers, and optional exchange filters; omitted filters
+   * use server defaults.
    * @param options - Per-request abort signal, timeout override and successful-response observer.
    * @returns The complete response envelope, including positions, market/event sidecars and
    * unavailable_exchanges.

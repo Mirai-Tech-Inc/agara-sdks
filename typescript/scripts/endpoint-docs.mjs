@@ -154,8 +154,8 @@ export const endpointDocs = {
     returns:
       "The complete response envelope, including positions, market/event sidecars and unavailable_exchanges.",
     remarks:
-      "An unavailable exchange must not be treated as empty holdings. Call assertComplete before making decisions that require all requested exchanges.",
-    body: "Optional condition identifiers and exchange filters; omitted filters use server defaults.",
+      "An unavailable exchange must not be treated as empty holdings. Call assertComplete before making decisions that require all requested exchanges. At least one condition identifier is required: the server answers an empty array with an empty envelope, which cannot be told apart from holding nothing, so this client rejects it instead.",
+    body: "One or more condition identifiers, and optional exchange filters; omitted filters use server defaults.",
   },
   splitPosition: {
     summary: "Request conversion of collateral into a complete outcome set.",

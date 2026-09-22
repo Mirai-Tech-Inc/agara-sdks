@@ -178,6 +178,13 @@ export function validateRequest(name: string, body: unknown, query: unknown): vo
       throw new RangeError("Signed order batches need 1–32 entries");
     for (const order of body.orders) validateOrder(order, true);
   }
+  // The server accepts an empty condition_ids and answers an empty envelope, which a caller cannot
+  // tell apart from holding nothing. Callers build this list from a filter, so one that matched
+  // nothing must fail here rather than read as a flat portfolio.
+  if (name === "listPositions" && isObject(body)) {
+    if (!Array.isArray(body.condition_ids) || body.condition_ids.length < 1)
+      throw new TypeError("listPositions requires at least one condition_id");
+  }
   if ((name === "splitPosition" || name === "mergePosition") && isObject(body))
     micro(body.collateral_amount_micro ?? body.shares_micro, "position amount");
   if ((name === "submitBatch" || name === "supersedeBatch") && isObject(body)) {
