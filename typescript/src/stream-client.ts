@@ -259,7 +259,10 @@ export class AgaraStream implements AsyncIterable<StreamEvent> {
    * @throws ProtocolError - A subscription subject or depth is malformed.
    * @throws RangeError - More than 64 subscriptions remain after deduplication.
    * @remarks
-   * Reconnection consumes the normal retry budget and emits recovery gaps after a prior open.
+   * This is not a subscription delta. An open socket is closed and the new list is replayed on
+   * reconnect, so changing one channel costs a reconnect, consumes the normal retry budget, and
+   * emits a recovery gap for every subject the stream already held, each needing its own REST
+   * reconciliation. Prefer choosing the full channel set at construction.
    * The count limit is checked after storing the new list; after that error, replace it with a valid
    * list or close the stream before it reconnects.
    */

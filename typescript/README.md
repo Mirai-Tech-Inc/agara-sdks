@@ -154,6 +154,16 @@ backpressure. Reconnection uses bounded exponential jitter and replays subscript
 authentication failure stops instead of looping a stale token. AbortSignal, `.close()`,
 and breaking the iterator release sockets/timers. At most 64 subscriptions are allowed.
 The router sends ten-second heartbeat frames; an idle watchdog detects stalled streams.
+`ping()` and `listSubscriptions()` send the corresponding control commands.
+
+`setSubscriptions` changes the set by reconnecting, not by sending a subscription delta: it
+closes an open socket and the new list is replayed on reconnect. Adding or removing one
+channel therefore costs a reconnect, spends retry budget, and emits a gap for **every**
+subject the stream already held, each of which then needs its own REST reconciliation.
+Choose the full channel set up front where you can, and treat a mid-stream change as a
+deliberate resync rather than a cheap adjustment. A server-requested resubscribe is the
+narrower case: it sends `unsubscribe`/`subscribe` for the affected subjects only and emits
+a `resubscribe` gap for those.
 
 A gap requires application reconciliation: orderbook state needs its REST fence and a
 fresh snapshot; best quotes await a fresh snapshot; account/trades/condition/event
