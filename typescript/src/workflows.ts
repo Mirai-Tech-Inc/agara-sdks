@@ -167,18 +167,18 @@ export class AgaraClient extends TraderClient {
     );
   }
   /**
-   * Reconcile an AGARA split/merge batch, or return an existing relayer receipt unchanged.
+   * Reconcile the account batch that a split or merge accepted.
    *
-   * @param result - The complete discriminated response from `splitPosition` or `mergePosition`.
-   * @param options - Batch wait settings; unused when the response is already a relayer receipt.
-   * @returns Batch status after polling, or the original relayer response without extra status reads.
-   * @throws The same polling errors as `waitForBatch` when the result carries a batch hash.
+   * @param result - The acceptance returned by `splitPosition` or `mergePosition`.
+   * @param options - Batch wait settings.
+   * @returns Batch status after polling; a terminal state does not by itself mean success.
+   * @throws The same polling errors as `waitForBatch`.
    */
   async waitForPositionOperation(
     result: PositionOperationResult,
     options: WaitOptions = {},
-  ): Promise<BatchStatus | TradingSchemas["PortfolioPositionOperationResponse"]> {
-    return "batch_hash" in result ? this.waitForBatch(result.batch_hash, options) : result;
+  ): Promise<BatchStatus> {
+    return this.waitForBatch(result.batch_hash, options);
   }
   /**
    * Iterate order-history page envelopes while retaining the original request filters.

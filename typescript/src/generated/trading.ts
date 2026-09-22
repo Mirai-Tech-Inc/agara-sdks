@@ -1206,7 +1206,7 @@ export interface components {
          * @description The AGARA exchange identifier.
          * @enum {string}
          */
-        Exchange: "AGARA" | "POLYMARKET";
+        Exchange: "AGARA";
         /**
          * @description One wallet's single-sided view of a fill — the shared item type for
          *     `/trade/v1/portfolio/trades` and `/trade/v1/orders/{id}/trades`.
@@ -1911,17 +1911,6 @@ export interface components {
             condition_id: components["schemas"]["ConditionId"];
             /** @description Share amount in micro units. */
             shares_micro: components["schemas"]["MicroAmount"];
-        };
-        PortfolioPositionOperationResponse: {
-            /** @enum {string} */
-            operation: "SPLIT" | "MERGE" | "REDEEM";
-            condition_id: string;
-            relayer_transaction_id: string;
-            transaction_hash: string | null;
-            /** @enum {string} */
-            relayer_state: "MINED" | "CONFIRMED";
-            /** Format: date-time */
-            as_of: string;
         };
         /**
          * @description Request to split collateral into outcome tokens.
@@ -4677,15 +4666,6 @@ export interface operations {
                     "application/json": components["schemas"]["PositionOperationAccepted"];
                 };
             };
-            /** @description POLYMARKET operation receipt */
-            202: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PortfolioPositionOperationResponse"];
-                };
-            };
             /** @description The request body is not valid JSON. */
             400: {
                 headers: {
@@ -4862,15 +4842,6 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PositionOperationAccepted"];
-                };
-            };
-            /** @description POLYMARKET operation receipt */
-            202: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PortfolioPositionOperationResponse"];
                 };
             };
             /** @description The request body is not valid JSON. */

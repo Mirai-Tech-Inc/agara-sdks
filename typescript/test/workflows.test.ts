@@ -55,9 +55,9 @@ it("detects multi-step cursor cycles", async () => {
   ).rejects.toBeInstanceOf(PaginationError);
 });
 it("exposes incomplete portfolios without losing rows", () => {
-  const page = { positions: [], unavailable_exchanges: ["POLYMARKET"] };
+  const page = { positions: [], unavailable_exchanges: ["AGARA"] };
   expect(() => assertComplete(page)).toThrow(PartialAvailabilityError);
-  expect(page.unavailable_exchanges).toEqual(["POLYMARKET"]);
+  expect(page.unavailable_exchanges).toEqual(["AGARA"]);
 });
 it("times out with the latest order instead of returning a false terminal result", async () => {
   const c = new AgaraClient(traderOptions);

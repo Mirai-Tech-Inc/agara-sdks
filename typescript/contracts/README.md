@@ -9,8 +9,6 @@ The environment-projected trading document omits mounted paths, including both b
 withdrawal paths, which respond on every deployment checked. These source-backed additions
 preserve the actual router contract:
 
-- Split/merge's POLYMARKET 202 receipt: `handlers/portfolio.rs:39-138` and
-  `crates/service/src/position_operations.rs:154-169`.
 - AGARA acceptance status is `PENDING`: `apps/router/src/handlers.rs:763`.
 - Both bridge withdrawal paths: `apps/router/src/handlers/portfolio.rs` and
   `crates/service/src/portfolio.rs`, which resolve the AGARA wallet.
@@ -29,8 +27,8 @@ the snapshot rejects. Everything else prints as a warning. The deliberate deviat
 below are recorded in `drift-allowlist.json`; keep that list short, because it is what stops
 the report from being read.
 
-The trading `Exchange` enum is restored to AGARA/POLYMARKET from the actual domain;
-environment documentation projects it to AGARA even on shared multi-exchange DTOs.
+The trading `Exchange` enum carries AGARA only: this package is Agara-only, so the other
+exchange's identifier is not shipped even though the platform domain still defines it.
 Runtime schema references are namespaced by service so catalogue and trading names
 cannot overwrite each other. The runtime checker covers the schema forms used here;
 it is not offered as a general-purpose JSON Schema validator.

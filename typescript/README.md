@@ -54,8 +54,10 @@ structured server failure; method presence does not enable them.
 Unrealized P&L is not part of the surface: the platform does not support it, so
 `/trade/v1/portfolio/pnl` and `/trade/v1/portfolio/pnl/history` are excluded and only
 `getRealizedPnl` remains. Bridge *deposits* are likewise excluded: the platform has no Agara
-USDC deposit bridge, and the deposit routes resolve a Polymarket wallet, so an Agara account
-can never satisfy them. Bridge withdrawal reads resolve the Agara wallet and are supported.
+USDC deposit bridge, and the deposit routes resolve another exchange's wallet, so an Agara
+account can never satisfy them. Bridge withdrawal reads resolve the Agara wallet and are
+supported. This package is Agara-only throughout: no other exchange appears in any type,
+enum or response shape.
 
 JWT onboarding/account administration, token CRUD, standalone withdrawals, merge-all
 creation, browser configuration, home/navigation presentation, faucets, admin/internal
@@ -80,8 +82,8 @@ When the polling loop expires, `WaitTimeoutError` carries `.latest`. An in-fligh
 times out can instead throw `TransportError`; inspect its cause. A timeout does not establish
 that the order failed or that a submitted mutation was cancelled.
 
-AGARA split/merge returns 201 `{ batch_hash, status: 'PENDING', as_of }`; POLYMARKET
-returns its 202 operation receipt. `waitForPositionOperation` handles that union.
+Split and merge return 201 `{ batch_hash, status: 'PENDING', as_of }`, which
+`waitForPositionOperation` reconciles through `waitForBatch`.
 `waitForBatch` returns on SETTLED, FAILED_DIVERGENT, or FAILED after `unwound_at` is
 present. Inspect the returned state/failure: completion does not imply success.
 

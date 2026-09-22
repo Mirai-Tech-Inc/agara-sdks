@@ -40,7 +40,7 @@ export type Success<T> = T extends { responses: infer R }
 export type Order = TradingSchemas["Order"];
 /** Wallet's side of an executed fill, including exact micro amounts and its settlement status. */
 export type Fill = TradingSchemas["Fill"];
-/** Exchange identifier accepted by trading and portfolio APIs: AGARA or POLYMARKET. */
+/** Exchange identifier accepted by trading and portfolio APIs. */
 export type Exchange = TradingSchemas["Exchange"];
 /** Direction of an order or fill: BUY acquires shares and SELL disposes of shares. */
 export type Side = TradingSchemas["Side"];
@@ -74,10 +74,8 @@ export interface SignedOrderBatchRequest {
   /** One through 32 signed order bodies. */
   orders: SignedOrderRequest[];
 }
-/** AGARA batch acceptance or POLYMARKET position-operation receipt returned by split and merge. */
-export type PositionOperationResult =
-  | TradingSchemas["PositionOperationAccepted"]
-  | TradingSchemas["PortfolioPositionOperationResponse"];
+/** Batch acceptance returned by split and merge. */
+export type PositionOperationResult = TradingSchemas["PositionOperationAccepted"];
 type Resting =
   | {
       /** Rest any unfilled quantity until canceled. */

@@ -1,8 +1,8 @@
 import { privateKeyToAccount } from "viem/accounts";
 import { describe, expect, it, vi } from "vitest";
 import { formatUnits, parseUnits } from "../src/amounts.js";
-import { ProtocolError, TransportError } from "../src/errors.js";
-import { AgaraClient, PublicClient } from "../src/index.js";
+import { PartialAvailabilityError, ProtocolError, TransportError } from "../src/errors.js";
+import { AgaraClient, assertComplete, PublicClient } from "../src/index.js";
 import { parseJson, stringifyJson } from "../src/json.js";
 import { signOrder } from "../src/signing.js";
 import { ResponseObserverError } from "../src/transport.js";
@@ -231,24 +231,26 @@ it("preserves mixed accepted/rejected signed-batch results", async () => {
   });
   expect(await c.placeSignedOrders({ orders: [signed, signed] })).toEqual(response);
 });
-it("preserves POLYMARKET availability and a complete positions envelope", async () => {
+it("preserves an unavailable exchange rather than reporting empty holdings", async () => {
+  // The dangerous reading of this envelope is "no positions". It means the exchange could not be
+  // consulted, so the envelope must survive intact and assertComplete must refuse it.
   const response = {
     positions: [],
     markets: {},
     events: {},
-    unavailable_exchanges: ["POLYMARKET"],
+    unavailable_exchanges: ["AGARA"],
     as_of: "2026-09-17T00:00:00Z",
   };
   const c = new AgaraClient({
     ...traderOptions,
     fetch: async () => new Response(JSON.stringify(response)),
   });
-  expect(
-    await c.listPositions({
-      condition_ids: [`0x${"aa".repeat(32)}`],
-      exchanges: ["AGARA", "POLYMARKET"],
-    }),
-  ).toEqual(response);
+  const page = await c.listPositions({
+    condition_ids: [`0x${"aa".repeat(32)}`],
+    exchanges: ["AGARA"],
+  });
+  expect(page).toEqual(response);
+  expect(() => assertComplete(page)).toThrow(PartialAvailabilityError);
 });
 it("refuses a positions read that names no condition", async () => {
   const fetcher = vi.fn<typeof fetch>();
@@ -263,29 +265,40 @@ it("refuses a positions read that names no condition", async () => {
   expect(fetcher).not.toHaveBeenCalled();
 });
 it.each(["splitPosition", "mergePosition"] as const)(
-  "preserves %s's POLYMARKET 202 completed receipt",
+  "reconciles %s's accepted batch through its digest",
   async (name) => {
-    const response = {
-      operation: name === "splitPosition" ? "SPLIT" : "MERGE",
-      condition_id: `0x${"aa".repeat(32)}`,
-      relayer_transaction_id: "receipt",
-      transaction_hash: null,
-      relayer_state: "CONFIRMED",
-      as_of: "2026-09-17T00:00:00Z",
+    const batchHash = `0x${"bb".repeat(32)}`;
+    const accepted = { batch_hash: batchHash, status: "PENDING", as_of: "2026-09-17T00:00:00Z" };
+    const settled = {
+      batch_hash: batchHash,
+      status: "SETTLED",
+      seq: 1,
+      deadline_unix_seconds: 1900000000,
+      origin: "PRESIGNED",
+      tx_hash: `0x${"cc".repeat(32)}`,
+      executed_at: "2026-09-17T00:00:05Z",
+      failure: null,
+      superseded_by_batch_hash: null,
+      heals_batch_hash: null,
+      unwound_at: null,
+      created_at: "2026-09-17T00:00:00Z",
     };
     const c = new AgaraClient({
       ...traderOptions,
-      fetch: async () => new Response(JSON.stringify(response), { status: 202 }),
+      fetch: async (url) =>
+        new Response(JSON.stringify(String(url).includes("/batches/") ? settled : accepted), {
+          status: String(url).includes("/batches/") ? 200 : 201,
+        }),
     });
     const result =
       name === "splitPosition"
         ? await c.splitPosition({
-            condition_id: response.condition_id,
+            condition_id: `0x${"aa".repeat(32)}`,
             collateral_amount_micro: "1000000",
           })
-        : await c.mergePosition({ condition_id: response.condition_id, shares_micro: "1000000" });
-    expect(result).toEqual(response);
-    expect(await c.waitForPositionOperation(result)).toEqual(response);
+        : await c.mergePosition({ condition_id: `0x${"aa".repeat(32)}`, shares_micro: "1000000" });
+    expect(result).toEqual(accepted);
+    expect(await c.waitForPositionOperation(result)).toEqual(settled);
   },
 );
 it("does not label read-only POST lists as ambiguous mutations", async () => {

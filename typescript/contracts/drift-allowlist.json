@@ -3,11 +3,6 @@
   "deliberate": [
     {
       "operation": "*",
-      "pattern": "#enum: snapshot AGARA\\|POLYMARKET, deployment AGARA$",
-      "reason": "The trading Exchange enum is restored to the actual domain (AGARA/POLYMARKET). Environment documentation projects it to AGARA even on shared multi-exchange DTOs, so a single-exchange deployment always looks narrower."
-    },
-    {
-      "operation": "*",
       "pattern": "^request ops\\[\\]<(ACROSS_SWAP_APPROVE|WITHDRAW_ACROSS_SWAP_[A-Z0-9_]+)>",
       "reason": "Across and CCTP batch operations require server signing. The snapshot keeps their variants so the types stay complete, and the presigned helpers reject them locally; a deployment without the bridge omits them."
     },

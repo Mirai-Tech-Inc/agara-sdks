@@ -1448,8 +1448,7 @@
       "Exchange": {
         "description": "The AGARA exchange identifier.",
         "enum": [
-          "AGARA",
-          "POLYMARKET"
+          "AGARA"
         ],
         "type": "string"
       },
@@ -3341,50 +3340,6 @@
         ],
         "type": "object"
       },
-      "PortfolioPositionOperationResponse": {
-        "type": "object",
-        "properties": {
-          "operation": {
-            "type": "string",
-            "enum": [
-              "SPLIT",
-              "MERGE",
-              "REDEEM"
-            ]
-          },
-          "condition_id": {
-            "type": "string"
-          },
-          "relayer_transaction_id": {
-            "type": "string"
-          },
-          "transaction_hash": {
-            "type": [
-              "string",
-              "null"
-            ]
-          },
-          "relayer_state": {
-            "type": "string",
-            "enum": [
-              "MINED",
-              "CONFIRMED"
-            ]
-          },
-          "as_of": {
-            "type": "string",
-            "format": "date-time"
-          }
-        },
-        "required": [
-          "operation",
-          "condition_id",
-          "relayer_transaction_id",
-          "transaction_hash",
-          "relayer_state",
-          "as_of"
-        ]
-      },
       "PortfolioPositionSplitRequest": {
         "description": "Request to split collateral into outcome tokens.",
         "example": {
@@ -4143,7 +4098,7 @@
     }
   },
   "info": {
-    "description": "Pinned a7e8c2dc1 platform contract; see contracts/README.md for source patches.",
+    "description": "Pinned 8cf944265 platform contract; see contracts/README.md for source patches.",
     "license": {
       "name": ""
     },
@@ -14769,16 +14724,6 @@
                 }
               }
             }
-          },
-          "202": {
-            "description": "POLYMARKET operation receipt",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PortfolioPositionOperationResponse"
-                }
-              }
-            }
           }
         },
         "security": [
@@ -15544,16 +15489,6 @@
                 "schema": {
                   "format": "uuid",
                   "type": "string"
-                }
-              }
-            }
-          },
-          "202": {
-            "description": "POLYMARKET operation receipt",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PortfolioPositionOperationResponse"
                 }
               }
             }
