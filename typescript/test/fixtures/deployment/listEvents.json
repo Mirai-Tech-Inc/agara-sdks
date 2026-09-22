@@ -1,0 +1,230 @@
+{
+  "events": [
+    {
+      "id": "10f54c3a-711f-46e1-a704-e4d4eef23fec",
+      "slug": "ethereum-price-up-or-down-30-minutes-event",
+      "title": "Ethereum Price Up or Down (30 Minutes) Series",
+      "is_accepting_orders": true,
+      "is_live": false,
+      "is_group_root": true,
+      "start_time": null,
+      "end_time": null,
+      "volume_micro": "0",
+      "primary_category": {
+        "slug": "crypto",
+        "label": "Crypto"
+      },
+      "main_market_id": "726ee543-07a3-4832-9040-dfac7fb5cd82",
+      "resolution_status": "ACTIVE",
+      "state": "ACTIVE",
+      "event_type": "RECURRING_PROPOSITION",
+      "display": {},
+      "listing_markets": [
+        {
+          "id": "726ee543-07a3-4832-9040-dfac7fb5cd82",
+          "state": "ACTIVE",
+          "slug": "ethereum-price-up-or-down-30-minutes-2026-09-22T11-30-00-000Z",
+          "exchange": "AGARA",
+          "question": "Ethereum Price Up or Down (30 Minutes) - Sep 22, 7:30AM-8:00AM ET",
+          "display_label": "Ethereum Price Up or Down (30 Minutes) - Sep 22, 7:30AM-8:00AM ET",
+          "pyth_pro_symbol": "Crypto.ETH/USD",
+          "security_symbol": "ETH-USD",
+          "security_provider": "pyth-pro",
+          "reference_price": "2738.59249115",
+          "currency": "USD",
+          "reference_at": "2026-09-22T11:30:00.000Z",
+          "observe_at": "2026-09-22T12:00:00.000Z",
+          "outcomes": [
+            {
+              "label": "Up",
+              "kind": "yes",
+              "price_micro": null,
+              "token_id": "67131944017751803210252541932033735712001246384314474322637545281262756989102"
+            },
+            {
+              "label": "Down",
+              "kind": "no",
+              "price_micro": null,
+              "token_id": "66189271033515239284408794235797490958607725379128077043067438815469731541109"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "13e14ae6-2112-4d5e-94eb-289a6fcaccae",
+      "slug": "solana-price-up-or-down-30-minutes-event",
+      "title": "Solana Price Up or Down (30 Minutes) Series",
+      "is_accepting_orders": true,
+      "is_live": false,
+      "is_group_root": true,
+      "start_time": null,
+      "end_time": null,
+      "volume_micro": "0",
+      "primary_category": {
+        "slug": "crypto",
+        "label": "Crypto"
+      },
+      "main_market_id": "f4fd7ab0-a884-41d1-8bc2-5f7b9495600e",
+      "resolution_status": "ACTIVE",
+      "state": "ACTIVE",
+      "event_type": "RECURRING_PROPOSITION",
+      "display": {},
+      "listing_markets": [
+        {
+          "id": "f4fd7ab0-a884-41d1-8bc2-5f7b9495600e",
+          "state": "ACTIVE",
+          "slug": "solana-price-up-or-down-30-minutes-2026-09-22T11-30-00-000Z",
+          "exchange": "AGARA",
+          "question": "Solana Price Up or Down (30 Minutes) - Sep 22, 7:30AM-8:00AM ET",
+          "display_label": "Solana Price Up or Down (30 Minutes) - Sep 22, 7:30AM-8:00AM ET",
+          "pyth_pro_symbol": "Crypto.SOL/USD",
+          "security_symbol": "SOL-USD",
+          "security_provider": "pyth-pro",
+          "reference_price": "116.8185147",
+          "currency": "USD",
+          "reference_at": "2026-09-22T11:30:00.000Z",
+          "observe_at": "2026-09-22T12:00:00.000Z",
+          "outcomes": [
+            {
+              "label": "Up",
+              "kind": "yes",
+              "price_micro": null,
+              "token_id": "97891526367841266931125371499407415981882695035248157332480264809189291058422"
+            },
+            {
+              "label": "Down",
+              "kind": "no",
+              "price_micro": null,
+              "token_id": "43556705602706736165319049547899093528428696484885640888320775025594156236623"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "1933103a-7380-4981-a9c9-c1f19fc84e1f",
+      "slug": "bitcoin-price-up-or-down-15-minutes-event",
+      "title": "Bitcoin Price Up or Down (15 Minutes) Series",
+      "is_accepting_orders": true,
+      "is_live": false,
+      "is_group_root": true,
+      "start_time": null,
+      "end_time": null,
+      "volume_micro": "0",
+      "primary_category": {
+        "slug": "crypto",
+        "label": "Crypto"
+      },
+      "main_market_id": "c6d6bc37-6a23-42b8-9fcf-701aca752f7a",
+      "resolution_status": "ACTIVE",
+      "state": "ACTIVE",
+      "event_type": "RECURRING_PROPOSITION",
+      "display": {},
+      "listing_markets": [
+        {
+          "id": "c6d6bc37-6a23-42b8-9fcf-701aca752f7a",
+          "state": "ACTIVE",
+          "slug": "bitcoin-price-up-or-down-15-minutes-2026-09-22T11-45-00-000Z",
+          "exchange": "AGARA",
+          "question": "Bitcoin Price Up or Down (15 Minutes) - Sep 22, 7:45AM-8:00AM ET",
+          "display_label": "Bitcoin Price Up or Down (15 Minutes) - Sep 22, 7:45AM-8:00AM ET",
+          "pyth_pro_symbol": "Crypto.BTC/USD",
+          "security_symbol": "BTC-USD",
+          "security_provider": "pyth-pro",
+          "reference_price": "86076.63068223",
+          "currency": "USD",
+          "reference_at": "2026-09-22T11:45:00.000Z",
+          "observe_at": "2026-09-22T12:00:00.000Z",
+          "outcomes": [
+            {
+              "label": "Up",
+              "kind": "yes",
+              "price_micro": null,
+              "token_id": "32335818700359745997090823827090613331899166808402541751016909678081856885137"
+            },
+            {
+              "label": "Down",
+              "kind": "no",
+              "price_micro": null,
+              "token_id": "27123958522377367845367854710541603448853913621572708452476439431417872584426"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "19b7f64b-05b6-44b4-aad3-aa74038f97d2",
+      "slug": "solana-price-up-or-down-5-minutes-event",
+      "title": "Solana Price Up or Down (5 Minutes) Series",
+      "is_accepting_orders": true,
+      "is_live": false,
+      "is_group_root": true,
+      "start_time": null,
+      "end_time": null,
+      "volume_micro": "0",
+      "primary_category": {
+        "slug": "crypto",
+        "label": "Crypto"
+      },
+      "main_market_id": "2dd0d215-7361-4620-b3ea-33b50c81e047",
+      "resolution_status": "ACTIVE",
+      "state": "ACTIVE",
+      "event_type": "RECURRING_PROPOSITION",
+      "display": {},
+      "listing_markets": [
+        {
+          "id": "2dd0d215-7361-4620-b3ea-33b50c81e047",
+          "state": "ACTIVE",
+          "slug": "solana-price-up-or-down-5-minutes-2026-09-22T11-45-00-000Z",
+          "exchange": "AGARA",
+          "question": "Solana Price Up or Down (5 Minutes) - Sep 22, 7:45AM-7:50AM ET",
+          "display_label": "Solana Price Up or Down (5 Minutes) - Sep 22, 7:45AM-7:50AM ET",
+          "pyth_pro_symbol": "Crypto.SOL/USD",
+          "security_symbol": "SOL-USD",
+          "security_provider": "pyth-pro",
+          "reference_price": "117.3903747",
+          "currency": "USD",
+          "reference_at": "2026-09-22T11:45:00.000Z",
+          "observe_at": "2026-09-22T11:50:00.000Z",
+          "outcomes": [
+            {
+              "label": "Up",
+              "kind": "yes",
+              "price_micro": null,
+              "token_id": "58905618036405451497434628136636212093422472674607113675794508989158115548131"
+            },
+            {
+              "label": "Down",
+              "kind": "no",
+              "price_micro": null,
+              "token_id": "104294261376630249032934044136988769976700555949702233601977571710802366195726"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "19f6d437-17f2-4d30-aab2-c9cf66c25d7a",
+      "slug": "samsung-price-up-or-down-daily-event",
+      "title": "Samsung Price Up or Down (Daily) Series",
+      "is_accepting_orders": false,
+      "is_live": false,
+      "is_group_root": true,
+      "start_time": null,
+      "end_time": null,
+      "volume_micro": "0",
+      "primary_category": null,
+      "main_market_id": null,
+      "resolution_status": "ACTIVE",
+      "state": "INACTIVE",
+      "event_type": "RECURRING_PROPOSITION",
+      "display": {},
+      "listing_markets": []
+    }
+  ],
+  "pagination": {
+    "next_cursor": "eyJ2ZXIiOjMsImYiOiJkZjc2OTA1MjgyYmYiLCJiIjoxLCJ0Ijo5OTk5OTk5OTk5LCJ2IjowLCJpIjoiMTlmNmQ0MzctMTdmMi00ZDMwLWFhYjItYzljZjY2YzI1ZDdhIiwicyI6ImRlZmF1bHQifQ",
+    "limit": 5
+  }
+}

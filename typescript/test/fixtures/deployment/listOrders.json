@@ -1,0 +1,259 @@
+{
+  "orders": [
+    {
+      "internal_id": "01a0c8f2-3b29-7eb2-b03d-93dfe79477c0",
+      "exchange": "AGARA",
+      "token_id": "53001811052467883992819895815006000371851434699384551262153764437950873430832",
+      "condition_id": "0x2dcfeea0061ce44d559bda09c89733bc7d1ba82d93572543132781737038abd3",
+      "side": "BUY",
+      "type": "LIMIT",
+      "price_micro": "150000",
+      "original_size_micro": "1000000",
+      "collateral_amount_micro": null,
+      "size_matched_micro": "0",
+      "avg_fill_price_micro": null,
+      "status": "OPEN",
+      "is_terminal": false,
+      "failure": null,
+      "expiration": "1970-01-01T00:00:00Z",
+      "created_at": "2026-09-22T11:48:33.196840Z",
+      "cancel_requested_at": null
+    },
+    {
+      "internal_id": "01a0c8f2-3877-7d41-95cc-8c8fc218410a",
+      "exchange": "AGARA",
+      "token_id": "3080354623804693924140594680509310463211971617800178260199236136438405504979",
+      "condition_id": "0x2dcfeea0061ce44d559bda09c89733bc7d1ba82d93572543132781737038abd3",
+      "side": "BUY",
+      "type": "LIMIT",
+      "price_micro": "120000",
+      "original_size_micro": "1000000",
+      "collateral_amount_micro": null,
+      "size_matched_micro": "0",
+      "avg_fill_price_micro": null,
+      "status": "OPEN",
+      "is_terminal": false,
+      "failure": null,
+      "expiration": "1970-01-01T00:00:00Z",
+      "created_at": "2026-09-22T11:48:32.506849Z",
+      "cancel_requested_at": null
+    },
+    {
+      "internal_id": "01a0c8f2-322c-7770-afd9-07fad6d6352b",
+      "exchange": "AGARA",
+      "token_id": "3080354623804693924140594680509310463211971617800178260199236136438405504979",
+      "condition_id": "0x2dcfeea0061ce44d559bda09c89733bc7d1ba82d93572543132781737038abd3",
+      "side": "BUY",
+      "type": "LIMIT",
+      "price_micro": "100000",
+      "original_size_micro": "1000000",
+      "collateral_amount_micro": null,
+      "size_matched_micro": "0",
+      "avg_fill_price_micro": null,
+      "status": "OPEN",
+      "is_terminal": false,
+      "failure": null,
+      "expiration": "1970-01-01T00:00:00Z",
+      "created_at": "2026-09-22T11:48:30.895273Z",
+      "cancel_requested_at": null
+    },
+    {
+      "internal_id": "01a0c88e-70bf-7883-9252-6845a85e2547",
+      "exchange": "AGARA",
+      "token_id": "3080354623804693924140594680509310463211971617800178260199236136438405504979",
+      "condition_id": "0x2dcfeea0061ce44d559bda09c89733bc7d1ba82d93572543132781737038abd3",
+      "side": "BUY",
+      "type": "MARKET",
+      "price_micro": null,
+      "original_size_micro": "500000",
+      "collateral_amount_micro": "500000",
+      "size_matched_micro": "0",
+      "avg_fill_price_micro": null,
+      "status": "REJECTED",
+      "is_terminal": true,
+      "failure": {
+        "code": "order_not_fillable",
+        "title": "Order cannot be filled",
+        "detail": "Order cannot be filled right now.",
+        "recovery": {
+          "strategy": "none"
+        }
+      },
+      "expiration": "1970-01-01T00:00:00Z",
+      "created_at": "2026-09-22T09:59:33.314576Z",
+      "cancel_requested_at": null
+    },
+    {
+      "internal_id": "01a0c88e-5b9a-77f1-8a50-d1b7f5ba01c9",
+      "exchange": "AGARA",
+      "token_id": "3080354623804693924140594680509310463211971617800178260199236136438405504979",
+      "condition_id": "0x2dcfeea0061ce44d559bda09c89733bc7d1ba82d93572543132781737038abd3",
+      "side": "BUY",
+      "type": "LIMIT",
+      "price_micro": "100000",
+      "original_size_micro": "1000000",
+      "collateral_amount_micro": null,
+      "size_matched_micro": "0",
+      "avg_fill_price_micro": null,
+      "status": "CANCELLED",
+      "is_terminal": true,
+      "failure": null,
+      "expiration": "1970-01-01T00:00:00Z",
+      "created_at": "2026-09-22T09:59:27.901025Z",
+      "cancel_requested_at": "2026-09-22T09:59:28.452180Z"
+    },
+    {
+      "internal_id": "01a0c88e-131a-7031-afec-c5527fc7e2fc",
+      "exchange": "AGARA",
+      "token_id": "3080354623804693924140594680509310463211971617800178260199236136438405504979",
+      "condition_id": "0x2dcfeea0061ce44d559bda09c89733bc7d1ba82d93572543132781737038abd3",
+      "side": "BUY",
+      "type": "LIMIT",
+      "price_micro": "100000",
+      "original_size_micro": "1000000",
+      "collateral_amount_micro": null,
+      "size_matched_micro": "0",
+      "avg_fill_price_micro": null,
+      "status": "CANCELLED",
+      "is_terminal": true,
+      "failure": null,
+      "expiration": "1970-01-01T00:00:00Z",
+      "created_at": "2026-09-22T09:59:09.341533Z",
+      "cancel_requested_at": null
+    },
+    {
+      "internal_id": "01a0c88d-bfdb-7a41-a976-2137ace01abf",
+      "exchange": "AGARA",
+      "token_id": "3080354623804693924140594680509310463211971617800178260199236136438405504979",
+      "condition_id": "0x2dcfeea0061ce44d559bda09c89733bc7d1ba82d93572543132781737038abd3",
+      "side": "BUY",
+      "type": "LIMIT",
+      "price_micro": "100500",
+      "original_size_micro": "1000000",
+      "collateral_amount_micro": null,
+      "size_matched_micro": "0",
+      "avg_fill_price_micro": null,
+      "status": "CANCELLED",
+      "is_terminal": true,
+      "failure": null,
+      "expiration": "1970-01-01T00:00:00Z",
+      "created_at": "2026-09-22T09:58:48.031113Z",
+      "cancel_requested_at": null
+    },
+    {
+      "internal_id": "01a0c888-3b95-70d2-98d9-f2252117aafb",
+      "exchange": "AGARA",
+      "token_id": "3080354623804693924140594680509310463211971617800178260199236136438405504979",
+      "condition_id": "0x2dcfeea0061ce44d559bda09c89733bc7d1ba82d93572543132781737038abd3",
+      "side": "BUY",
+      "type": "LIMIT",
+      "price_micro": "600000",
+      "original_size_micro": "1000000",
+      "collateral_amount_micro": null,
+      "size_matched_micro": "1000000",
+      "avg_fill_price_micro": "600000",
+      "status": "MATCHED",
+      "is_terminal": true,
+      "failure": null,
+      "expiration": "1970-01-01T00:00:00Z",
+      "created_at": "2026-09-22T09:52:46.488406Z",
+      "cancel_requested_at": null
+    },
+    {
+      "internal_id": "01a0c888-3244-7641-9cfd-d8e54cc030ec",
+      "exchange": "AGARA",
+      "token_id": "3080354623804693924140594680509310463211971617800178260199236136438405504979",
+      "condition_id": "0x2dcfeea0061ce44d559bda09c89733bc7d1ba82d93572543132781737038abd3",
+      "side": "BUY",
+      "type": "LIMIT",
+      "price_micro": "100500",
+      "original_size_micro": "1000000",
+      "collateral_amount_micro": null,
+      "size_matched_micro": "0",
+      "avg_fill_price_micro": null,
+      "status": "CANCELLED",
+      "is_terminal": true,
+      "failure": null,
+      "expiration": "1970-01-01T00:00:00Z",
+      "created_at": "2026-09-22T09:52:44.103736Z",
+      "cancel_requested_at": null
+    },
+    {
+      "internal_id": "01a0c888-2fea-72c2-9e1d-75aa4aec1f69",
+      "exchange": "AGARA",
+      "token_id": "3080354623804693924140594680509310463211971617800178260199236136438405504979",
+      "condition_id": "0x2dcfeea0061ce44d559bda09c89733bc7d1ba82d93572543132781737038abd3",
+      "side": "BUY",
+      "type": "MARKET",
+      "price_micro": null,
+      "original_size_micro": "500000",
+      "collateral_amount_micro": "500000",
+      "size_matched_micro": "0",
+      "avg_fill_price_micro": null,
+      "status": "REJECTED",
+      "is_terminal": true,
+      "failure": {
+        "code": "order_not_fillable",
+        "title": "Order cannot be filled",
+        "detail": "Order cannot be filled right now.",
+        "recovery": {
+          "strategy": "none"
+        }
+      },
+      "expiration": "1970-01-01T00:00:00Z",
+      "created_at": "2026-09-22T09:52:43.501060Z",
+      "cancel_requested_at": null
+    }
+  ],
+  "markets": {
+    "3080354623804693924140594680509310463211971617800178260199236136438405504979": {
+      "market_id": "b9721a97-dc02-4703-a074-680b59c5b348",
+      "market_title": "China Annual Inflation 2026 - >= 1.6%",
+      "outcome_name": "Yes",
+      "logo_url": null,
+      "event_slug": "china-annual-inflation-2026",
+      "state": "ACTIVE",
+      "neg_risk_id": null,
+      "display": {
+        "market": {
+          "description": "This is a market about the variation of consumer prices in China over the 12-month period ending December 2026, as reported by the National Bureau of Statistics (NBS) of China.\n\nThis market will resolve according to the percentage change in the Consumer Price Index (CPI) during the 12-month period ending December 2026 according to the monthly NBS report.\n\nThe resolution source for this market will be the NBS Consumer Price Index monthly report released for December 2026 (https://www.stats.gov.cn/english/PressRelease/), currently expected to be released in January 2027. Resolution of this market will take place upon release of the aforementioned data. If no data for the specified month is released by the date the next month's data is scheduled to be released, this market will resolve based on data from the last available month.\n\nYou can find the relevant figure by locating the report for December 2026 on the Press Releases page (see: https://www.stats.gov.cn/english/PressRelease/), locating the table named \"Consumer Price Indexes in December 2026\", and finding the consumer price index figure in the column labeled \"Growth Rate Y/Y (%)\".\n\nNote: the resolution source for this market will be the official monthly NBS CPI news release which reports inflation during 12-month periods to only one decimal point (e.g. 1.9%). Thus, this is the level of precision that will be used when resolving the market. For the full release schedule, see: https://www.stats.gov.cn/english/PressRelease/ReleaseCalendar/",
+          "portfolio_title": "China Annual Inflation 2026 - >= 1.6%",
+          "resolution_source": "https://www.stats.gov.cn/english/PressRelease/"
+        },
+        "outcome": {
+          "kind": "yes",
+          "label": "Yes",
+          "short_label": "Yes",
+          "side": "left"
+        }
+      }
+    },
+    "53001811052467883992819895815006000371851434699384551262153764437950873430832": {
+      "market_id": "b9721a97-dc02-4703-a074-680b59c5b348",
+      "market_title": "China Annual Inflation 2026 - >= 1.6%",
+      "outcome_name": "No",
+      "logo_url": null,
+      "event_slug": "china-annual-inflation-2026",
+      "state": "ACTIVE",
+      "neg_risk_id": null,
+      "display": {
+        "market": {
+          "description": "This is a market about the variation of consumer prices in China over the 12-month period ending December 2026, as reported by the National Bureau of Statistics (NBS) of China.\n\nThis market will resolve according to the percentage change in the Consumer Price Index (CPI) during the 12-month period ending December 2026 according to the monthly NBS report.\n\nThe resolution source for this market will be the NBS Consumer Price Index monthly report released for December 2026 (https://www.stats.gov.cn/english/PressRelease/), currently expected to be released in January 2027. Resolution of this market will take place upon release of the aforementioned data. If no data for the specified month is released by the date the next month's data is scheduled to be released, this market will resolve based on data from the last available month.\n\nYou can find the relevant figure by locating the report for December 2026 on the Press Releases page (see: https://www.stats.gov.cn/english/PressRelease/), locating the table named \"Consumer Price Indexes in December 2026\", and finding the consumer price index figure in the column labeled \"Growth Rate Y/Y (%)\".\n\nNote: the resolution source for this market will be the official monthly NBS CPI news release which reports inflation during 12-month periods to only one decimal point (e.g. 1.9%). Thus, this is the level of precision that will be used when resolving the market. For the full release schedule, see: https://www.stats.gov.cn/english/PressRelease/ReleaseCalendar/",
+          "portfolio_title": "China Annual Inflation 2026 - >= 1.6%",
+          "resolution_source": "https://www.stats.gov.cn/english/PressRelease/"
+        },
+        "outcome": {
+          "kind": "no",
+          "label": "No",
+          "short_label": "No",
+          "side": "right"
+        }
+      }
+    }
+  },
+  "pagination": {
+    "next_cursor": "eyJ2IjoxLCJyIjoib3JkZXJzL2xpc3QiLCJmIjoiY2JmMjljZTQ4NDIyMjMyNSIsInQiOjE3OTAwNzA3NjM1MDEwNjAsImkiOiIwMWEwYzg4OC0yZmVhLTcyYzItOWUxZC03NWFhNGFlYzFmNjkifQ",
+    "limit": 10
+  },
+  "as_of": "2026-09-22T11:49:00.426596876Z"
+}

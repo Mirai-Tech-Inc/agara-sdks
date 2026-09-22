@@ -1,0 +1,113 @@
+{
+  "activities": [
+    {
+      "type": "MERGE",
+      "exchange": "AGARA",
+      "id": "merge:0xe3c105b1238060ca962de5aafefbb86ab6c2c50d99d5125b987aa7cfff62968d:0000000000",
+      "condition_id": "0x2dcfeea0061ce44d559bda09c89733bc7d1ba82d93572543132781737038abd3",
+      "shares_micro": "1000000",
+      "amount_micro": "1000000",
+      "tx_hash": "0xcd78b58e87fe5a2867db5b2cf4f9977e7b467684dae5a211ae76ff91a346aa13",
+      "created_at": "2026-09-22T09:53:39.936868Z"
+    },
+    {
+      "type": "SPLIT",
+      "exchange": "AGARA",
+      "id": "split:0xf279aa1de3392c29017d469290fab7e9ddc68eb5d2915b76a4b265d1fe2cd7ae:0000000000",
+      "condition_id": "0x2dcfeea0061ce44d559bda09c89733bc7d1ba82d93572543132781737038abd3",
+      "shares_micro": "1000000",
+      "amount_micro": "1000000",
+      "tx_hash": "0xe0e72a352895d097f0089ac2726e01584995bd97209119a37b8cf33ff9b4ca73",
+      "created_at": "2026-09-22T09:53:25.030546Z"
+    },
+    {
+      "type": "ORDER",
+      "exchange": "AGARA",
+      "id": "order:01a0c888-3b95-70d2-98d9-f2252117aafb",
+      "order_id": "01a0c888-3b95-70d2-98d9-f2252117aafb",
+      "status": "MATCHED",
+      "fill_status": "FULL",
+      "condition_id": "0x2dcfeea0061ce44d559bda09c89733bc7d1ba82d93572543132781737038abd3",
+      "token_id": "3080354623804693924140594680509310463211971617800178260199236136438405504979",
+      "side": "BUY",
+      "filled_shares_micro": "1000000",
+      "average_fill_price_micro": "600000",
+      "filled_amount_micro": "600000",
+      "fees_micro": "0",
+      "created_at": "2026-09-22T09:53:08.298871Z"
+    },
+    {
+      "type": "DEPOSIT",
+      "exchange": "AGARA",
+      "id": "deposit:84fe034e-e76e-4988-bb21-e87c94ca3c01",
+      "amount_micro": "1000000000000",
+      "chain_id": 84532,
+      "token_address": "0xc999400c662f360ac0d2953f0d78f5e121f71f67",
+      "counterparty_address": "0x198a0d61b49cdefc3bd89e038aa123dc2ea7fc88",
+      "tx_hash": "0x33c2756dd5dde77e2248abacbf99425d12e9331be0fab7722ee0c28ba8df83af",
+      "created_at": "2026-09-22T09:47:07.392194Z"
+    }
+  ],
+  "markets": {
+    "3080354623804693924140594680509310463211971617800178260199236136438405504979": {
+      "market_id": "b9721a97-dc02-4703-a074-680b59c5b348",
+      "market_title": "China Annual Inflation 2026 - >= 1.6%",
+      "outcome_name": "Yes",
+      "logo_url": null,
+      "event_slug": "china-annual-inflation-2026",
+      "state": "ACTIVE",
+      "neg_risk_id": null,
+      "display": {
+        "market": {
+          "description": "This is a market about the variation of consumer prices in China over the 12-month period ending December 2026, as reported by the National Bureau of Statistics (NBS) of China.\n\nThis market will resolve according to the percentage change in the Consumer Price Index (CPI) during the 12-month period ending December 2026 according to the monthly NBS report.\n\nThe resolution source for this market will be the NBS Consumer Price Index monthly report released for December 2026 (https://www.stats.gov.cn/english/PressRelease/), currently expected to be released in January 2027. Resolution of this market will take place upon release of the aforementioned data. If no data for the specified month is released by the date the next month's data is scheduled to be released, this market will resolve based on data from the last available month.\n\nYou can find the relevant figure by locating the report for December 2026 on the Press Releases page (see: https://www.stats.gov.cn/english/PressRelease/), locating the table named \"Consumer Price Indexes in December 2026\", and finding the consumer price index figure in the column labeled \"Growth Rate Y/Y (%)\".\n\nNote: the resolution source for this market will be the official monthly NBS CPI news release which reports inflation during 12-month periods to only one decimal point (e.g. 1.9%). Thus, this is the level of precision that will be used when resolving the market. For the full release schedule, see: https://www.stats.gov.cn/english/PressRelease/ReleaseCalendar/",
+          "portfolio_title": "China Annual Inflation 2026 - >= 1.6%",
+          "resolution_source": "https://www.stats.gov.cn/english/PressRelease/"
+        },
+        "outcome": {
+          "kind": "yes",
+          "label": "Yes",
+          "short_label": "Yes",
+          "side": "left"
+        }
+      }
+    }
+  },
+  "conditions": {
+    "0x2dcfeea0061ce44d559bda09c89733bc7d1ba82d93572543132781737038abd3": {
+      "market_id": "b9721a97-dc02-4703-a074-680b59c5b348",
+      "market_title": "China Annual Inflation 2026 - >= 1.6%",
+      "logo_url": null,
+      "event_slug": "china-annual-inflation-2026",
+      "display": {
+        "market": {
+          "description": "This is a market about the variation of consumer prices in China over the 12-month period ending December 2026, as reported by the National Bureau of Statistics (NBS) of China.\n\nThis market will resolve according to the percentage change in the Consumer Price Index (CPI) during the 12-month period ending December 2026 according to the monthly NBS report.\n\nThe resolution source for this market will be the NBS Consumer Price Index monthly report released for December 2026 (https://www.stats.gov.cn/english/PressRelease/), currently expected to be released in January 2027. Resolution of this market will take place upon release of the aforementioned data. If no data for the specified month is released by the date the next month's data is scheduled to be released, this market will resolve based on data from the last available month.\n\nYou can find the relevant figure by locating the report for December 2026 on the Press Releases page (see: https://www.stats.gov.cn/english/PressRelease/), locating the table named \"Consumer Price Indexes in December 2026\", and finding the consumer price index figure in the column labeled \"Growth Rate Y/Y (%)\".\n\nNote: the resolution source for this market will be the official monthly NBS CPI news release which reports inflation during 12-month periods to only one decimal point (e.g. 1.9%). Thus, this is the level of precision that will be used when resolving the market. For the full release schedule, see: https://www.stats.gov.cn/english/PressRelease/ReleaseCalendar/",
+          "portfolio_title": "China Annual Inflation 2026 - >= 1.6%",
+          "resolution_source": "https://www.stats.gov.cn/english/PressRelease/"
+        }
+      }
+    }
+  },
+  "events": {
+    "china-annual-inflation-2026": {
+      "event_title": "China Annual Inflation 2026",
+      "display": {
+        "event": {
+          "game_unit_label": null,
+          "has_legacy_prop_markets": false,
+          "has_prop_markets": false,
+          "has_three_way_markets": false,
+          "layout": "multi_outcome",
+          "liquidity": 0,
+          "market_categories": [],
+          "spreads_main_market_id": null,
+          "totals_main_market_id": null
+        }
+      }
+    }
+  },
+  "pagination": {
+    "next_cursor": null,
+    "limit": 10
+  },
+  "as_of": "2026-09-22T11:48:58.088156Z"
+}

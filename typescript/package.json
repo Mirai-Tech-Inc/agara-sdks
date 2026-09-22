@@ -46,7 +46,8 @@
     "check": "npm run typecheck && npm run lint && npm run docs:check && npm test && npm run build",
     "test:pack": "npm run build && node scripts/pack-smoke.mjs",
     "docs:check": "node scripts/check-docs.mjs",
-    "drift:check": "node scripts/check-drift.mjs"
+    "drift:check": "node scripts/check-drift.mjs",
+    "fixtures:record": "node scripts/record-fixtures.mjs"
   },
   "dependencies": {
     "lossless-json": "^4.3.1"

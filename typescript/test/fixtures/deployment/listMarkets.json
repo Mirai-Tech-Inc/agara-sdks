@@ -1,0 +1,493 @@
+{
+  "markets": [
+    {
+      "id": "b9721a97-dc02-4703-a074-680b59c5b348",
+      "exchange": "AGARA",
+      "slug": "china-annual-inflation-2026-1-6",
+      "question": ">= 1.6%",
+      "display_type": "BINARY",
+      "source_market_type": null,
+      "outcomes": [
+        {
+          "id": "d9ed3d68-7a3e-4531-919e-5e4a6382786a",
+          "index": 0,
+          "label": "Yes",
+          "price_micro": null,
+          "token_id": "3080354623804693924140594680509310463211971617800178260199236136438405504979",
+          "best_bid_micro": null,
+          "best_ask_micro": null,
+          "spread_micro": null,
+          "kind": "yes",
+          "short_label": "Yes",
+          "team_side": null,
+          "side": "left",
+          "threshold": null,
+          "resolution_price_micro": null,
+          "display": {
+            "kind": "yes",
+            "side": "left",
+            "label": "Yes",
+            "short_label": "Yes"
+          }
+        },
+        {
+          "id": "9c1630af-b8d3-4717-bd0c-0ede9c9000a3",
+          "index": 1,
+          "label": "No",
+          "price_micro": null,
+          "token_id": "53001811052467883992819895815006000371851434699384551262153764437950873430832",
+          "best_bid_micro": null,
+          "best_ask_micro": null,
+          "spread_micro": null,
+          "kind": "no",
+          "short_label": "No",
+          "team_side": null,
+          "side": "right",
+          "threshold": null,
+          "resolution_price_micro": null,
+          "display": {
+            "kind": "no",
+            "side": "right",
+            "label": "No",
+            "short_label": "No"
+          }
+        }
+      ],
+      "state": "ACTIVE",
+      "is_accepting_orders": true,
+      "halted_at": null,
+      "halted_reason": null,
+      "volume_micro": "135400000",
+      "liquidity": "0",
+      "volume_24h_micro": "0",
+      "tick_size_micro": "10000",
+      "engine_config": {
+        "tick_size": 1,
+        "price_scale": 100,
+        "size_scale": 100,
+        "min_price": 1,
+        "max_price": 99
+      },
+      "min_order_size_micro": "1000000",
+      "line": null,
+      "resolution_status": null,
+      "resolution_outcome": null,
+      "resolved_at": null,
+      "resolution": null,
+      "archived_at": null,
+      "condition_id": "0x2dcfeea0061ce44d559bda09c89733bc7d1ba82d93572543132781737038abd3",
+      "neg_risk_id": null,
+      "three_way_role": null,
+      "is_three_way": null,
+      "game_number": null,
+      "display_label": ">= 1.6%",
+      "display": {
+        "description": "This is a market about the variation of consumer prices in China over the 12-month period ending December 2026, as reported by the National Bureau of Statistics (NBS) of China.\n\nThis market will resolve according to the percentage change in the Consumer Price Index (CPI) during the 12-month period ending December 2026 according to the monthly NBS report.\n\nThe resolution source for this market will be the NBS Consumer Price Index monthly report released for December 2026 (https://www.stats.gov.cn/english/PressRelease/), currently expected to be released in January 2027. Resolution of this market will take place upon release of the aforementioned data. If no data for the specified month is released by the date the next month's data is scheduled to be released, this market will resolve based on data from the last available month.\n\nYou can find the relevant figure by locating the report for December 2026 on the Press Releases page (see: https://www.stats.gov.cn/english/PressRelease/), locating the table named \"Consumer Price Indexes in December 2026\", and finding the consumer price index figure in the column labeled \"Growth Rate Y/Y (%)\".\n\nNote: the resolution source for this market will be the official monthly NBS CPI news release which reports inflation during 12-month periods to only one decimal point (e.g. 1.9%). Thus, this is the level of precision that will be used when resolving the market. For the full release schedule, see: https://www.stats.gov.cn/english/PressRelease/ReleaseCalendar/",
+        "portfolio_title": "China Annual Inflation 2026 - >= 1.6%",
+        "resolution_source": "https://www.stats.gov.cn/english/PressRelease/"
+      },
+      "event": {
+        "id": "268cf2dc-6380-4a7b-a84f-24ddfcfea1c5",
+        "slug": "china-annual-inflation-2026",
+        "title": "China Annual Inflation 2026",
+        "active": true
+      }
+    },
+    {
+      "id": "152afbc6-a78c-4cd2-903f-f97af2d47012",
+      "exchange": "AGARA",
+      "slug": "solana-price-up-or-down-15-minutes-2026-09-22T11-45-00-000Z",
+      "question": "Solana Price Up or Down (15 Minutes) - Sep 22, 7:45AM-8:00AM ET",
+      "display_type": "BINARY",
+      "source_market_type": null,
+      "outcomes": [
+        {
+          "id": "19316366-d815-4d0a-b426-28f94bb16ef3",
+          "index": 0,
+          "label": "Up",
+          "price_micro": null,
+          "token_id": "100253358858861815991936075527649221238976179895352887466646042969670877189907",
+          "best_bid_micro": null,
+          "best_ask_micro": null,
+          "spread_micro": null,
+          "kind": "yes",
+          "team_side": null,
+          "side": "left",
+          "threshold": null,
+          "resolution_price_micro": null,
+          "resolution_label": "SOL Up",
+          "display": {
+            "kind": "yes",
+            "side": "left",
+            "label": "Up",
+            "resolution_label": "SOL Up"
+          }
+        },
+        {
+          "id": "9ab1c225-7dd1-4848-8cf8-b3ed6b705441",
+          "index": 1,
+          "label": "Down",
+          "price_micro": null,
+          "token_id": "7875922582474771464930373106927011099584715501812795601121245770272650732375",
+          "best_bid_micro": null,
+          "best_ask_micro": null,
+          "spread_micro": null,
+          "kind": "no",
+          "team_side": null,
+          "side": "right",
+          "threshold": null,
+          "resolution_price_micro": null,
+          "resolution_label": "SOL Down",
+          "display": {
+            "kind": "no",
+            "side": "right",
+            "label": "Down",
+            "resolution_label": "SOL Down"
+          }
+        }
+      ],
+      "state": "ACTIVE",
+      "is_accepting_orders": true,
+      "halted_at": null,
+      "halted_reason": null,
+      "volume_micro": "0",
+      "liquidity": "0",
+      "volume_24h_micro": "0",
+      "tick_size_micro": "10000",
+      "engine_config": {
+        "tick_size": 1,
+        "price_scale": 100,
+        "size_scale": 100,
+        "min_price": 1,
+        "max_price": 99
+      },
+      "min_order_size_micro": "1000000",
+      "line": null,
+      "resolution_status": null,
+      "resolution_outcome": null,
+      "resolved_at": null,
+      "resolution": null,
+      "archived_at": null,
+      "condition_id": "0x3c9d3a97efae5b13316066b3229cbbeca7b7fd71200da8b91de3c9010ba8ac79",
+      "neg_risk_id": null,
+      "three_way_role": null,
+      "is_three_way": null,
+      "game_number": null,
+      "display_label": "Solana Price Up or Down (15 Minutes) - Sep 22, 7:45AM-8:00AM ET",
+      "display": {
+        "currency": "USD",
+        "observe_at": "2026-09-22T12:00:00.000Z",
+        "description": "Resolves UP if Solana / USD price at 8:00AM ET on Sep 22 is equal to or higher than the Solana / USD price at 7:45AM ET on Sep 22 ($117.39037). Prices sourced from Pyth Pro using the timestamped Crypto.SOL/USD point-price feed, at the open instant (unix second 1790077500) and close instant (unix second 1790078400).",
+        "series_slug": "solana-price-up-or-down-15-minutes",
+        "reference_at": "2026-09-22T11:45:00.000Z",
+        "pyth_pro_symbol": "Crypto.SOL/USD",
+        "reference_price": "117.3903747",
+        "resolution_source": "https://app.pyth.com/explore/Crypto.SOL%2FUSD"
+      },
+      "event": {
+        "id": "5bdfa796-abf9-4baf-911c-8a4dd607d044",
+        "slug": "solana-price-up-or-down-15-minutes-event",
+        "title": "Solana Price Up or Down (15 Minutes) Series",
+        "active": true
+      }
+    },
+    {
+      "id": "1af8f91b-8319-4954-bd9c-ec61948b4af9",
+      "exchange": "AGARA",
+      "slug": "ethereum-price-up-or-down-5-minutes-2026-09-22T11-45-00-000Z",
+      "question": "Ethereum Price Up or Down (5 Minutes) - Sep 22, 7:45AM-7:50AM ET",
+      "display_type": "BINARY",
+      "source_market_type": null,
+      "outcomes": [
+        {
+          "id": "761491c2-bed3-4bfe-ae59-80f0cf88c109",
+          "index": 0,
+          "label": "Up",
+          "price_micro": null,
+          "token_id": "96504310786839282873408980876804646446942065952578586416340167133182630998148",
+          "best_bid_micro": null,
+          "best_ask_micro": null,
+          "spread_micro": null,
+          "kind": "yes",
+          "team_side": null,
+          "side": "left",
+          "threshold": null,
+          "resolution_price_micro": null,
+          "resolution_label": "ETH Up",
+          "display": {
+            "kind": "yes",
+            "side": "left",
+            "label": "Up",
+            "resolution_label": "ETH Up"
+          }
+        },
+        {
+          "id": "1f8558df-8499-4683-98c5-c55f15a7a65d",
+          "index": 1,
+          "label": "Down",
+          "price_micro": null,
+          "token_id": "68637524813089871123144958986883663371999178509961256681648260172557341277047",
+          "best_bid_micro": null,
+          "best_ask_micro": null,
+          "spread_micro": null,
+          "kind": "no",
+          "team_side": null,
+          "side": "right",
+          "threshold": null,
+          "resolution_price_micro": null,
+          "resolution_label": "ETH Down",
+          "display": {
+            "kind": "no",
+            "side": "right",
+            "label": "Down",
+            "resolution_label": "ETH Down"
+          }
+        }
+      ],
+      "state": "ACTIVE",
+      "is_accepting_orders": true,
+      "halted_at": null,
+      "halted_reason": null,
+      "volume_micro": "0",
+      "liquidity": "0",
+      "volume_24h_micro": "0",
+      "tick_size_micro": "10000",
+      "engine_config": {
+        "tick_size": 1,
+        "price_scale": 100,
+        "size_scale": 100,
+        "min_price": 1,
+        "max_price": 99
+      },
+      "min_order_size_micro": "1000000",
+      "line": null,
+      "resolution_status": null,
+      "resolution_outcome": null,
+      "resolved_at": null,
+      "resolution": null,
+      "archived_at": null,
+      "condition_id": "0x153796033e2b3374d039216af4bd3104622075b8099524b06c911372b900d37f",
+      "neg_risk_id": null,
+      "three_way_role": null,
+      "is_three_way": null,
+      "game_number": null,
+      "display_label": "Ethereum Price Up or Down (5 Minutes) - Sep 22, 7:45AM-7:50AM ET",
+      "display": {
+        "currency": "USD",
+        "observe_at": "2026-09-22T11:50:00.000Z",
+        "description": "Resolves UP if Ethereum / USD price at 7:50AM ET on Sep 22 is equal to or higher than the Ethereum / USD price at 7:45AM ET on Sep 22 ($2,745.0212). Prices sourced from Pyth Pro using the timestamped Crypto.ETH/USD point-price feed, at the open instant (unix second 1790077500) and close instant (unix second 1790077800).",
+        "series_slug": "ethereum-price-up-or-down-5-minutes",
+        "reference_at": "2026-09-22T11:45:00.000Z",
+        "pyth_pro_symbol": "Crypto.ETH/USD",
+        "reference_price": "2745.0212961",
+        "resolution_source": "https://app.pyth.com/explore/Crypto.ETH%2FUSD"
+      },
+      "event": {
+        "id": "b1cbcc96-9e88-426d-bd23-997d6a6b49a0",
+        "slug": "ethereum-price-up-or-down-5-minutes-event",
+        "title": "Ethereum Price Up or Down (5 Minutes) Series",
+        "active": true
+      }
+    },
+    {
+      "id": "2dd0d215-7361-4620-b3ea-33b50c81e047",
+      "exchange": "AGARA",
+      "slug": "solana-price-up-or-down-5-minutes-2026-09-22T11-45-00-000Z",
+      "question": "Solana Price Up or Down (5 Minutes) - Sep 22, 7:45AM-7:50AM ET",
+      "display_type": "BINARY",
+      "source_market_type": null,
+      "outcomes": [
+        {
+          "id": "717446fb-a08c-4e76-adf7-87f0534d1eb5",
+          "index": 0,
+          "label": "Up",
+          "price_micro": null,
+          "token_id": "58905618036405451497434628136636212093422472674607113675794508989158115548131",
+          "best_bid_micro": null,
+          "best_ask_micro": null,
+          "spread_micro": null,
+          "kind": "yes",
+          "team_side": null,
+          "side": "left",
+          "threshold": null,
+          "resolution_price_micro": null,
+          "resolution_label": "SOL Up",
+          "display": {
+            "kind": "yes",
+            "side": "left",
+            "label": "Up",
+            "resolution_label": "SOL Up"
+          }
+        },
+        {
+          "id": "35c013e6-cb66-451c-bf09-4c04067dd3ab",
+          "index": 1,
+          "label": "Down",
+          "price_micro": null,
+          "token_id": "104294261376630249032934044136988769976700555949702233601977571710802366195726",
+          "best_bid_micro": null,
+          "best_ask_micro": null,
+          "spread_micro": null,
+          "kind": "no",
+          "team_side": null,
+          "side": "right",
+          "threshold": null,
+          "resolution_price_micro": null,
+          "resolution_label": "SOL Down",
+          "display": {
+            "kind": "no",
+            "side": "right",
+            "label": "Down",
+            "resolution_label": "SOL Down"
+          }
+        }
+      ],
+      "state": "ACTIVE",
+      "is_accepting_orders": true,
+      "halted_at": null,
+      "halted_reason": null,
+      "volume_micro": "0",
+      "liquidity": "0",
+      "volume_24h_micro": "0",
+      "tick_size_micro": "10000",
+      "engine_config": {
+        "tick_size": 1,
+        "price_scale": 100,
+        "size_scale": 100,
+        "min_price": 1,
+        "max_price": 99
+      },
+      "min_order_size_micro": "1000000",
+      "line": null,
+      "resolution_status": null,
+      "resolution_outcome": null,
+      "resolved_at": null,
+      "resolution": null,
+      "archived_at": null,
+      "condition_id": "0x1437217bbde76c78cbffbef6064f7b9ae6ca82c42e866b2f1a46e7551fbc887d",
+      "neg_risk_id": null,
+      "three_way_role": null,
+      "is_three_way": null,
+      "game_number": null,
+      "display_label": "Solana Price Up or Down (5 Minutes) - Sep 22, 7:45AM-7:50AM ET",
+      "display": {
+        "currency": "USD",
+        "observe_at": "2026-09-22T11:50:00.000Z",
+        "description": "Resolves UP if Solana / USD price at 7:50AM ET on Sep 22 is equal to or higher than the Solana / USD price at 7:45AM ET on Sep 22 ($117.39037). Prices sourced from Pyth Pro using the timestamped Crypto.SOL/USD point-price feed, at the open instant (unix second 1790077500) and close instant (unix second 1790077800).",
+        "series_slug": "solana-price-up-or-down-5-minutes",
+        "reference_at": "2026-09-22T11:45:00.000Z",
+        "pyth_pro_symbol": "Crypto.SOL/USD",
+        "reference_price": "117.3903747",
+        "resolution_source": "https://app.pyth.com/explore/Crypto.SOL%2FUSD"
+      },
+      "event": {
+        "id": "19b7f64b-05b6-44b4-aad3-aa74038f97d2",
+        "slug": "solana-price-up-or-down-5-minutes-event",
+        "title": "Solana Price Up or Down (5 Minutes) Series",
+        "active": true
+      }
+    },
+    {
+      "id": "35540ffd-051b-4fb6-b8a8-2d72c21bc67c",
+      "exchange": "AGARA",
+      "slug": "bitcoin-price-up-or-down-30-minutes-2026-09-22T11-30-00-000Z",
+      "question": "Bitcoin Price Up or Down (30 Minutes) - Sep 22, 7:30AM-8:00AM ET",
+      "display_type": "BINARY",
+      "source_market_type": null,
+      "outcomes": [
+        {
+          "id": "a6fef2d2-dee3-40d8-a410-754f4877110d",
+          "index": 0,
+          "label": "Up",
+          "price_micro": null,
+          "token_id": "45173766924026773818488979761693362869998962200034129805086590496853521020584",
+          "best_bid_micro": null,
+          "best_ask_micro": null,
+          "spread_micro": null,
+          "kind": "yes",
+          "team_side": null,
+          "side": "left",
+          "threshold": null,
+          "resolution_price_micro": null,
+          "resolution_label": "BTC Up",
+          "display": {
+            "kind": "yes",
+            "side": "left",
+            "label": "Up",
+            "resolution_label": "BTC Up"
+          }
+        },
+        {
+          "id": "9fdac99c-1772-40a5-8bfe-bf86dc6c707e",
+          "index": 1,
+          "label": "Down",
+          "price_micro": null,
+          "token_id": "10581957471570113324728858197283581166743893851123005178187851783297483220903",
+          "best_bid_micro": null,
+          "best_ask_micro": null,
+          "spread_micro": null,
+          "kind": "no",
+          "team_side": null,
+          "side": "right",
+          "threshold": null,
+          "resolution_price_micro": null,
+          "resolution_label": "BTC Down",
+          "display": {
+            "kind": "no",
+            "side": "right",
+            "label": "Down",
+            "resolution_label": "BTC Down"
+          }
+        }
+      ],
+      "state": "ACTIVE",
+      "is_accepting_orders": true,
+      "halted_at": null,
+      "halted_reason": null,
+      "volume_micro": "0",
+      "liquidity": "0",
+      "volume_24h_micro": "0",
+      "tick_size_micro": "10000",
+      "engine_config": {
+        "tick_size": 1,
+        "price_scale": 100,
+        "size_scale": 100,
+        "min_price": 1,
+        "max_price": 99
+      },
+      "min_order_size_micro": "1000000",
+      "line": null,
+      "resolution_status": null,
+      "resolution_outcome": null,
+      "resolved_at": null,
+      "resolution": null,
+      "archived_at": null,
+      "condition_id": "0xeb208f9540b48c0878049b90f803aa24f82867c11ce4bbb9fb4393a64b1f34cb",
+      "neg_risk_id": null,
+      "three_way_role": null,
+      "is_three_way": null,
+      "game_number": null,
+      "display_label": "Bitcoin Price Up or Down (30 Minutes) - Sep 22, 7:30AM-8:00AM ET",
+      "display": {
+        "currency": "USD",
+        "observe_at": "2026-09-22T12:00:00.000Z",
+        "description": "Resolves UP if Bitcoin / US Dollar price at 8:00AM ET on Sep 22 is equal to or higher than the Bitcoin / US Dollar price at 7:30AM ET on Sep 22 ($85,905.812). Prices sourced from Pyth Pro using the timestamped Crypto.BTC/USD point-price feed, at the open instant (unix second 1790076600) and close instant (unix second 1790078400).",
+        "series_slug": "bitcoin-price-up-or-down-30-minutes",
+        "reference_at": "2026-09-22T11:30:00.000Z",
+        "pyth_pro_symbol": "Crypto.BTC/USD",
+        "reference_price": "85905.81228123",
+        "resolution_source": "https://app.pyth.com/explore/Crypto.BTC%2FUSD"
+      },
+      "event": {
+        "id": "30310888-676a-42ed-af70-ff1cc119561e",
+        "slug": "bitcoin-price-up-or-down-30-minutes-event",
+        "title": "Bitcoin Price Up or Down (30 Minutes) Series",
+        "active": true
+      }
+    }
+  ],
+  "pagination": {
+    "next_cursor": "eyJ2ZXIiOjEsImYiOiJlYjI0NTBhZWIzYjEiLCJhIjoxLCJ2IjoiMCIsImkiOiIzNTU0MGZmZC0wNTFiLTRmYjYtYjhhOC0yZDcyYzIxYmM2N2MifQ",
+    "limit": 5
+  }
+}

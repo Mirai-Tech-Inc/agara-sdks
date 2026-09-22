@@ -1,0 +1,116 @@
+{
+  "securities": [
+    {
+      "symbol": "AAPL-USD",
+      "label": "Apple/US Dollar",
+      "mic": "XNAS",
+      "asset_class": "equity",
+      "active": true
+    },
+    {
+      "symbol": "BTC-USD",
+      "label": "Bitcoin / US Dollar",
+      "mic": "XCRYPTO",
+      "asset_class": "crypto",
+      "active": true
+    },
+    {
+      "symbol": "ETH-USD",
+      "label": "Ethereum / USD",
+      "mic": "XCRYPTO",
+      "asset_class": "crypto",
+      "active": true
+    },
+    {
+      "symbol": "FOXCONN-USD",
+      "label": "FOXCONN/USD",
+      "mic": "XTAI",
+      "asset_class": "equity",
+      "active": true
+    },
+    {
+      "symbol": "GRAB-USD",
+      "label": "GRAB/USD",
+      "mic": "XNAS",
+      "asset_class": "equity",
+      "active": true
+    },
+    {
+      "symbol": "KR200-KRW",
+      "label": "KR200/KRW",
+      "mic": "XKRX",
+      "asset_class": "equity",
+      "active": true
+    },
+    {
+      "symbol": "MEDIATEK-TWD",
+      "label": "MEDIATEK/TWD",
+      "mic": "XTAI",
+      "asset_class": "equity",
+      "active": true
+    },
+    {
+      "symbol": "MINIMAX-HKD",
+      "label": "Minimax/HK Dollar",
+      "mic": "XHKG",
+      "asset_class": "equity",
+      "active": true
+    },
+    {
+      "symbol": "POPMART-HKD",
+      "label": "POPMART/HKD",
+      "mic": "XHKG",
+      "asset_class": "equity",
+      "active": true
+    },
+    {
+      "symbol": "SAMSUNG-KRW",
+      "label": "SAMSUNG/KRW",
+      "mic": "XKRX",
+      "asset_class": "equity",
+      "active": true
+    },
+    {
+      "symbol": "SHEIN-HKD",
+      "label": "SHEIN/HKD",
+      "mic": "XHKG",
+      "asset_class": "equity",
+      "active": true
+    },
+    {
+      "symbol": "SKHY-USD",
+      "label": "SKHYNIX/USD",
+      "mic": "XNAS",
+      "asset_class": "equity",
+      "active": true
+    },
+    {
+      "symbol": "SOL-USD",
+      "label": "Solana / USD",
+      "mic": "XCRYPTO",
+      "asset_class": "crypto",
+      "active": true
+    },
+    {
+      "symbol": "TSMC-TWD",
+      "label": "TSMC/TWD",
+      "mic": "XTAI",
+      "asset_class": "equity",
+      "active": true
+    },
+    {
+      "symbol": "UNITREE-CNY",
+      "label": "UNITREE/CNY",
+      "mic": "XSHG",
+      "asset_class": "equity",
+      "active": true
+    },
+    {
+      "symbol": "ZAI-HKD",
+      "label": "ZAI/HKD",
+      "mic": "XHKG",
+      "asset_class": "equity",
+      "active": true
+    }
+  ]
+}

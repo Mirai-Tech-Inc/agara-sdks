@@ -1,0 +1,120 @@
+{
+  "comment": "Responses recorded from a real deployment. Not derived from contracts/, so they fail offline when a snapshot drifts from what the server sends. Re-record with scripts/record-fixtures.mjs.",
+  "recorded_at": "2026-09-22T11:49:01.469Z",
+  "deployment": "https://app.dev.agara.xyz",
+  "platform_commit": "8cf944265642737148bdb2ae128c697b776cebec",
+  "recordings": [
+    {
+      "name": "listMarkets",
+      "request": "GET /api/v1/markets?source=agara&state=ACTIVE&limit=5",
+      "collection": "markets",
+      "elements": 5,
+      "allowEmpty": false
+    },
+    {
+      "name": "listEvents",
+      "request": "GET /api/v1/events?limit=5&include_markets=true",
+      "collection": "events",
+      "elements": 5,
+      "allowEmpty": false
+    },
+    {
+      "name": "listSecurities",
+      "request": "GET /api/v1/securities",
+      "collection": "securities",
+      "elements": 16,
+      "allowEmpty": false
+    },
+    {
+      "name": "listCalendars",
+      "request": "GET /api/v1/calendars",
+      "collection": "venues",
+      "elements": 10,
+      "allowEmpty": false
+    },
+    {
+      "name": "search",
+      "request": "GET /api/v1/search?q=inflation&limit=5",
+      "collection": null,
+      "elements": null,
+      "allowEmpty": false
+    },
+    {
+      "name": "listLpIncentives",
+      "request": "GET /trade/v1/lp-incentives",
+      "collection": "markets",
+      "elements": 0,
+      "allowEmpty": true
+    },
+    {
+      "name": "listLpIncentiveCategories",
+      "request": "GET /trade/v1/lp-incentives/categories",
+      "collection": null,
+      "elements": null,
+      "allowEmpty": false
+    },
+    {
+      "name": "getLpIncentiveEarnings",
+      "request": "GET /trade/v1/lp-incentives/earnings",
+      "collection": null,
+      "elements": null,
+      "allowEmpty": false
+    },
+    {
+      "name": "listClosedLpIncentives",
+      "request": "GET /trade/v1/lp-incentives/closed?limit=5",
+      "collection": "markets",
+      "elements": 0,
+      "allowEmpty": true
+    },
+    {
+      "name": "getPortfolioSummary",
+      "request": "GET /trade/v1/portfolio/summary",
+      "collection": "summaries",
+      "elements": 1,
+      "allowEmpty": false
+    },
+    {
+      "name": "listTrades",
+      "request": "GET /trade/v1/portfolio/trades?limit=10",
+      "collection": "trades",
+      "elements": 1,
+      "allowEmpty": false
+    },
+    {
+      "name": "listActivities",
+      "request": "GET /trade/v1/portfolio/activities?limit=10",
+      "collection": "activities",
+      "elements": 4,
+      "allowEmpty": false
+    },
+    {
+      "name": "getRebates",
+      "request": "GET /trade/v1/portfolio/rebates",
+      "collection": null,
+      "elements": null,
+      "allowEmpty": false
+    },
+    {
+      "name": "getRealizedPnl",
+      "request": "GET /trade/v1/portfolio/pnl/realized?granularity=day&window=30d",
+      "collection": null,
+      "elements": null,
+      "allowEmpty": false
+    },
+    {
+      "name": "listOrders",
+      "request": "POST /trade/v1/orders/list",
+      "collection": "orders",
+      "elements": 10,
+      "allowEmpty": false
+    },
+    {
+      "name": "listOpenOrders",
+      "request": "POST /trade/v1/portfolio/open-orders/list",
+      "collection": "orders",
+      "elements": 3,
+      "allowEmpty": false
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "summaries": [
+    {
+      "exchange": "AGARA",
+      "cash_balance_micro": "999999400000",
+      "free_cash_micro": "999999400000",
+      "positions_value_micro": "480000",
+      "portfolio_value_micro": "999999880000",
+      "open_cost_basis_micro": "550000",
+      "open_unrealized_pnl_micro": "-70000",
+      "as_of": "2026-09-22T11:48:56.432129819Z"
+    }
+  ]
+}

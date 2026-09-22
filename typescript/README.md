@@ -185,6 +185,13 @@ survive declaration emission and packing, so installed consumers receive Intelli
 Generation is offline from committed snapshots. Tests use mock transports, canonical
 problem fixtures, current wire payloads and signing goldens; no live trades are sent.
 
+The endpoint mapping test builds its response from the same snapshot it validates, so it cannot
+notice a snapshot that disagrees with the server. `test/fixtures/deployment/` holds responses
+recorded from a real deployment as an independent source; a snapshot that drifts from one fails
+offline. Re-record with `npm run fixtures:record` (read-only; create the orders or positions you
+want represented first) and review `provenance.json` in the diff. A recording whose collection
+came back empty pins no element schema, and the suite names those explicitly.
+
 Because generation is offline, a platform field rename is invisible here until a consumer hits
 it. `npm run drift:check` compares the committed contracts against the OpenAPI a deployment
 serves and fails on a difference that breaks a correct exchange:

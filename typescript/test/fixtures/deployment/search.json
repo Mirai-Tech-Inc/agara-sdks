@@ -1,0 +1,286 @@
+{
+  "events": [
+    {
+      "id": "268cf2dc-6380-4a7b-a84f-24ddfcfea1c5",
+      "slug": "china-annual-inflation-2026",
+      "title": "China Annual Inflation 2026",
+      "is_accepting_orders": true,
+      "is_live": false,
+      "is_group_root": true,
+      "start_time": null,
+      "end_time": null,
+      "volume_micro": "0",
+      "primary_category": {
+        "slug": "economics",
+        "label": "Economics"
+      },
+      "main_market_id": "e9712ff3-2b23-4fdd-8afc-f689c7c978d7",
+      "resolution_status": "ACTIVE",
+      "state": "ACTIVE",
+      "event_type": "MULTI_OUTCOME",
+      "market_count": 5,
+      "display": {
+        "layout": "multi_outcome",
+        "liquidity": 0,
+        "game_unit_label": null,
+        "has_prop_markets": false,
+        "market_categories": [],
+        "has_three_way_markets": false,
+        "totals_main_market_id": null,
+        "spreads_main_market_id": null,
+        "has_legacy_prop_markets": false
+      },
+      "listing_markets": [
+        {
+          "id": "b9721a97-dc02-4703-a074-680b59c5b348",
+          "state": "ACTIVE",
+          "slug": "china-annual-inflation-2026-1-6",
+          "exchange": "AGARA",
+          "question": ">= 1.6%",
+          "display_label": ">= 1.6%",
+          "outcomes": [
+            {
+              "label": "Yes",
+              "short_label": "Yes",
+              "kind": "yes",
+              "price_micro": null,
+              "token_id": "3080354623804693924140594680509310463211971617800178260199236136438405504979"
+            },
+            {
+              "label": "No",
+              "short_label": "No",
+              "kind": "no",
+              "price_micro": null,
+              "token_id": "53001811052467883992819895815006000371851434699384551262153764437950873430832"
+            }
+          ]
+        },
+        {
+          "id": "e9712ff3-2b23-4fdd-8afc-f689c7c978d7",
+          "state": "ACTIVE",
+          "slug": "china-annual-inflation-2026-0",
+          "exchange": "AGARA",
+          "question": "<= 0%",
+          "display_label": "<= 0%",
+          "outcomes": [
+            {
+              "label": "Yes",
+              "short_label": "Yes",
+              "kind": "yes",
+              "price_micro": null,
+              "token_id": "99012173636674810266903918861890309935687058218308799093216860382795121580995"
+            },
+            {
+              "label": "No",
+              "short_label": "No",
+              "kind": "no",
+              "price_micro": null,
+              "token_id": "65141117386598292559926930753496520979471708844191968156479247746731457149638"
+            }
+          ]
+        }
+      ],
+      "relevance_score": 1
+    },
+    {
+      "id": "40a20094-1d38-40bb-afc4-dbf4f9583dba",
+      "slug": "bank-of-thailand-rate-decision-in-october-2026",
+      "title": "Bank of Thailand rate decision in October 2026?",
+      "is_accepting_orders": true,
+      "is_live": false,
+      "is_group_root": true,
+      "start_time": null,
+      "end_time": null,
+      "volume_micro": "0",
+      "primary_category": {
+        "slug": "economics",
+        "label": "Economics"
+      },
+      "main_market_id": "f366c2ca-cea3-4c2c-9ec8-f8e4f5e687c2",
+      "resolution_status": "ACTIVE",
+      "state": "ACTIVE",
+      "event_type": "MULTI_OUTCOME",
+      "market_count": 3,
+      "display": {
+        "layout": "multi_outcome",
+        "liquidity": 0,
+        "game_unit_label": null,
+        "has_prop_markets": false,
+        "market_categories": [],
+        "has_three_way_markets": false,
+        "totals_main_market_id": null,
+        "spreads_main_market_id": null,
+        "has_legacy_prop_markets": false
+      },
+      "listing_markets": [
+        {
+          "id": "95068125-e3e4-4952-a069-338b391b4008",
+          "state": "ACTIVE",
+          "slug": "bank-of-thailand-rate-decision-in-october-2026-decrease",
+          "exchange": "AGARA",
+          "question": "Decrease",
+          "display_label": "Decrease",
+          "outcomes": [
+            {
+              "label": "Yes",
+              "short_label": "Yes",
+              "kind": "yes",
+              "price_micro": null,
+              "token_id": "87525905375799608571161205197860804316640747070200950656253353654724373106883"
+            },
+            {
+              "label": "No",
+              "short_label": "No",
+              "kind": "no",
+              "price_micro": null,
+              "token_id": "12740956778978668076813651004270631076199672003852554756317004998599514426870"
+            }
+          ]
+        },
+        {
+          "id": "f366c2ca-cea3-4c2c-9ec8-f8e4f5e687c2",
+          "state": "ACTIVE",
+          "slug": "bank-of-thailand-rate-decision-in-october-2026-hold",
+          "exchange": "AGARA",
+          "question": "Hold",
+          "display_label": "Hold",
+          "outcomes": [
+            {
+              "label": "Yes",
+              "short_label": "Yes",
+              "kind": "yes",
+              "price_micro": null,
+              "token_id": "110078068442761197679022830304542219340871347250717674514426326162705977887116"
+            },
+            {
+              "label": "No",
+              "short_label": "No",
+              "kind": "no",
+              "price_micro": null,
+              "token_id": "48343656279848090381940734573568821131824861323841897251717426634272321528581"
+            }
+          ]
+        }
+      ],
+      "relevance_score": 0.4
+    }
+  ],
+  "markets": [
+    {
+      "id": "b9721a97-dc02-4703-a074-680b59c5b348",
+      "slug": "china-annual-inflation-2026-1-6",
+      "question": ">= 1.6%",
+      "relevance_score": 1,
+      "is_accepting_orders": true,
+      "volume_micro": "135400000",
+      "event": {
+        "slug": "china-annual-inflation-2026",
+        "title": "China Annual Inflation 2026",
+        "image_url": null
+      },
+      "outcomes": [
+        {
+          "label": "Yes",
+          "price_micro": null
+        },
+        {
+          "label": "No",
+          "price_micro": null
+        }
+      ]
+    },
+    {
+      "id": "6759b7ad-27d3-4a51-b0d4-cc259bef05ba",
+      "slug": "china-annual-inflation-2026-0-1-0-5",
+      "question": "0.1 – 0.5%",
+      "relevance_score": 1,
+      "is_accepting_orders": true,
+      "volume_micro": "0",
+      "event": {
+        "slug": "china-annual-inflation-2026",
+        "title": "China Annual Inflation 2026",
+        "image_url": null
+      },
+      "outcomes": [
+        {
+          "label": "Yes",
+          "price_micro": null
+        },
+        {
+          "label": "No",
+          "price_micro": null
+        }
+      ]
+    },
+    {
+      "id": "71f45ae2-1db5-40af-a9c2-74b6fbd87364",
+      "slug": "china-annual-inflation-2026-0-6-1-0",
+      "question": "0.6 – 1.0%",
+      "relevance_score": 1,
+      "is_accepting_orders": true,
+      "volume_micro": "0",
+      "event": {
+        "slug": "china-annual-inflation-2026",
+        "title": "China Annual Inflation 2026",
+        "image_url": null
+      },
+      "outcomes": [
+        {
+          "label": "Yes",
+          "price_micro": null
+        },
+        {
+          "label": "No",
+          "price_micro": null
+        }
+      ]
+    },
+    {
+      "id": "cba7d41f-f8d5-4923-9931-e9444540f2a9",
+      "slug": "china-annual-inflation-2026-1-1-1-5",
+      "question": "1.1 – 1.5%",
+      "relevance_score": 1,
+      "is_accepting_orders": true,
+      "volume_micro": "0",
+      "event": {
+        "slug": "china-annual-inflation-2026",
+        "title": "China Annual Inflation 2026",
+        "image_url": null
+      },
+      "outcomes": [
+        {
+          "label": "Yes",
+          "price_micro": null
+        },
+        {
+          "label": "No",
+          "price_micro": null
+        }
+      ]
+    },
+    {
+      "id": "e9712ff3-2b23-4fdd-8afc-f689c7c978d7",
+      "slug": "china-annual-inflation-2026-0",
+      "question": "<= 0%",
+      "relevance_score": 1,
+      "is_accepting_orders": true,
+      "volume_micro": "0",
+      "event": {
+        "slug": "china-annual-inflation-2026",
+        "title": "China Annual Inflation 2026",
+        "image_url": null
+      },
+      "outcomes": [
+        {
+          "label": "Yes",
+          "price_micro": null
+        },
+        {
+          "label": "No",
+          "price_micro": null
+        }
+      ]
+    }
+  ],
+  "categories": []
+}
