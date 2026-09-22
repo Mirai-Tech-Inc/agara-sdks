@@ -294,6 +294,55 @@ it("validates bounds during construction", () => {
   expect(() => new PublicClient({ timeoutMs: NaN })).toThrow();
   expect(() => new PublicClient({ maxResponseBytes: -1 })).toThrow();
 });
+// Every deployment reached so far answers PENDING with each acquisition cost null, so the shape a
+// caught-up account actually returns has never been decoded. A contract that rejected it would
+// surface only once accounting had caught up, against real money.
+it.each(["AVAILABLE", "PENDING", undefined])("decodes a %s portfolio unchanged", async (status) => {
+  const large = "9007199254740993";
+  const costs = {
+    positions_value_micro: large,
+    portfolio_value_micro: large,
+    open_cost_basis_micro: "250000",
+    open_unrealized_pnl_micro: "-125000",
+  };
+  const summary = {
+    ...(successBody("getPortfolioSummary").summaries as Record<string, unknown>[])[0],
+    ...(status === undefined ? {} : { accounting_status: status }),
+    ...(status === "AVAILABLE" ? costs : {}),
+  };
+  const envelope = { ...successBody("getPortfolioSummary"), summaries: [summary] };
+  const c = new AgaraClient({
+    ...traderOptions,
+    fetch: async () => new Response(stringifyJson(envelope)),
+  });
+
+  const result = await c.getPortfolioSummary();
+  expect(result.summaries?.[0]).toEqual(summary);
+  // Exact beyond a double's range: a decode through plain JSON would round it to ...92.
+  if (status === "AVAILABLE") expect(result.summaries?.[0]?.portfolio_value_micro).toBe(large);
+});
+it.each(["AVAILABLE", "PENDING", undefined])("decodes a %s position unchanged", async (status) => {
+  const priced = {
+    avg_price_micro: "450000",
+    current_price_micro: "520000",
+    current_value_micro: "5200000",
+    open_cost_basis_micro: "4500000",
+  };
+  const position = {
+    ...(successBody("listPositions").positions as Record<string, unknown>[])[0],
+    ...(status === undefined ? {} : { accounting_status: status }),
+    ...(status === "AVAILABLE" ? priced : {}),
+  };
+  const envelope = { ...successBody("listPositions"), positions: [position] };
+  const c = new AgaraClient({
+    ...traderOptions,
+    fetch: async () => new Response(stringifyJson(envelope)),
+  });
+
+  expect(
+    (await c.listPositions({ condition_ids: [`0x${"11".repeat(32)}`] })).positions?.[0],
+  ).toEqual(position);
+});
 it("preserves mixed accepted/rejected signed-batch results", async () => {
   const as_of = "2026-09-17T00:00:00Z";
   const response = {
