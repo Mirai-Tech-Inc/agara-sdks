@@ -16,6 +16,7 @@ interface Endpoint {
   operationId: string;
 }
 const endpoints = contract("endpoints") as unknown as Endpoint[];
+const CATALOGUE = "https://catalogue.test";
 const specs = { trading: contract("trading"), catalogue: contract("catalogue") };
 const key = privateKeyToAccount(`0x${"11".repeat(32)}`);
 const signed = await signOrder(
@@ -66,7 +67,11 @@ describe("complete named endpoint contract", () => {
           headers: { "content-type": "application/json", "x-request-id": "audit" },
         });
       };
-      const client = new AgaraClient({ ...traderOptions, fetch: fetcher });
+      const client = new AgaraClient({
+        ...traderOptions,
+        catalogueBaseUrl: CATALOGUE,
+        fetch: fetcher,
+      });
       const args: unknown[] = [];
       let path = endpoint.path;
       const parameters = (operation.parameters ?? []) as {
@@ -127,6 +132,15 @@ describe("complete named endpoint contract", () => {
       expect(await method.apply(client, args)).toEqual(responseBody);
       expect(actualUrl?.pathname).toBe(path);
       expect(actualInit?.method).toBe(endpoint.method);
+      // Which deployment answers, and whether the token travels, follow from the endpoint's service
+      // in the contract. A catalogue read that reached the trading origin, or carried the bearer,
+      // would leak the token to a host the caller pointed somewhere else entirely.
+      expect(actualUrl?.origin).toBe(
+        endpoint.service === "api" ? CATALOGUE : traderOptions.baseUrl,
+      );
+      expect(new Headers(actualInit?.headers).get("authorization")).toBe(
+        endpoint.service === "api" ? null : `Bearer ${traderOptions.token}`,
+      );
       for (const [key, value] of Object.entries(query))
         expect(actualUrl?.searchParams.get(key)).toBe(
           Array.isArray(value) ? value.join(",") : String(value),
@@ -134,6 +148,29 @@ describe("complete named endpoint contract", () => {
       if (body !== undefined)
         expect(parseJson(String(actualInit?.body))).toEqual(parseJson(stringifyJson(body)));
     });
+});
+it("sends catalogue reads to the trading base URL until one is given for them", async () => {
+  const seen: string[] = [];
+  const fetcher: typeof fetch = async (url) => {
+    seen.push(String(url));
+    throw Error("recorded");
+  };
+  await expect(
+    new PublicClient({ baseUrl: "https://one.test/", fetch: fetcher }).getCategory("crypto"),
+  ).rejects.toThrow();
+  await expect(
+    new PublicClient({
+      baseUrl: "https://one.test",
+      catalogueBaseUrl: "https://two.test/gateway/",
+      fetch: fetcher,
+    }).getCategory("crypto"),
+  ).rejects.toThrow();
+
+  // A trailing slash on either base would otherwise produce a doubled separator the server 404s on.
+  expect(seen).toEqual([
+    "https://one.test/api/v1/categories/crypto",
+    "https://two.test/gateway/api/v1/categories/crypto",
+  ]);
 });
 it("anonymous requests omit credentials and encode safe paths", async () => {
   const fetcher = vi.fn<typeof fetch>(async () => new Response('{"status":"ok"}'));
