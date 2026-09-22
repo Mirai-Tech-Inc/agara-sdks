@@ -12,7 +12,7 @@ import {
   signOrder,
   ZERO_BYTES32,
 } from "../src/signing.js";
-import { validateOrder } from "../src/validation.js";
+import { validateOrder, validateRequest } from "../src/validation.js";
 import { contract } from "./helpers.js";
 
 const signer = privateKeyToAccount(`0x${"11".repeat(32)}`);
@@ -161,4 +161,24 @@ it("routes neg-risk merges and rejects unsupported splits/self withdrawals", asy
       signer,
     ),
   ).rejects.toThrow();
+});
+it("carries a heal reference in the submission without changing what was signed", async () => {
+  const input = { domain, context, operations, seq: 4n, deadlineUnixSeconds: 1784022000n };
+  const plain = await signBatch(input, signer);
+  const healing = await signBatch({ ...input, healsBatchHash: `0x${"ab".repeat(32)}` }, signer);
+
+  // The reference rides in the body only. A digest that moved with it would make the healing
+  // submission a different batch from the one the signature authorizes.
+  expect(healing.batchHash).toBe(contract("batch-goldens").MULTI_CALL_BATCH_HASH);
+  expect(healing.batchHash).toBe(plain.batchHash);
+  expect(healing.body.signature).toBe(plain.body.signature);
+  expect(healing.body.heals_batch_hash).toBe(`0x${"ab".repeat(32)}`);
+  expect("heals_batch_hash" in plain.body).toBe(false);
+  expect(() => validateRequest("submitBatch", healing.body, undefined)).not.toThrow();
+});
+it("refuses a heal reference that is not a bytes32 hash", async () => {
+  const input = { domain, context, operations, seq: 4n, deadlineUnixSeconds: 1784022000n };
+  await expect(
+    signBatch({ ...input, healsBatchHash: `0x${"ab".repeat(31)}` }, signer),
+  ).rejects.toThrow(TypeError);
 });
