@@ -1,6 +1,6 @@
 # TypeScript SDK design research
 
-Research performed September 17, 2026, using official exchange repositories, official API documentation and published package metadata. This is design research, not a recommendation to inherit another exchange's wire formats, auth scheme, rounding rules or retry policy. Agara source commit 8cf944265642737148bdb2ae128c697b776cebec remains the contract authority.
+Research performed September 17, 2026, using official exchange repositories, official API documentation and published package metadata. This is design research, not a recommendation to inherit another exchange's wire formats, auth scheme, rounding rules or retry policy. Agara source commit e136dacf2e5442d1a8e2a05d7c77bf70b8f3aa6f remains the contract authority.
 
 ## Sources inspected
 

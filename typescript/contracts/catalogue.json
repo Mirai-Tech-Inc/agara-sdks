@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Agara Public API",
-    "description": "Pinned 8cf944265 platform contract; see contracts/README.md for source patches.",
+    "description": "Pinned e136dacf2 platform contract; see contracts/README.md for source patches.",
     "version": "1.0.0",
     "x-logo": {
       "url": "/assets/brand/agara-mark.svg",

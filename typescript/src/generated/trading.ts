@@ -1499,6 +1499,11 @@ export interface components {
              */
             size: number;
         };
+        /**
+         * @description Availability of processed acquisition-cost accounting; available does not imply engine synchronization.
+         * @enum {string}
+         */
+        PortfolioAccountingStatus: "AVAILABLE" | "PENDING" | "UNAVAILABLE";
         /** @description Canonical AGARA activity response. */
         PortfolioActivitiesResponse: {
             /** @description Activities sorted by timestamp and internal reference UUID descending. */
@@ -1819,26 +1824,30 @@ export interface components {
         PortfolioOrderFillStatus: "FULL" | "PARTIAL";
         /** @description Position row. */
         PortfolioPosition: {
+            /** @description Acquisition-cost availability; quantities continue to come from the engine. */
+            accounting_status?: components["schemas"]["PortfolioAccountingStatus"];
             /** @description Shares available to place into a new sell order. */
             available_shares_micro: components["schemas"]["MicroAmount"];
             /** @description Average entry price. */
-            avg_price_micro: components["schemas"]["MicroAmount"];
+            avg_price_micro?: components["schemas"]["MicroAmount"] | null;
             /** @description Market condition id. */
             condition_id: components["schemas"]["ConditionId"];
             /** @description Current price. */
-            current_price_micro: components["schemas"]["MicroAmount"];
+            current_price_micro?: components["schemas"]["MicroAmount"] | null;
             /** @description Current position value. */
-            current_value_micro: components["schemas"]["MicroAmount"];
+            current_value_micro?: components["schemas"]["MicroAmount"] | null;
             /** @description Owning exchange; token ids can overlap across listings. */
             exchange: components["schemas"]["Exchange"];
             /** @description Mergeable now: an active binary market with a held, locked-adjusted complete set. Advisory; engine is authority. */
             mergeable: boolean;
             /** @description Mergeable complete-set size (min available leg), micro. `None` when not mergeable; always `None` off AGARA. */
             mergeable_shares_micro?: components["schemas"]["MicroAmount"] | null;
+            /** @description Cost of live held shares using the latest processed acquisition average. */
+            open_cost_basis_micro?: components["schemas"]["MicroAmount"] | null;
             /** @description Profit or loss. */
-            profit_loss_micro: components["schemas"]["MicroAmount"];
-            /** @description Profit or loss ratio. */
-            profit_loss_percent: components["schemas"]["PortfolioDecimalString"];
+            profit_loss_micro?: components["schemas"]["MicroAmount"] | null;
+            /** @description Profit or loss percentage; 21 means 21%. */
+            profit_loss_percent?: components["schemas"]["PortfolioDecimalString"] | null;
             /** @description Whether the position is redeemable. */
             redeemable: boolean;
             /** @description Held shares. */
@@ -1954,11 +1963,10 @@ export interface components {
             /** @description Settlement transaction hash. */
             tx_hash: string;
         };
-        /**
-         * @description One exchange's portfolio summary. Collateral and positions on different
-         *     networks remain separate.
-         */
+        /** @description One exchange's portfolio summary; networks remain separate. */
         PortfolioSummaryEntry: {
+            /** @description Acquisition-cost availability; quantities continue to come from the engine. */
+            accounting_status?: components["schemas"]["PortfolioAccountingStatus"];
             /**
              * Format: date-time
              * @description Snapshot timestamp.
@@ -1971,13 +1979,13 @@ export interface components {
             /** @description Cash available for buy validation. */
             free_cash_micro: components["schemas"]["MicroAmount"];
             /** @description Cost basis of open positions. */
-            open_cost_basis_micro: components["schemas"]["MicroAmount"];
+            open_cost_basis_micro?: components["schemas"]["MicroAmount"] | null;
             /** @description Unrealized P&L for open positions. */
-            open_unrealized_pnl_micro: components["schemas"]["MicroAmount"];
+            open_unrealized_pnl_micro?: components["schemas"]["MicroAmount"] | null;
             /** @description Total portfolio value. */
-            portfolio_value_micro: components["schemas"]["MicroAmount"];
+            portfolio_value_micro?: components["schemas"]["MicroAmount"] | null;
             /** @description Current value of open positions. */
-            positions_value_micro: components["schemas"]["MicroAmount"];
+            positions_value_micro?: components["schemas"]["MicroAmount"] | null;
         };
         /** @description AGARA portfolio summary. */
         PortfolioSummaryResponse: {

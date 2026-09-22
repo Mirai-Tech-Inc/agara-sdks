@@ -2,7 +2,7 @@
 
 TypeScript client for Agara public discovery, PAT trading, account batches, portfolio,
 LP rewards, P&L, router WebSockets, and price SSE. Alpha; not yet published by this change.
-Targets platform commit `8cf944265642737148bdb2ae128c697b776cebec`.
+Targets platform commit `e136dacf2e5442d1a8e2a05d7c77bf70b8f3aa6f`.
 
 Requires Node.js 22+ or a modern browser with fetch, AbortController, WebSocket,
 Web Streams, and bigint. Core HTTP needs only `lossless-json`. Install the optional

@@ -1,8 +1,8 @@
 {
   "comment": "Responses recorded from a real deployment. Not derived from contracts/, so they fail offline when a snapshot drifts from what the server sends. Re-record with scripts/record-fixtures.mjs.",
-  "recorded_at": "2026-09-22T11:49:01.469Z",
+  "recorded_at": "2026-09-22T17:27:23.174Z",
   "deployment": "https://app.dev.agara.xyz",
-  "platform_commit": "8cf944265642737148bdb2ae128c697b776cebec",
+  "platform_commit": "e136dacf2e5442d1a8e2a05d7c77bf70b8f3aa6f",
   "recordings": [
     {
       "name": "listMarkets",
@@ -78,14 +78,14 @@
       "name": "listTrades",
       "request": "GET /trade/v1/portfolio/trades?limit=10",
       "collection": "trades",
-      "elements": 1,
+      "elements": 6,
       "allowEmpty": false
     },
     {
       "name": "listActivities",
       "request": "GET /trade/v1/portfolio/activities?limit=10",
       "collection": "activities",
-      "elements": 4,
+      "elements": 10,
       "allowEmpty": false
     },
     {

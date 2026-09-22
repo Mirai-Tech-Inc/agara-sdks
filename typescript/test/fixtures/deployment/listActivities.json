@@ -1,30 +1,31 @@
 {
   "activities": [
     {
-      "type": "MERGE",
+      "type": "WITHDRAWAL",
       "exchange": "AGARA",
-      "id": "merge:0xe3c105b1238060ca962de5aafefbb86ab6c2c50d99d5125b987aa7cfff62968d:0000000000",
-      "condition_id": "0x2dcfeea0061ce44d559bda09c89733bc7d1ba82d93572543132781737038abd3",
-      "shares_micro": "1000000",
+      "id": "withdrawal:b492590d-e85d-4026-a6ac-c81f284d6562",
       "amount_micro": "1000000",
-      "tx_hash": "0xcd78b58e87fe5a2867db5b2cf4f9977e7b467684dae5a211ae76ff91a346aa13",
-      "created_at": "2026-09-22T09:53:39.936868Z"
+      "chain_id": 84532,
+      "token_address": "0xc999400c662f360ac0d2953f0d78f5e121f71f67",
+      "counterparty_address": "0x94bb4ec20ff52c19d2908cc0768226cbde95e168",
+      "tx_hash": "0x5faef79fd8a0756eab639daefee8ef718fcf44864a5e45ec7e1f045553d5587a",
+      "created_at": "2026-09-22T16:19:13.214618Z"
     },
     {
       "type": "SPLIT",
       "exchange": "AGARA",
-      "id": "split:0xf279aa1de3392c29017d469290fab7e9ddc68eb5d2915b76a4b265d1fe2cd7ae:0000000000",
+      "id": "split:0x1e960cb1946ba1f274d6d802cf87564e02925d7b0b4e45409e4a1f7f500bea12:0000000000",
       "condition_id": "0x2dcfeea0061ce44d559bda09c89733bc7d1ba82d93572543132781737038abd3",
       "shares_micro": "1000000",
       "amount_micro": "1000000",
-      "tx_hash": "0xe0e72a352895d097f0089ac2726e01584995bd97209119a37b8cf33ff9b4ca73",
-      "created_at": "2026-09-22T09:53:25.030546Z"
+      "tx_hash": "0x393b4af065314a854e13116e8e3d1e54dcdaa99fc2e111c7539576b0afb47287",
+      "created_at": "2026-09-22T16:19:00.623262Z"
     },
     {
       "type": "ORDER",
       "exchange": "AGARA",
-      "id": "order:01a0c888-3b95-70d2-98d9-f2252117aafb",
-      "order_id": "01a0c888-3b95-70d2-98d9-f2252117aafb",
+      "id": "order:01a0c9e8-d8b1-7a43-b7b6-09a615fda34e",
+      "order_id": "01a0c9e8-d8b1-7a43-b7b6-09a615fda34e",
       "status": "MATCHED",
       "fill_status": "FULL",
       "condition_id": "0x2dcfeea0061ce44d559bda09c89733bc7d1ba82d93572543132781737038abd3",
@@ -34,21 +35,119 @@
       "average_fill_price_micro": "600000",
       "filled_amount_micro": "600000",
       "fees_micro": "0",
-      "created_at": "2026-09-22T09:53:08.298871Z"
+      "created_at": "2026-09-22T16:18:04.073409Z"
     },
     {
-      "type": "DEPOSIT",
+      "type": "ORDER",
       "exchange": "AGARA",
-      "id": "deposit:84fe034e-e76e-4988-bb21-e87c94ca3c01",
-      "amount_micro": "1000000000000",
-      "chain_id": 84532,
-      "token_address": "0xc999400c662f360ac0d2953f0d78f5e121f71f67",
-      "counterparty_address": "0x198a0d61b49cdefc3bd89e038aa123dc2ea7fc88",
-      "tx_hash": "0x33c2756dd5dde77e2248abacbf99425d12e9331be0fab7722ee0c28ba8df83af",
-      "created_at": "2026-09-22T09:47:07.392194Z"
+      "id": "order:01a0c9b6-ac87-73f2-ab4f-91b0752fcbcc",
+      "order_id": "01a0c9b6-ac87-73f2-ab4f-91b0752fcbcc",
+      "status": "MATCHED",
+      "fill_status": "FULL",
+      "condition_id": "0xeb2632ff089655330cdca873f292ee5baed720ffba591e7dcb73a2ef35cdb946",
+      "token_id": "104640906757864346691844812154405452972337921714258432458463934631395739043847",
+      "side": "BUY",
+      "filled_shares_micro": "1000000",
+      "average_fill_price_micro": "600000",
+      "filled_amount_micro": "600000",
+      "fees_micro": "0",
+      "created_at": "2026-09-22T15:23:12.091661Z"
+    },
+    {
+      "type": "MERGE",
+      "exchange": "AGARA",
+      "id": "merge:0xb04e8291defecf27f68fd25a8c4e585a968a9d54a9f411777aafe0f4b8ff0ebe:0000000000",
+      "condition_id": "0x2dcfeea0061ce44d559bda09c89733bc7d1ba82d93572543132781737038abd3",
+      "shares_micro": "1000000",
+      "amount_micro": "1000000",
+      "tx_hash": "0x51db331bcc598864b763d824e063e6e333b3bcdecc358e73c25bd06ded775401",
+      "created_at": "2026-09-22T15:05:48.345057Z"
+    },
+    {
+      "type": "SPLIT",
+      "exchange": "AGARA",
+      "id": "split:0x8429e085ba755a9d371c343c1c1d0a8614fae98cf2213330048e237d7f221730:0000000000",
+      "condition_id": "0x2dcfeea0061ce44d559bda09c89733bc7d1ba82d93572543132781737038abd3",
+      "shares_micro": "1000000",
+      "amount_micro": "1000000",
+      "tx_hash": "0xb7a1896160aa9c05c353521bbc60665de2a8d34bbe4ba536cfcff8ad735180dc",
+      "created_at": "2026-09-22T15:05:37.335284Z"
+    },
+    {
+      "type": "ORDER",
+      "exchange": "AGARA",
+      "id": "order:01a0c96d-9e45-7562-a2a1-23ec1af9c185",
+      "order_id": "01a0c96d-9e45-7562-a2a1-23ec1af9c185",
+      "status": "MATCHED",
+      "fill_status": "FULL",
+      "condition_id": "0x2dcfeea0061ce44d559bda09c89733bc7d1ba82d93572543132781737038abd3",
+      "token_id": "3080354623804693924140594680509310463211971617800178260199236136438405504979",
+      "side": "BUY",
+      "filled_shares_micro": "1000000",
+      "average_fill_price_micro": "600000",
+      "filled_amount_micro": "600000",
+      "fees_micro": "0",
+      "created_at": "2026-09-22T14:03:24.399335Z"
+    },
+    {
+      "type": "MERGE",
+      "exchange": "AGARA",
+      "id": "merge:0xce0c43319407f5168cf438d931f8fa13644a53c05e20f3a992411fdf807bab5d:0000000000",
+      "condition_id": "0x2dcfeea0061ce44d559bda09c89733bc7d1ba82d93572543132781737038abd3",
+      "shares_micro": "1000000",
+      "amount_micro": "1000000",
+      "tx_hash": "0x21924e9a1cd49beb967e3cd55ee260f9813d2aedc8637df301cc3eaf3f0eecf2",
+      "created_at": "2026-09-22T14:01:45.415400Z"
+    },
+    {
+      "type": "SPLIT",
+      "exchange": "AGARA",
+      "id": "split:0xf4e8a8c5d1838ec7475e03f14fd3da7d2ada2db2d2b6c31944f65919aef9fee5:0000000000",
+      "condition_id": "0x2dcfeea0061ce44d559bda09c89733bc7d1ba82d93572543132781737038abd3",
+      "shares_micro": "1000000",
+      "amount_micro": "1000000",
+      "tx_hash": "0x196b56c07cd08581934919138621f1bccd6f5c36e97bf897bff731740cfb41b0",
+      "created_at": "2026-09-22T14:01:40.953856Z"
+    },
+    {
+      "type": "MERGE",
+      "exchange": "AGARA",
+      "id": "merge:0xbe9c4cb1fb015c7506993095926c48fb7663cd628cf51d6cece0f2b8f0a831da:0000000000",
+      "condition_id": "0x2dcfeea0061ce44d559bda09c89733bc7d1ba82d93572543132781737038abd3",
+      "shares_micro": "1000000",
+      "amount_micro": "1000000",
+      "tx_hash": "0x64ad377094ea0952e7b2485eb380f45911b035961b882051c6ab06dc9a511b10",
+      "created_at": "2026-09-22T13:46:07.269544Z"
     }
   ],
   "markets": {
+    "104640906757864346691844812154405452972337921714258432458463934631395739043847": {
+      "market_id": "1244542c-8264-4f1c-8310-be524b36ef7d",
+      "market_title": "Bitcoin Price Up or Down (15 Minutes) - Sep 22, 11:15AM-11:30AM ET",
+      "outcome_name": "Up",
+      "logo_url": null,
+      "event_slug": "bitcoin-price-up-or-down-15-minutes-event",
+      "state": "RESOLVED",
+      "neg_risk_id": null,
+      "display": {
+        "market": {
+          "currency": "USD",
+          "description": "This market will resolve to \"Up\" if the closing price for Bitcoin / US Dollar at 11:30AM ET on Sep 22, 2026 is equal to or higher than its opening price at 11:15AM ET on Sep 22, 2026. A lower closing price resolves the market to \"Down\". Equal opening and closing prices resolve to \"Up\".\nOpening and closing prices are sourced exclusively from Pyth Pro using the timestamped Crypto.BTC/USD point-price feed. The timestamp provided by the source must be at or before the opening or closing instant, never later, and no more than 3 seconds old at that instant.\nPrices are compared at their original source precision, before any display rounding.\nIf no valid opening price is available, the market will not become Active. If no valid closing price is available, resolution may be delayed for manual review at the discretion of the Agara team.\nFinal settlement may occur after the closing instant, once any applicable review or dispute process has completed.",
+          "observe_at": "2026-09-22T15:30:00.000Z",
+          "pyth_pro_symbol": "Crypto.BTC/USD",
+          "reference_at": "2026-09-22T15:15:00.000Z",
+          "reference_price": "86301.02855499",
+          "resolution_source": "https://app.pyth.com/explore/Crypto.BTC%2FUSD",
+          "series_slug": "bitcoin-price-up-or-down-15-minutes"
+        },
+        "outcome": {
+          "kind": "yes",
+          "label": "Up",
+          "resolution_label": "BTC Up",
+          "side": "left"
+        }
+      }
+    },
     "3080354623804693924140594680509310463211971617800178260199236136438405504979": {
       "market_id": "b9721a97-dc02-4703-a074-680b59c5b348",
       "market_title": "China Annual Inflation 2026 - >= 1.6%",
@@ -85,9 +184,33 @@
           "resolution_source": "https://www.stats.gov.cn/english/PressRelease/"
         }
       }
+    },
+    "0xeb2632ff089655330cdca873f292ee5baed720ffba591e7dcb73a2ef35cdb946": {
+      "market_id": "1244542c-8264-4f1c-8310-be524b36ef7d",
+      "market_title": "Bitcoin Price Up or Down (15 Minutes) - Sep 22, 11:15AM-11:30AM ET",
+      "logo_url": null,
+      "event_slug": "bitcoin-price-up-or-down-15-minutes-event",
+      "display": {
+        "market": {
+          "currency": "USD",
+          "description": "This market will resolve to \"Up\" if the closing price for Bitcoin / US Dollar at 11:30AM ET on Sep 22, 2026 is equal to or higher than its opening price at 11:15AM ET on Sep 22, 2026. A lower closing price resolves the market to \"Down\". Equal opening and closing prices resolve to \"Up\".\nOpening and closing prices are sourced exclusively from Pyth Pro using the timestamped Crypto.BTC/USD point-price feed. The timestamp provided by the source must be at or before the opening or closing instant, never later, and no more than 3 seconds old at that instant.\nPrices are compared at their original source precision, before any display rounding.\nIf no valid opening price is available, the market will not become Active. If no valid closing price is available, resolution may be delayed for manual review at the discretion of the Agara team.\nFinal settlement may occur after the closing instant, once any applicable review or dispute process has completed.",
+          "observe_at": "2026-09-22T15:30:00.000Z",
+          "pyth_pro_symbol": "Crypto.BTC/USD",
+          "reference_at": "2026-09-22T15:15:00.000Z",
+          "reference_price": "86301.02855499",
+          "resolution_source": "https://app.pyth.com/explore/Crypto.BTC%2FUSD",
+          "series_slug": "bitcoin-price-up-or-down-15-minutes"
+        }
+      }
     }
   },
   "events": {
+    "bitcoin-price-up-or-down-15-minutes-event": {
+      "event_title": "Bitcoin Price Up or Down (15 Minutes) Series",
+      "display": {
+        "event": {}
+      }
+    },
     "china-annual-inflation-2026": {
       "event_title": "China Annual Inflation 2026",
       "display": {
@@ -106,8 +229,8 @@
     }
   },
   "pagination": {
-    "next_cursor": null,
+    "next_cursor": "eyJ2IjozLCJyIjoicG9ydGZvbGlvL2FjdGl2aXRpZXMiLCJmIjoiY2JmMjljZTQ4NDIyMjMyNSIsInQiOjE3OTAwODQ3NjcyNjk1NDQsImkiOiI0ZDU1OTc2ZS05NTkzLTQ1NzAtOTliOS1jODcwMjAxNjljMTcifQ",
     "limit": 10
   },
-  "as_of": "2026-09-22T11:48:58.088156Z"
+  "as_of": "2026-09-22T17:27:19.159031Z"
 }

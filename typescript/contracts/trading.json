@@ -163,7 +163,7 @@
             "type": "array"
           },
           "hash": {
-            "description": "Snapshot sequence number stringified \u2014 two snapshots with the\nsame hash are byte-identical.",
+            "description": "Snapshot sequence number stringified — two snapshots with the\nsame hash are byte-identical.",
             "example": "1234",
             "type": "string"
           },
@@ -931,7 +931,7 @@
         "type": "string"
       },
       "ConditionMeta": {
-        "description": "Market display metadata for condition-level rows (splits), keyed in\nresponses by condition id. Logo resolution is condition-level (market\nimage, then event icon) \u2014 outcome logos are team-dependent and would\nflap across requests under the outcome-keyed store's last-row-wins.",
+        "description": "Market display metadata for condition-level rows (splits), keyed in\nresponses by condition id. Logo resolution is condition-level (market\nimage, then event icon) — outcome logos are team-dependent and would\nflap across requests under the outcome-keyed store's last-row-wins.",
         "properties": {
           "display": {
             "$ref": "#/components/schemas/ConditionMetaDisplay",
@@ -967,7 +967,7 @@
         "type": "object"
       },
       "ConditionMetaDisplay": {
-        "description": "Raw CMS display JSONB for a condition-level sidecar entry \u2014 market only. A\ncondition aggregates every outcome leg, so no single outcome display applies\n(and an outcome blob would flap under the store's last-row-wins, like logos).",
+        "description": "Raw CMS display JSONB for a condition-level sidecar entry — market only. A\ncondition aggregates every outcome leg, so no single outcome display applies\n(and an outcome blob would flap under the store's last-row-wins, like logos).",
         "properties": {
           "market": {
             "description": "Raw market-level display blob as stored by the CMS.",
@@ -1170,7 +1170,7 @@
             "type": "string"
           },
           "chain_token_id": {
-            "description": "CTF position id as the u256 value the bot signed over (decimal\nor `0x`-hex string). Must encode the same numeric value as\n`token_id` above \u2014 the router validates they match. Carried\nseparately because the lookup `token_id` is a free-form string\nwhose encoding isn't guaranteed to match what the bot used in\nthe EIP-712 envelope.",
+            "description": "CTF position id as the u256 value the bot signed over (decimal\nor `0x`-hex string). Must encode the same numeric value as\n`token_id` above — the router validates they match. Carried\nseparately because the lookup `token_id` is a free-form string\nwhose encoding isn't guaranteed to match what the bot used in\nthe EIP-712 envelope.",
             "type": "string"
           },
           "expiration_unix_seconds": {
@@ -1183,7 +1183,7 @@
             ]
           },
           "maker": {
-            "description": "Maker address \u2014 must equal the wallet's deposit-wallet address.",
+            "description": "Maker address — must equal the wallet's deposit-wallet address.",
             "type": "string"
           },
           "maker_amount": {
@@ -1265,7 +1265,7 @@
           },
           "type": {
             "$ref": "#/components/schemas/ClobOrderType",
-            "description": "Order type \u2014 only `LIMIT` is supported on this endpoint."
+            "description": "Order type — only `LIMIT` is supported on this endpoint."
           }
         },
         "required": [
@@ -1374,7 +1374,7 @@
         "type": "string"
       },
       "Fill": {
-        "description": "One wallet's single-sided view of a fill \u2014 the shared item type for\n`/trade/v1/portfolio/trades` and `/trade/v1/orders/{id}/trades`.",
+        "description": "One wallet's single-sided view of a fill — the shared item type for\n`/trade/v1/portfolio/trades` and `/trade/v1/orders/{id}/trades`.",
         "properties": {
           "exchange": {
             "$ref": "#/components/schemas/Exchange",
@@ -2136,7 +2136,7 @@
         "type": "string"
       },
       "Order": {
-        "description": "On-the-wire order row \u2014 the trimmed ledger projection served by the\norder-list, single-order, and portfolio open-orders endpoints.",
+        "description": "On-the-wire order row — the trimmed ledger projection served by the\norder-list, single-order, and portfolio open-orders endpoints.",
         "properties": {
           "avg_fill_price_micro": {
             "description": "Average fill price in micro units.",
@@ -2322,6 +2322,15 @@
           "size"
         ],
         "type": "object"
+      },
+      "PortfolioAccountingStatus": {
+        "description": "Availability of processed acquisition-cost accounting; available does not imply engine synchronization.",
+        "enum": [
+          "AVAILABLE",
+          "PENDING",
+          "UNAVAILABLE"
+        ],
+        "type": "string"
       },
       "PortfolioActivitiesResponse": {
         "description": "Canonical AGARA activity response.",
@@ -3157,25 +3166,53 @@
       "PortfolioPosition": {
         "description": "Position row.",
         "properties": {
+          "accounting_status": {
+            "$ref": "#/components/schemas/PortfolioAccountingStatus",
+            "description": "Acquisition-cost availability; quantities continue to come from the engine."
+          },
           "available_shares_micro": {
             "$ref": "#/components/schemas/MicroAmount",
             "description": "Shares available to place into a new sell order."
           },
           "avg_price_micro": {
-            "$ref": "#/components/schemas/MicroAmount",
-            "description": "Average entry price."
+            "description": "Average entry price.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/MicroAmount",
+                "description": "Average entry price."
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "condition_id": {
             "$ref": "#/components/schemas/ConditionId",
             "description": "Market condition id."
           },
           "current_price_micro": {
-            "$ref": "#/components/schemas/MicroAmount",
-            "description": "Current price."
+            "description": "Current price.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/MicroAmount",
+                "description": "Current price."
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "current_value_micro": {
-            "$ref": "#/components/schemas/MicroAmount",
-            "description": "Current position value."
+            "description": "Current position value.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/MicroAmount",
+                "description": "Current position value."
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "exchange": {
             "$ref": "#/components/schemas/Exchange",
@@ -3197,13 +3234,41 @@
               }
             ]
           },
+          "open_cost_basis_micro": {
+            "description": "Cost of live held shares using the latest processed acquisition average.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/MicroAmount",
+                "description": "Cost of live held shares using the latest processed acquisition average."
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "profit_loss_micro": {
-            "$ref": "#/components/schemas/MicroAmount",
-            "description": "Profit or loss."
+            "description": "Profit or loss.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/MicroAmount",
+                "description": "Profit or loss."
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "profit_loss_percent": {
-            "$ref": "#/components/schemas/PortfolioDecimalString",
-            "description": "Profit or loss ratio."
+            "description": "Profit or loss percentage; 21 means 21%.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/PortfolioDecimalString",
+                "description": "Profit or loss percentage; 21 means 21%."
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "redeemable": {
             "description": "Whether the position is redeemable.",
@@ -3228,12 +3293,7 @@
           "token_id",
           "shares_micro",
           "available_shares_micro",
-          "avg_price_micro",
-          "current_price_micro",
-          "current_value_micro",
           "to_win_micro",
-          "profit_loss_micro",
-          "profit_loss_percent",
           "redeemable",
           "mergeable"
         ],
@@ -3457,8 +3517,12 @@
         "type": "object"
       },
       "PortfolioSummaryEntry": {
-        "description": "One exchange's portfolio summary. Collateral and positions on different\nnetworks remain separate.",
+        "description": "One exchange's portfolio summary; networks remain separate.",
         "properties": {
+          "accounting_status": {
+            "$ref": "#/components/schemas/PortfolioAccountingStatus",
+            "description": "Acquisition-cost availability; quantities continue to come from the engine."
+          },
           "as_of": {
             "description": "Snapshot timestamp.",
             "format": "date-time",
@@ -3477,30 +3541,58 @@
             "description": "Cash available for buy validation."
           },
           "open_cost_basis_micro": {
-            "$ref": "#/components/schemas/MicroAmount",
-            "description": "Cost basis of open positions."
+            "description": "Cost basis of open positions.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/MicroAmount",
+                "description": "Cost basis of open positions."
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "open_unrealized_pnl_micro": {
-            "$ref": "#/components/schemas/MicroAmount",
-            "description": "Unrealized P&L for open positions."
+            "description": "Unrealized P&L for open positions.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/MicroAmount",
+                "description": "Unrealized P&L for open positions."
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "portfolio_value_micro": {
-            "$ref": "#/components/schemas/MicroAmount",
-            "description": "Total portfolio value."
+            "description": "Total portfolio value.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/MicroAmount",
+                "description": "Total portfolio value."
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "positions_value_micro": {
-            "$ref": "#/components/schemas/MicroAmount",
-            "description": "Current value of open positions."
+            "description": "Current value of open positions.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/MicroAmount",
+                "description": "Current value of open positions."
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "required": [
           "exchange",
           "cash_balance_micro",
           "free_cash_micro",
-          "positions_value_micro",
-          "portfolio_value_micro",
-          "open_cost_basis_micro",
-          "open_unrealized_pnl_micro",
           "as_of"
         ],
         "type": "object"
@@ -3966,7 +4058,7 @@
         ]
       },
       "Side": {
-        "description": "Buy/sell side of a trade or order \u2014 the shared DTO side across the\nportfolio and orders endpoints.",
+        "description": "Buy/sell side of a trade or order — the shared DTO side across the\nportfolio and orders endpoints.",
         "enum": [
           "BUY",
           "SELL"
@@ -4005,8 +4097,8 @@
     },
     "securitySchemes": {
       "personal_access_token": {
-        "bearerFormat": "agt_\u2026",
-        "description": "Personal access token issued from the web app's Settings \u2192 API tokens page. Send as `Authorization: Bearer agt_\u2026`.",
+        "bearerFormat": "agt_…",
+        "description": "Personal access token issued from the web app's Settings → API tokens page. Send as `Authorization: Bearer agt_…`.",
         "scheme": "bearer",
         "type": "http"
       },
@@ -4019,7 +4111,7 @@
     }
   },
   "info": {
-    "description": "Pinned 8cf944265 platform contract; see contracts/README.md for source patches.",
+    "description": "Pinned e136dacf2 platform contract; see contracts/README.md for source patches.",
     "license": {
       "name": ""
     },
@@ -7220,7 +7312,7 @@
                 }
               }
             },
-            "description": "The JSON body is well-formed but does not match the schema \u2014 a required field is missing, or a field has the wrong type.",
+            "description": "The JSON body is well-formed but does not match the schema — a required field is missing, or a field has the wrong type.",
             "headers": {
               "X-Request-ID": {
                 "description": "Origin request identifier to retain when contacting support. Edge-generated 429 responses may omit it.",
@@ -12420,7 +12512,7 @@
                 }
               }
             },
-            "description": "The JSON body is well-formed but does not match the schema \u2014 a required field is missing, or a field has the wrong type.",
+            "description": "The JSON body is well-formed but does not match the schema — a required field is missing, or a field has the wrong type.",
             "headers": {
               "X-Request-ID": {
                 "description": "Origin request identifier to retain when contacting support. Edge-generated 429 responses may omit it.",
@@ -12891,7 +12983,7 @@
                 }
               }
             },
-            "description": "The JSON body is well-formed but does not match the schema \u2014 a required field is missing, or a field has the wrong type.",
+            "description": "The JSON body is well-formed but does not match the schema — a required field is missing, or a field has the wrong type.",
             "headers": {
               "X-Request-ID": {
                 "description": "Origin request identifier to retain when contacting support. Edge-generated 429 responses may omit it.",
@@ -16443,7 +16535,7 @@
                 }
               }
             },
-            "description": "One page of your credited LP reward cycles \u2014 one row per accrual, using the accrual's reward day \u2014 with the unpaged row count. Callers with no rewards get an empty list."
+            "description": "One page of your credited LP reward cycles — one row per accrual, using the accrual's reward day — with the unpaged row count. Callers with no rewards get an empty list."
           },
           "401": {
             "content": {
@@ -17192,7 +17284,7 @@
                 }
               }
             },
-            "description": "Rewards for the current reward cycle so far \u2014 projected live from today's scores \u2014 plus the trailing 7-day, 30-day, and all-time windows ending today. Callers with no scores or accruals get zeros."
+            "description": "Rewards for the current reward cycle so far — projected live from today's scores — plus the trailing 7-day, 30-day, and all-time windows ending today. Callers with no scores or accruals get zeros."
           },
           "401": {
             "content": {
