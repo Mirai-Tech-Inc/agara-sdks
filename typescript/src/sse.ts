@@ -154,7 +154,9 @@ async function* chunks(
  * Stream provider prices for one or more symbols over SSE.
  *
  * @param symbols - One to 64 distinct provider symbols, such as `Crypto.BTC/USD`; duplicates are removed.
- * Each symbol must contain 1–64 letters, digits, dots, underscores, slashes, or hyphens.
+ * Each symbol must contain 1–64 letters, digits, dots, underscores, slashes, or hyphens. These are
+ * provider symbols, not the Agara security symbols (`BTC-USD`) that `getPricePoint` and
+ * `getPriceTicks` take; a price-resolved market carries its own as `display.pyth_pro_symbol`.
  * @param options - HTTP, cancellation, event-size, and reconnection settings.
  * @returns A lazy async generator; validation and the first request occur on the first read.
  * @throws TypeError - Symbols or the service URL are invalid.
@@ -177,7 +179,8 @@ export async function* priceStream(
 /**
  * Stream the Pyth Pro price feed for a single provider symbol over SSE.
  *
- * @param symbol - Provider symbol of 1–64 letters, digits, dots, underscores, slashes, or hyphens.
+ * @param symbol - Provider symbol of 1–64 letters, digits, dots, underscores, slashes, or hyphens,
+ * such as `Crypto.BTC/USD`; see {@link priceStream} on how this differs from an Agara security symbol.
  * @param options - HTTP, cancellation, event-size, and reconnection settings.
  * @returns A lazy async generator with the same retry and cancellation behavior as {@link priceStream}.
  * @throws TypeError - The symbol or service URL is invalid.

@@ -527,11 +527,15 @@ export class PublicClient extends Transport {
    * Read a provider price pinned to a past Unix second.
    *
    * @remarks
-   * Callable without credentials. Use canonical security/provider identifiers from discovery; the
-   * requested second and actual observation time are distinct.
+   * Callable without credentials. `symbol` is an Agara security symbol such as `BTC-USD`, listed by
+   * `listSecurities`. `provider` is a data-provider slug, lowercase and hyphenated, such as
+   * `pyth-pro`; an uppercase value like `PYTH` is rejected with 422. No method here returns the
+   * slug, so take it from configuration. Both differ from the provider symbols the price streams
+   * take, such as `Crypto.BTC/USD`. The requested second and the actual observation time are
+   * distinct.
    *
-   * @param query - Canonical symbol/provider identifiers and the requested at timestamp in Unix
-   * seconds.
+   * @param query - Agara security symbol (see `listSecurities`), a provider slug matching
+   * `^[a-z0-9-]{1,32}$` such as `pyth-pro`, and the requested at timestamp in Unix seconds.
    * @param options - Per-request abort signal, timeout override and successful-response observer.
    * @returns The available price observation and provider timing metadata.
    * @throws TypeError for invalid local request shapes or text inputs.
@@ -562,11 +566,13 @@ export class PublicClient extends Transport {
    * Read provider price ticks over an inclusive historical interval.
    *
    * @remarks
-   * Callable without credentials. Preserve exact provider price representations; missing
+   * Callable without credentials. Takes the same identifiers as `getPricePoint`: an Agara security
+   * symbol such as `BTC-USD` and a lowercase provider slug such as `pyth-pro`, not a provider
+   * symbol like `Crypto.BTC/USD`. Preserve exact provider price representations; missing
    * observations do not imply a zero price.
    *
-   * @param query - Canonical symbol/provider and inclusive from/to Unix seconds over a window of at
-   * most 24 hours.
+   * @param query - Agara security symbol, a provider slug matching `^[a-z0-9-]{1,32}$` such as
+   * `pyth-pro`, and inclusive from/to Unix seconds over a window of at most 24 hours.
    * @param options - Per-request abort signal, timeout override and successful-response observer.
    * @returns Price observations and timestamps for the requested history window.
    * @throws TypeError for invalid local request shapes or text inputs.
