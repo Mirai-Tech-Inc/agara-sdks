@@ -268,6 +268,55 @@ it("does not retry before an oversized Retry-After", async () => {
   });
   expect(fetcher).toHaveBeenCalledTimes(1);
 });
+it("counts reconnects over the stream's lifetime, not since the last price", async () => {
+  // Every connection delivers a price and then ends, so a count reset on data would never advance.
+  const fetcher = vi.fn<typeof fetch>(
+    async () =>
+      new Response(`data: ${JSON.stringify({ parsed: [] })}\n\n`, {
+        headers: { "content-type": "text/event-stream" },
+      }),
+  );
+  const seen: number[] = [];
+  const connectionsMade: number[] = [];
+  const stream = priceStream(["BTC/USD"], {
+    fetch: fetcher,
+    reconnectDelayMs: 0,
+    maxReconnects: 2,
+    onReconnect: (attempt) => {
+      seen.push(attempt);
+      connectionsMade.push(fetcher.mock.calls.length);
+    },
+  });
+
+  await expect(
+    (async () => {
+      for await (const _event of stream);
+    })(),
+  ).rejects.toBeInstanceOf(ProtocolError);
+  expect(seen).toEqual([1, 2]);
+  // Each callback lands before its retry opens the next connection, and the attempt that exceeds the
+  // limit is never announced: a caller counting these sees every wait it is actually made to serve.
+  expect(connectionsMade).toEqual([1, 2]);
+  expect(fetcher).toHaveBeenCalledTimes(3);
+});
+it("never announces a reconnect when retries are disabled by the limit", async () => {
+  const fetcher = vi.fn<typeof fetch>(
+    async () =>
+      new Response(`data: ${JSON.stringify({ parsed: [] })}\n\n`, {
+        headers: { "content-type": "text/event-stream" },
+      }),
+  );
+  const onReconnect = vi.fn();
+  const stream = priceStream(["BTC/USD"], { fetch: fetcher, maxReconnects: 0, onReconnect });
+
+  await expect(
+    (async () => {
+      for await (const _event of stream);
+    })(),
+  ).rejects.toBeInstanceOf(ProtocolError);
+  expect(onReconnect).not.toHaveBeenCalled();
+  expect(fetcher).toHaveBeenCalledTimes(1);
+});
 it("rejects an outstanding next on malformed data rather than ending cleanly", async () => {
   const { created, factory } = sockets();
   const stream = marketStream({ channels: [], webSocketFactory: factory });
