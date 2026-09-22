@@ -47,6 +47,7 @@
     "test:pack": "npm run build && node scripts/pack-smoke.mjs",
     "docs:check": "node scripts/check-docs.mjs",
     "drift:check": "node scripts/check-drift.mjs",
+    "streams:check": "node scripts/check-streams.mjs",
     "fixtures:record": "node scripts/record-fixtures.mjs"
   },
   "dependencies": {

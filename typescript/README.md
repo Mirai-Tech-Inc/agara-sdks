@@ -220,5 +220,21 @@ AGARA_DRIFT_BASE_URL=https://app.sandbox.agara.xyz npm run drift:check
 It needs network, so it is not part of `npm run check`; CI runs it on a schedule and on demand.
 Deliberate deviations live in [contracts/drift-allowlist.json](contracts/drift-allowlist.json).
 
+Streams have no equivalent schema: there is no AsyncAPI document, and neither stream path nor any
+frame schema appears in the OpenAPI. `contracts/ws-fixtures.json` pins frame shapes, but the offline
+suite replays those fixtures through the decoder that produced them, so it cannot notice the router
+changing. `npm run streams:check` covers that gap from the other side, by making a deployment speak
+and requiring the pinned decoder to accept every frame:
+
+```sh
+AGARA_STREAM_BASE_URL=https://app.sandbox.agara.xyz npm run streams:check
+```
+
+It subscribes to every market-side form plus a multiplexed connection, adds the account channel when
+`AGARA_STREAM_TOKEN` is set, and fails on a `ProtocolError` or on a channel that produced no frame at
+all. Frames decoding as `op: "unknown"` are reported but do not fail: that is the
+forward-compatibility path, and it means the router emits an update kind this package does not model
+yet.
+
 See [design references](docs/design.md), [migration notes](docs/migration.md), and
 [examples](examples/). Publishing is a separate explicit action.

@@ -46,3 +46,37 @@ jobs:
             exit 0
           fi
           exit "$status"
+
+  # Separate job, not a later step: a REST drift failure must not hide a stream failure, and the
+  # stream check is the only cover streams have. There is no WebSocket schema to diff, so this one
+  # makes the deployment speak and requires the pinned decoder to accept every frame.
+  streams:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: typescript
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: typescript/package-lock.json
+      - run: npm ci
+      - run: npm run build
+      - name: Decode live stream frames
+        env:
+          AGARA_STREAM_BASE_URL: ${{ inputs.base_url || vars.AGARA_DRIFT_BASE_URL || 'https://app.sandbox.agara.xyz' }}
+          AGARA_STREAM_GATE_COOKIE: ${{ secrets.AGARA_DRIFT_GATE_COOKIE }}
+          AGARA_STREAM_TOKEN: ${{ secrets.AGARA_STREAM_TOKEN }}
+        run: |
+          set +e
+          npm run streams:check
+          status=$?
+          set -e
+          if [ "$status" -eq 2 ]; then
+            echo "::warning::deployment unreachable; stream frames not checked"
+            exit 0
+          fi
+          exit "$status"
