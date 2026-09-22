@@ -24,7 +24,7 @@ export const endpointDocs = {
     summary: "Submit one pre-signed AGARA LIMIT order.",
     returns: "An asynchronous order acknowledgement; no matching or settlement is guaranteed.",
     remarks:
-      "The signature and envelope must describe the same economics. After an uncertain submission, reconcile the existing order_hash with getOrderByHash before deciding whether to submit again.",
+      "The signature and envelope must describe the same economics. A successful submission returns an order_id; read it back with getOrder. An ambiguous submission cannot be reconciled by digest through this client, so do not replay it blindly.",
     body: "Signed order envelope, exact micro price/shares and matching EIP-712 hash/signature fields.",
   },
   placeSignedOrders: {
@@ -49,15 +49,6 @@ export const endpointDocs = {
       "Only order.is_terminal establishes order completion; a MATCHED label alone does not prove completion or chain settlement.",
     params: {
       order_id: "Internal order UUID returned by order acceptance.",
-    },
-  },
-  getOrderByHash: {
-    summary: "Reconcile a signed order using its known EIP-712 digest.",
-    returns: "The current order record and market metadata for the hash.",
-    remarks:
-      "Use the original digest after an ambiguous signed submission. A not-found response may reflect persistence lag; it does not by itself prove that resubmission is safe.",
-    params: {
-      order_hash: "Original 32-byte signed order digest encoded as 0x-prefixed hex.",
     },
   },
   getOrderTrades: {

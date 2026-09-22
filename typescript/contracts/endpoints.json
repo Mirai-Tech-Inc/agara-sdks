@@ -63,15 +63,6 @@
     "operationId": "cancel_order"
   },
   {
-    "name": "getOrderByHash",
-    "service": "router",
-    "protocol": "HTTP",
-    "method": "GET",
-    "path": "/trade/v1/orders/by-hash/{order_hash}",
-    "auth": "Privy JWT or PAT: OrdersRead",
-    "operationId": "get_order_by_hash"
-  },
-  {
     "name": "getOrderTrades",
     "service": "router",
     "protocol": "HTTP",

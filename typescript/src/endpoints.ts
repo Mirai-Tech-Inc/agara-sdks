@@ -787,8 +787,9 @@ export class TraderClient extends PublicClient {
    *
    * @remarks
    * Requires a personal access token with scope `orders:place_signed`. The signature and envelope
-   * must describe the same economics. After an uncertain submission, reconcile the existing
-   * order_hash with getOrderByHash before deciding whether to submit again.
+   * must describe the same economics. A successful submission returns an order_id; read it back
+   * with getOrder. An ambiguous submission cannot be reconciled by digest through this client, so
+   * do not replay it blindly.
    *
    * @param body - Signed order envelope, exact micro price/shares and matching EIP-712
    * hash/signature fields.
@@ -954,41 +955,6 @@ export class TraderClient extends PublicClient {
       options,
       true,
       "cancelOrder",
-    );
-  }
-
-  /**
-   * Reconcile a signed order using its known EIP-712 digest.
-   *
-   * @remarks
-   * Requires a personal access token with scope `orders:read`. Use the original digest after an
-   * ambiguous signed submission. A not-found response may reflect persistence lag; it does not by
-   * itself prove that resubmission is safe.
-   *
-   * @param order_hash - Original 32-byte signed order digest encoded as 0x-prefixed hex.
-   * @param options - Per-request abort signal, timeout override and successful-response observer.
-   * @returns The current order record and market metadata for the hash.
-   * @throws TypeError for invalid local request shapes or text inputs.
-   * @throws RangeError for invalid local numeric inputs or timeout overrides.
-   * @throws AgaraError for an unsuccessful HTTP response; inspect its status and validated
-   * recovery.
-   * @throws TransportError for failed or aborted I/O; inspect its cause for the underlying failure.
-   * @throws ProtocolError when a successful response is malformed or exceeds the response-byte
-   * bound.
-   * @throws ResponseObserverError when a callback throws after receiving a valid success response.
-   */
-  getOrderByHash(
-    order_hash: string,
-    options: RequestOptions = {},
-  ): Promise<Success<TradingOperations["get_order_by_hash"]>> {
-    return this.request(
-      "GET",
-      `/trade/v1/orders/by-hash/${this.pathPart(order_hash)}`,
-      undefined,
-      undefined,
-      options,
-      true,
-      "getOrderByHash",
     );
   }
 

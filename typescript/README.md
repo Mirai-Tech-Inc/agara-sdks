@@ -37,7 +37,7 @@ response observers receive HTTP status, headers and request ID.
 
 ## Coverage and wire contracts
 
-All **48 REST operations**, both router WebSocket endpoints, and both price SSE feeds
+All **47 REST operations**, both router WebSocket endpoints, and both price SSE feeds
 in [the checked-in scope](contracts/manifest.json) have named APIs. The
 [method inventory](contracts/endpoints.json) maps each REST method to its path and auth.
 Concrete request/response types derive from scoped OpenAPI snapshots, with source-backed
@@ -115,8 +115,10 @@ live sequence and deployment addresses from trusted configuration; the SDK never
 registry; unknown codes/strategies remain inspectable and cannot enable automatic action.
 Transport failures have `.outcomeUnknown` for mutations. No HTTP call is automatically
 retried. Polling helpers only repeat safe reads when registered recovery permits it.
-Reconcile ambiguous signed-order submission by its known hash; reconcile account batches
-by `batchHash`. Never blindly replay an ambiguous mutation.
+A signed submission that succeeds returns an order_id; read it back with `getOrder`. An
+ambiguous one cannot be reconciled by digest: no method accepts an order hash and listed orders do
+not carry one, so compare recent `listOrders` rows before considering a replay, and never replay
+blindly. Account batches do reconcile by `batchHash`, which `signBatch` returns locally.
 
 Request validation checks known request shapes, precision, LIMIT/MARKET sizing, GTD,
 post-only, signatures and batch bounds. Response validation rejects malformed known

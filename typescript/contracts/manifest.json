@@ -54,13 +54,6 @@
       "service": "router",
       "protocol": "HTTP",
       "method": "GET",
-      "path": "/trade/v1/orders/by-hash/{order_hash}",
-      "auth": "Privy JWT or PAT: OrdersRead"
-    },
-    {
-      "service": "router",
-      "protocol": "HTTP",
-      "method": "GET",
       "path": "/trade/v1/orders/{order_id}/trades",
       "auth": "Privy JWT or PAT: OrdersRead"
     },

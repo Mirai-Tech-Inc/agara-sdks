@@ -10,7 +10,6 @@ const names = {
   list_orders: "listOrders",
   get_order: "getOrder",
   cancel_order: "cancelOrder",
-  get_order_by_hash: "getOrderByHash",
   get_order_trades: "getOrderTrades",
   cancel_all_orders: "cancelAllOrders",
   create_batch: "submitBatch",
