@@ -117,27 +117,6 @@
       "service": "router",
       "protocol": "HTTP",
       "method": "GET",
-      "path": "/trade/v1/portfolio/bridge/deposit/address",
-      "auth": "Privy JWT or PAT: PortfolioRead"
-    },
-    {
-      "service": "router",
-      "protocol": "HTTP",
-      "method": "GET",
-      "path": "/trade/v1/portfolio/bridge/deposit/supported-assets",
-      "auth": "Privy JWT or PAT: PortfolioRead"
-    },
-    {
-      "service": "router",
-      "protocol": "HTTP",
-      "method": "POST",
-      "path": "/trade/v1/portfolio/bridge/deposit/quote",
-      "auth": "Privy JWT or PAT: PortfolioRead"
-    },
-    {
-      "service": "router",
-      "protocol": "HTTP",
-      "method": "GET",
       "path": "/trade/v1/portfolio/bridge/withdraw/supported-assets",
       "auth": "Privy JWT or PAT: PortfolioRead"
     },

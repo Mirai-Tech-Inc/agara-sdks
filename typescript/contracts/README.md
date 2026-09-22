@@ -2,17 +2,18 @@
 
 Platform `8cf944265642737148bdb2ae128c697b776cebec` (2026-09-22).
 `trading.json` and `catalogue.json` are scoped snapshots of the platform's checked-in
-`apps/web/content/api-specs` documents, limited to the 51 operations in `manifest.json`.
+`apps/web/content/api-specs` documents, limited to the 48 operations in `manifest.json`.
 Unused component schemas are removed. Preserve arbitrary metadata within documented JSON fields.
 
-The environment-projected trading document omits mounted multi-exchange paths. These
-source-backed additions preserve the actual router contract:
+The environment-projected trading document omits mounted paths, including both bridge
+withdrawal paths, which respond on every deployment checked. These source-backed additions
+preserve the actual router contract:
 
-- Three deposit paths and their DTOs: `apps/router/src/handlers/portfolio.rs:511-586`
-  and `crates/service/src/portfolio.rs:835-923`.
 - Split/merge's POLYMARKET 202 receipt: `handlers/portfolio.rs:39-138` and
   `crates/service/src/position_operations.rs:154-169`.
 - AGARA acceptance status is `PENDING`: `apps/router/src/handlers.rs:763`.
+- Both bridge withdrawal paths: `apps/router/src/handlers/portfolio.rs` and
+  `crates/service/src/portfolio.rs`, which resolve the AGARA wallet.
 
 Problem fixtures and code registry come unchanged from `specs/problem-contracts`.
 Run `npm run generate` after deliberately updating contract snapshots. Generated types

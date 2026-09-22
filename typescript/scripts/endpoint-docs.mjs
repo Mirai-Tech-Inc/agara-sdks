@@ -127,27 +127,6 @@ export const endpointDocs = {
       "Activity includes orders, splits, merges, redemptions, deposits, withdrawals and LP payouts. Use the realized-PnL report for accounting attribution.",
     query: "Page size from 1 to 500 (server default 50) and optional opaque cursor.",
   },
-  getBridgeDepositAddress: {
-    summary: "Read provider-issued deposit addresses for your trading wallet.",
-    returns: "The trading wallet address and provider deposit addresses by address family.",
-    remarks:
-      "Use the address family for the selected source chain. Retrieving an address does not submit a deposit transfer.",
-  },
-  getBridgeDepositAssets: {
-    summary: "List supported source chains and tokens for bridge deposits.",
-    returns:
-      "Provider chain/token identifiers, token decimals, address family and minimum checkout values.",
-    remarks:
-      "Provider identifiers are not necessarily EVM addresses or numeric chain IDs. Amounts for quotes use the source token native base units.",
-  },
-  quoteBridgeDeposit: {
-    summary: "Estimate a cross-chain deposit without executing a transfer.",
-    returns:
-      "Estimated destination quantity, timing, USD amounts, fees and provider quote identity.",
-    remarks:
-      "A quote is an estimate and can change. Its ID is not a transaction hash or execution confirmation.",
-    body: "Provider source-chain and token identifiers plus a positive integer string in the source token base units.",
-  },
   getBridgeWithdrawAssets: {
     summary: "List supported destination chains and assets for bridge withdrawals.",
     returns:

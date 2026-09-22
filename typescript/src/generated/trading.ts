@@ -255,54 +255,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/trade/v1/portfolio/bridge/deposit/address": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["portfolio_bridge_deposit_address"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/trade/v1/portfolio/bridge/deposit/supported-assets": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["portfolio_bridge_deposit_supported_assets"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/trade/v1/portfolio/bridge/deposit/quote": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["portfolio_bridge_deposit_quote"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/trade/v1/portfolio/bridge/withdraw/supported-assets": {
         parameters: {
             query?: never;
@@ -1736,21 +1688,6 @@ export interface components {
         PortfolioBridgeBaseUnitAmount: string;
         /** @description Bridge chain identifier. */
         PortfolioBridgeChainId: string;
-        PortfolioBridgeDepositAddressResponse: {
-            wallet_address: string;
-            deposit_addresses: components["schemas"]["PortfolioBridgeDepositAddresses"];
-            note: string | null;
-        };
-        PortfolioBridgeDepositAddresses: {
-            evm: string;
-            svm: string;
-            btc: string;
-        };
-        PortfolioBridgeDepositQuoteRequest: {
-            from_chain_id: string;
-            from_token_address: string;
-            from_amount_base_unit: string;
-        };
         /** @description Bridge deposit quote response body. */
         PortfolioBridgeDepositQuoteResponse: {
             /**
@@ -4495,70 +4432,6 @@ export interface operations {
                 };
                 content: {
                     "application/problem+json": components["schemas"]["KnownOriginProblemDetails"];
-                };
-            };
-        };
-    };
-    portfolio_bridge_deposit_address: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Current unprojected router response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PortfolioBridgeDepositAddressResponse"];
-                };
-            };
-        };
-    };
-    portfolio_bridge_deposit_supported_assets: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Current unprojected router response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PortfolioBridgeSupportedAssetsResponse"];
-                };
-            };
-        };
-    };
-    portfolio_bridge_deposit_quote: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["PortfolioBridgeDepositQuoteRequest"];
-            };
-        };
-        responses: {
-            /** @description Current unprojected router response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PortfolioBridgeDepositQuoteResponse"];
                 };
             };
         };

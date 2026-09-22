@@ -144,33 +144,6 @@
     "operationId": "portfolio_activities"
   },
   {
-    "name": "getBridgeDepositAddress",
-    "service": "router",
-    "protocol": "HTTP",
-    "method": "GET",
-    "path": "/trade/v1/portfolio/bridge/deposit/address",
-    "auth": "Privy JWT or PAT: PortfolioRead",
-    "operationId": "portfolio_bridge_deposit_address"
-  },
-  {
-    "name": "getBridgeDepositAssets",
-    "service": "router",
-    "protocol": "HTTP",
-    "method": "GET",
-    "path": "/trade/v1/portfolio/bridge/deposit/supported-assets",
-    "auth": "Privy JWT or PAT: PortfolioRead",
-    "operationId": "portfolio_bridge_deposit_supported_assets"
-  },
-  {
-    "name": "quoteBridgeDeposit",
-    "service": "router",
-    "protocol": "HTTP",
-    "method": "POST",
-    "path": "/trade/v1/portfolio/bridge/deposit/quote",
-    "auth": "Privy JWT or PAT: PortfolioRead",
-    "operationId": "portfolio_bridge_deposit_quote"
-  },
-  {
     "name": "getBridgeWithdrawAssets",
     "service": "router",
     "protocol": "HTTP",

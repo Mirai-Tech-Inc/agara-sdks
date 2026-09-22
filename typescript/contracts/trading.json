@@ -2743,66 +2743,6 @@
         "description": "Bridge chain identifier.",
         "type": "string"
       },
-      "PortfolioBridgeDepositAddressResponse": {
-        "type": "object",
-        "properties": {
-          "wallet_address": {
-            "type": "string"
-          },
-          "deposit_addresses": {
-            "$ref": "#/components/schemas/PortfolioBridgeDepositAddresses"
-          },
-          "note": {
-            "type": [
-              "string",
-              "null"
-            ]
-          }
-        },
-        "required": [
-          "wallet_address",
-          "deposit_addresses",
-          "note"
-        ]
-      },
-      "PortfolioBridgeDepositAddresses": {
-        "type": "object",
-        "properties": {
-          "evm": {
-            "type": "string"
-          },
-          "svm": {
-            "type": "string"
-          },
-          "btc": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "evm",
-          "svm",
-          "btc"
-        ]
-      },
-      "PortfolioBridgeDepositQuoteRequest": {
-        "type": "object",
-        "properties": {
-          "from_chain_id": {
-            "type": "string"
-          },
-          "from_token_address": {
-            "type": "string"
-          },
-          "from_amount_base_unit": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "from_chain_id",
-          "from_token_address",
-          "from_amount_base_unit"
-        ]
-      },
       "PortfolioBridgeDepositQuoteResponse": {
         "description": "Bridge deposit quote response body.",
         "properties": {
@@ -13188,67 +13128,6 @@
         "tags": [
           "portfolio"
         ]
-      }
-    },
-    "/trade/v1/portfolio/bridge/deposit/address": {
-      "get": {
-        "operationId": "portfolio_bridge_deposit_address",
-        "responses": {
-          "200": {
-            "description": "Current unprojected router response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PortfolioBridgeDepositAddressResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/trade/v1/portfolio/bridge/deposit/supported-assets": {
-      "get": {
-        "operationId": "portfolio_bridge_deposit_supported_assets",
-        "responses": {
-          "200": {
-            "description": "Current unprojected router response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PortfolioBridgeSupportedAssetsResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/trade/v1/portfolio/bridge/deposit/quote": {
-      "post": {
-        "operationId": "portfolio_bridge_deposit_quote",
-        "responses": {
-          "200": {
-            "description": "Current unprojected router response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PortfolioBridgeDepositQuoteResponse"
-                }
-              }
-            }
-          }
-        },
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/PortfolioBridgeDepositQuoteRequest"
-              }
-            }
-          }
-        }
       }
     },
     "/trade/v1/portfolio/bridge/withdraw/supported-assets": {

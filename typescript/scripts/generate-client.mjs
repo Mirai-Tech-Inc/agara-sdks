@@ -19,9 +19,6 @@ const names = {
   get_batch_group: "getBatchGroup",
   agara_orderbook: "getOrderbook",
   portfolio_activities: "listActivities",
-  portfolio_bridge_deposit_address: "getBridgeDepositAddress",
-  portfolio_bridge_deposit_supported_assets: "getBridgeDepositAssets",
-  portfolio_bridge_deposit_quote: "quoteBridgeDeposit",
   portfolio_bridge_withdraw_supported_assets: "getBridgeWithdrawAssets",
   portfolio_bridge_withdraw_quote: "quoteBridgeWithdrawal",
   portfolio_open_orders_list: "listOpenOrders",
@@ -210,13 +207,7 @@ function methodComment(name, endpoint, operation, params, query) {
     : `Requires a personal access token with scope ${scopes.map((scope) => `\`${scope}\``).join(", ")}.`;
   const mutation =
     !["GET", "HEAD"].includes(endpoint.method) &&
-    ![
-      "listOrders",
-      "listOpenOrders",
-      "listPositions",
-      "quoteBridgeDeposit",
-      "quoteBridgeWithdrawal",
-    ].includes(name);
+    !["listOrders", "listOpenOrders", "listPositions", "quoteBridgeWithdrawal"].includes(name);
   const lines = [docs.summary, "", "@remarks", `${authentication} ${docs.remarks}`, ""];
   for (const param of params.filter((param) => param.in === "path")) {
     const description = docs.params?.[param.name];

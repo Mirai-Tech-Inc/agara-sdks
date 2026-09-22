@@ -194,13 +194,7 @@ export class Transport {
     const mutation =
       method !== "GET" &&
       method !== "HEAD" &&
-      ![
-        "listOrders",
-        "listOpenOrders",
-        "listPositions",
-        "quoteBridgeDeposit",
-        "quoteBridgeWithdrawal",
-      ].includes(name);
+      !["listOrders", "listOpenOrders", "listPositions", "quoteBridgeWithdrawal"].includes(name);
     const url = new URL(
       `${path.startsWith("/api/") ? this.catalogueBaseUrl : this.baseUrl}${path}`,
     );
