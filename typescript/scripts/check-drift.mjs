@@ -242,7 +242,10 @@ for (const entry of inventory) {
     continue;
   }
   if (!theirs) {
-    record("warn", `absent from the deployment (${entry.method} ${entry.path})`);
+    // Says "not documented", never "absent": the environment-projected OpenAPI omits mounted paths,
+    // so a missing entry here is no evidence the route is missing. Both bridge withdrawal paths are
+    // undocumented on dev and answer requests there.
+    record("warn", `not documented by the deployment (${entry.method} ${entry.path})`);
     continue;
   }
 

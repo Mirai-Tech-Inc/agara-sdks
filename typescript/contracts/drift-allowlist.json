@@ -13,7 +13,7 @@
     },
     {
       "operation": "*",
-      "pattern": "^absent from the deployment \\(\\w+ /trade/v1/portfolio/bridge/withdraw/",
+      "pattern": "^not documented by the deployment \\(\\w+ /trade/v1/portfolio/bridge/withdraw/",
       "reason": "Both withdrawal paths are source-backed additions; the environment-projected OpenAPI omits them even though the routes respond (401 unauthenticated, and the handler runs when authorized). Absence from the document is not absence of the route."
     },
     {
