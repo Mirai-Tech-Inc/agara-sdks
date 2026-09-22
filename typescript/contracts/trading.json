@@ -2177,7 +2177,8 @@
       },
       "LpIncentiveMarketPhase": {
         "enum": [
-          "ACTIVE"
+          "ACTIVE",
+          "UPCOMING"
         ],
         "type": "string"
       },

@@ -1534,7 +1534,7 @@ export interface components {
             question: string;
         };
         /** @enum {string} */
-        LpIncentiveMarketPhase: "ACTIVE";
+        LpIncentiveMarketPhase: "ACTIVE" | "UPCOMING";
         /** @enum {string} */
         LpIncentiveSortBy: "market" | "close_time" | "max_spread" | "min_shares" | "reward_pool" | "my_share" | "projected_payout";
         /** @enum {string} */
