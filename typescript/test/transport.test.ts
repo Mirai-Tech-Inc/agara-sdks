@@ -18,6 +18,24 @@ interface Endpoint {
 const endpoints = contract("endpoints") as unknown as Endpoint[];
 const CATALOGUE = "https://catalogue.test";
 const specs = { trading: contract("trading"), catalogue: contract("catalogue") };
+function successBody(name: string): Record<string, unknown> {
+  const endpoint = endpoints.find((e) => e.name === name);
+  if (!endpoint) throw Error(`Unknown endpoint ${name}`);
+  const spec = specs[endpoint.service === "router" ? "trading" : "catalogue"];
+  const definitions = (spec.components as { schemas: Record<string, Schema> }).schemas;
+  const operation = (spec.paths as Record<string, Record<string, Schema>>)[endpoint.path]?.[
+    endpoint.method.toLowerCase()
+  ] as Schema;
+  const success = Object.entries(operation.responses as Record<string, Schema>).find(([status]) =>
+    status.startsWith("2"),
+  );
+  if (!success) throw Error(`No success response for ${name}`);
+  const schema = (success[1].content as { "application/json": { schema: Schema } })[
+    "application/json"
+  ].schema;
+
+  return sample(schema, definitions) as Record<string, unknown>;
+}
 const key = privateKeyToAccount(`0x${"11".repeat(32)}`);
 const signed = await signOrder(
   {
@@ -217,6 +235,46 @@ it("preserves response status and ids on canonical errors", async () => {
     code: "insufficient_balance",
     requestId: "8051f907-4eeb-4ca9-bd84-b447ea65a68c",
   });
+});
+it("runs the client observer before the per-request one, and neither on a failure", async () => {
+  const order = stringifyJson(successBody("getOrder"));
+  let ok = true;
+  const calls: string[] = [];
+  const c = new AgaraClient({
+    ...traderOptions,
+    onResponse: (m) => calls.push(`client ${m.status} ${m.requestId} ${m.headers.get("x-kind")}`),
+    fetch: async () =>
+      ok
+        ? new Response(order, { headers: { "x-request-id": "audit", "x-kind": "order" } })
+        : new Response('{"type":"urn:agara:problem:x","title":"x","status":500,"code":"x"}', {
+            status: 500,
+          }),
+  });
+
+  await c.getOrder("uuid", { onResponse: (m) => calls.push(`request ${m.status}`) });
+  // A metering observer that ran after the caller's own hook would report requests the caller had
+  // already acted on, and one that ran on failures would count responses that carry no result.
+  expect(calls).toEqual(["client 200 audit order", "request 200"]);
+  ok = false;
+  await expect(c.getOrder("uuid", { onResponse: () => calls.push("request") })).rejects.toThrow();
+  expect(calls).toHaveLength(2);
+});
+it("reports every status read a wait performs, not just the last", async () => {
+  const seen: number[] = [];
+  const envelope = successBody("getOrder");
+  const withTerminal = (is_terminal: boolean) =>
+    stringifyJson({ ...envelope, order: { ...(envelope.order as object), is_terminal } });
+  const bodies = [withTerminal(false), withTerminal(false), withTerminal(true)];
+  const c = new AgaraClient({
+    ...traderOptions,
+    onResponse: (m) => seen.push(m.status),
+    fetch: async () => new Response(bodies.shift(), { status: 200 }),
+  });
+
+  expect((await c.waitForOrder("uuid", { pollIntervalMs: 0 })).is_terminal).toBe(true);
+  // One observation per read: a caller metering its own request volume must see the polling reads,
+  // which are the ones that multiply.
+  expect(seen).toEqual([200, 200, 200]);
 });
 it("observer errors retain the successful response and do not suggest retry", async () => {
   const c = new AgaraClient({
