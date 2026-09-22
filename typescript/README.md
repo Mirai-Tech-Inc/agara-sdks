@@ -37,7 +37,7 @@ response observers receive HTTP status, headers and request ID.
 
 ## Coverage and wire contracts
 
-All **53 REST operations**, both router WebSocket endpoints, and both price SSE feeds
+All **51 REST operations**, both router WebSocket endpoints, and both price SSE feeds
 in [the checked-in scope](contracts/manifest.json) have named APIs. The
 [method inventory](contracts/endpoints.json) maps each REST method to its path and auth.
 Concrete request/response types derive from scoped OpenAPI snapshots, with source-backed
@@ -46,14 +46,18 @@ schema types through `TradingSchemas` / `CatalogueSchemas` from `@agara/sdk/type
 common domain types such as `Order`, `Fill`, `BatchSubmission` are also exported.
 
 Included families: orderbooks/orders/signed batches; account batch submission/status/
-supersede/group status; complete portfolio reads, split/merge, rebates, P&L; bridge
+supersede/group status; complete portfolio reads, split/merge, rebates, realized P&L; bridge
 asset/address/quote reads; LP incentives; events, markets, categories, search,
-calendars, securities, price point/ticks/token history. Feature-gated P&L and disabled
-providers return their structured server failure; method presence does not enable them.
+calendars, securities, price point/ticks/token history. Disabled providers return their
+structured server failure; method presence does not enable them.
+
+Unrealized P&L is not part of the surface: the platform does not support it, so
+`/trade/v1/portfolio/pnl` and `/trade/v1/portfolio/pnl/history` are excluded and only
+`getRealizedPnl` remains.
 
 JWT onboarding/account administration, token CRUD, standalone withdrawals, merge-all
 creation, browser configuration, home/navigation presentation, faucets, admin/internal
-routes, and retired redemption endpoints are intentionally excluded. PAT account-batch
+routes, retired redemption endpoints, and unrealized P&L are intentionally excluded. PAT account-batch
 `WITHDRAW` is supported and distinct from the excluded JWT withdrawal HTTP endpoint.
 Across batch operations require server signing and are not accepted by presigned helpers.
 

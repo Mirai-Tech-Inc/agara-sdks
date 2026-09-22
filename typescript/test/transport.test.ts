@@ -32,7 +32,7 @@ const signed = await signOrder(
 );
 describe("complete named endpoint contract", () => {
   it("covers the scope exactly", () => {
-    expect(endpoints).toHaveLength(53);
+    expect(endpoints).toHaveLength(51);
     const scope = contract("manifest").operations as Endpoint[];
     expect(new Set(endpoints.map((e) => `${e.method} ${e.path}`))).toEqual(
       new Set(

@@ -297,24 +297,6 @@
     "operationId": "lp_incentive_earnings"
   },
   {
-    "name": "getPnl",
-    "service": "router",
-    "protocol": "HTTP",
-    "method": "GET",
-    "path": "/trade/v1/portfolio/pnl",
-    "auth": "Privy JWT or PAT: PortfolioRead",
-    "operationId": "portfolio_pnl"
-  },
-  {
-    "name": "getPnlHistory",
-    "service": "router",
-    "protocol": "HTTP",
-    "method": "GET",
-    "path": "/trade/v1/portfolio/pnl/history",
-    "auth": "Privy JWT or PAT: PortfolioRead",
-    "operationId": "portfolio_pnl_history"
-  },
-  {
     "name": "getRealizedPnl",
     "service": "router",
     "protocol": "HTTP",

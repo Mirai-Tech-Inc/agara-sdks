@@ -249,20 +249,6 @@ export const endpointDocs = {
     remarks:
       "The current cycle is projected before minimum payout rules; trailing windows combine that projection with prior credited rewards.",
   },
-  getPnl: {
-    summary: "Read the latest completed settled-PnL snapshot.",
-    returns: "Exact micro-amount strings with valuation and custody provenance.",
-    remarks:
-      "Availability depends on deployment configuration and completed projections. Missing or not-ready data is not a zero-PnL result.",
-  },
-  getPnlHistory: {
-    summary: "Read completed settled-PnL buckets and range boundary snapshots.",
-    returns: "Boundary snapshots, lifetime-PnL change, completed points and has_more.",
-    remarks:
-      "Preserve has_more: a truncated result is not a complete range. A missing boundary precedes available completed projections.",
-    query:
-      "Inclusive RFC 3339 from/to instants and optional completed-bucket limit (default 672, maximum 2880).",
-  },
   getRealizedPnl: {
     summary: "Read exact realized-PnL attribution over a UTC calendar window.",
     returns:

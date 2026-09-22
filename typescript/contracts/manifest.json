@@ -250,20 +250,6 @@
       "service": "router",
       "protocol": "HTTP",
       "method": "GET",
-      "path": "/trade/v1/portfolio/pnl",
-      "auth": "Privy JWT or PAT: PortfolioRead"
-    },
-    {
-      "service": "router",
-      "protocol": "HTTP",
-      "method": "GET",
-      "path": "/trade/v1/portfolio/pnl/history",
-      "auth": "Privy JWT or PAT: PortfolioRead"
-    },
-    {
-      "service": "router",
-      "protocol": "HTTP",
-      "method": "GET",
       "path": "/trade/v1/portfolio/pnl/realized",
       "auth": "Privy JWT or PAT: PortfolioRead"
     },

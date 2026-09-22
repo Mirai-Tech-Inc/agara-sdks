@@ -36,8 +36,6 @@ const names = {
   closed_lp_incentives: "listClosedLpIncentives",
   closed_lp_incentive_categories: "listClosedLpIncentiveCategories",
   lp_incentive_earnings: "getLpIncentiveEarnings",
-  portfolio_pnl: "getPnl",
-  portfolio_pnl_history: "getPnlHistory",
   portfolio_realized_pnl: "getRealizedPnl",
   getApiV1CalendarsByMicDaysByDate: "getTradingDay",
   getApiV1CalendarsByMicDays: "listTradingDays",
