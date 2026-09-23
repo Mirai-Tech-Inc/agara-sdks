@@ -35,11 +35,11 @@
           },
           "price_scale": {
             "type": "number",
-            "description": "Number of engine price units per $1. e.g. 100 \u21d2 1 unit = $0.01."
+            "description": "Number of engine price units per $1. e.g. 100 ⇒ 1 unit = $0.01."
           },
           "size_scale": {
             "type": "number",
-            "description": "Number of engine size units per whole share. e.g. 1_000_000 \u21d2 1 unit = 1e-6 shares."
+            "description": "Number of engine size units per whole share. e.g. 1_000_000 ⇒ 1 unit = 1e-6 shares."
           },
           "min_price": {
             "type": "number",
@@ -57,7 +57,7 @@
           "min_price",
           "max_price"
         ],
-        "description": "AGARA matching-engine config for a single market. The engine deals in integer \"price units\" (`price = micro_dollars \u00d7 price_scale / 1_000_000`) and integer \"size units\" (`size = micro_shares \u00d7 size_scale / 1_000_000`). Used by maker/taker bots to quantize and clamp quotes locally \u2014 saves a round-trip per tick."
+        "description": "AGARA matching-engine config for a single market. The engine deals in integer \"price units\" (`price = micro_dollars × price_scale / 1_000_000`) and integer \"size units\" (`size = micro_shares × size_scale / 1_000_000`). Used by maker/taker bots to quantize and clamp quotes locally — saves a round-trip per tick."
       },
       "BaseMarketDisplay": {
         "type": "object",
@@ -91,15 +91,15 @@
           },
           "player_name": {
             "type": "string",
-            "description": "Player-prop player name (Steph Curry, Patrick Mahomes, \u2026)."
+            "description": "Player-prop player name (Steph Curry, Patrick Mahomes, …)."
           },
           "stat_type": {
             "type": "string",
-            "description": "Player-prop stat type (points, assists, passing yards, \u2026)."
+            "description": "Player-prop stat type (points, assists, passing yards, …)."
           },
           "liquidity": {
             "type": "number",
-            "description": "Snapshot of liquidity at last sync. Not sorted/filtered on, so it lives in the JSONB bag rather than as a dedicated column. NUMERIC via JSONB \u2014 number, not string."
+            "description": "Snapshot of liquidity at last sync. Not sorted/filtered on, so it lives in the JSONB bag rather than as a dedicated column. NUMERIC via JSONB — number, not string."
           },
           "cadence_seconds": {
             "type": "number",
@@ -125,7 +125,7 @@
           },
           "band_index": {
             "type": "number",
-            "description": "price_range band member: 0-based position in the cycle's ladder (low\u2192high), the concrete `[lower, upper)` bounds (null = an open `<`/`>=` tail), and the rendered band label. Stamped at provision; drive the bucket-ladder rows + cycle grouping."
+            "description": "price_range band member: 0-based position in the cycle's ladder (low→high), the concrete `[lower, upper)` bounds (null = an open `<`/`>=` tail), and the rendered band label. Stamped at provision; drive the bucket-ladder rows + cycle grouping."
           },
           "band_lower": {
             "type": [
@@ -171,7 +171,7 @@
               "number",
               "null"
             ],
-            "description": "Esports per-game routing \u2014 extracted from market.slug via /-game(\\d+)/i. null when the slug carries no -gameN suffix. Populated for every market regardless of layout (cheap slug parse); consumed only when the parent event's layout === 'esports'. Hoisted to MarketDetail.game_number \u2014 readers prefer top-level."
+            "description": "Esports per-game routing — extracted from market.slug via /-game(\\d+)/i. null when the slug carries no -gameN suffix. Populated for every market regardless of layout (cheap slug parse); consumed only when the parent event's layout === 'esports'. Hoisted to MarketDetail.game_number — readers prefer top-level."
           },
           "is_three_way": {
             "type": "boolean",
@@ -183,7 +183,7 @@
           },
           "display_label": {
             "type": "string",
-            "description": "Canonical display label for the row/card title. Sync's recipe (computeMarketLabel) always populates via a five-layer fallback: 3-way leg \u2192 tennis \u2192 esports tab strip \u2192 groupItemTitle for lined/multi-outcome \u2192 question. Hoisted to MarketDetail.display_label."
+            "description": "Canonical display label for the row/card title. Sync's recipe (computeMarketLabel) always populates via a five-layer fallback: 3-way leg → tennis → esports tab strip → groupItemTitle for lined/multi-outcome → question. Hoisted to MarketDetail.display_label."
           },
           "agara_cms": {
             "$ref": "#/components/schemas/AgaraCmsMarketDisplay",
@@ -196,7 +196,7 @@
         "properties": {
           "label": {
             "type": "string",
-            "description": "Canonical raw outcome text \u2014 storage home for MarketOutcome.label. Always populated by the sync writer; the wire shape lives in `MarketOutcome.label` after the API serializer hoists."
+            "description": "Canonical raw outcome text — storage home for MarketOutcome.label. Always populated by the sync writer; the wire shape lives in `MarketOutcome.label` after the API serializer hoists."
           },
           "kind": {
             "$ref": "#/components/schemas/OutcomeKind",
@@ -227,7 +227,7 @@
               "right",
               null
             ],
-            "description": "Pill side for binary card layouts: index-0 \u2192 'left', index-1 \u2192 'right'. null for ternary or grid layouts."
+            "description": "Pill side for binary card layouts: index-0 → 'left', index-1 → 'right'. null for ternary or grid layouts."
           },
           "threshold": {
             "type": [
@@ -238,7 +238,7 @@
           },
           "bet_slip_title": {
             "type": "string",
-            "description": "Pre-rendered bet-slip header sentence \u2014 single source of truth. See MarketOutcome.bet_slip_title."
+            "description": "Pre-rendered bet-slip header sentence — single source of truth. See MarketOutcome.bet_slip_title."
           },
           "resolution_label": {
             "type": "string",
@@ -257,7 +257,7 @@
           "lined_single_card",
           "multi_outcome_grid"
         ],
-        "description": "Render form for one CategorySection. Three values, locked. New rendering forms ship as new enum values plus a frontend dispatcher branch \u2014 no other schema change. See spec docs/superpowers/specs/2026-04-25-event-market-tabs-design.md \"Render hint catalog\" for the table."
+        "description": "Render form for one CategorySection. Three values, locked. New rendering forms ship as new enum values plus a frontend dispatcher branch — no other schema change. See spec docs/superpowers/specs/2026-04-25-event-market-tabs-design.md \"Render hint catalog\" for the table."
       },
       "CategoryResource": {
         "type": "object",
@@ -289,7 +289,7 @@
               "multi_outcome",
               "proposition"
             ],
-            "description": "Presence of each event_type in the closure-walked subtree. The web client rolls up MULTI_OUTCOME + PROPOSITION \u2192 \"Props\" for display; the API contract reports the schema event_types directly so the rollup decision stays a UI concern."
+            "description": "Presence of each event_type in the closure-walked subtree. The web client rolls up MULTI_OUTCOME + PROPOSITION → \"Props\" for display; the API contract reports the schema event_types directly so the rollup decision stays a UI concern."
           }
         },
         "required": [
@@ -304,7 +304,7 @@
         "properties": {
           "key": {
             "type": "string",
-            "description": "Canonical category key \u2014 see schema doc \u00a77 for the full registry. CMS overrides key on (event_id, tab_key, section_key)."
+            "description": "Canonical category key — see schema doc §7 for the full registry. CMS overrides key on (event_id, tab_key, section_key)."
           },
           "label": {
             "type": "string",
@@ -335,7 +335,7 @@
           "render_hint",
           "groups"
         ],
-        "description": "One categorized bucket within a tab \u2014 e.g. 'Moneyline', 'Spreads'."
+        "description": "One categorized bucket within a tab — e.g. 'Moneyline', 'Spreads'."
       },
       "CategorySectionMeta": {
         "type": "object",
@@ -346,14 +346,14 @@
               "line",
               "game_number"
             ],
-            "description": "lined_single_card only \u2014 what the line-selector pill strip displays. Default 'line' for spreads/totals/etc.; 'game_number' for esports map_winners (the pills read \"1 / 2 / 3\" instead of \"1.5 / 2.5\")."
+            "description": "lined_single_card only — what the line-selector pill strip displays. Default 'line' for spreads/totals/etc.; 'game_number' for esports map_winners (the pills read \"1 / 2 / 3\" instead of \"1.5 / 2.5\")."
           },
           "default_line": {
             "type": [
               "number",
               "null"
             ],
-            "description": "lined_single_card with selector_axis='line' only \u2014 the line the frontend should default to on mount. null when no anchor exists; renderer falls back to closest-to-50\u00a2. Ignored when axis is 'game_number' (frontend defaults to the smallest game number)."
+            "description": "lined_single_card with selector_axis='line' only — the line the frontend should default to on mount. null when no anchor exists; renderer falls back to closest-to-50¢. Ignored when axis is 'game_number' (frontend defaults to the smallest game number)."
           },
           "line_owner_side": {
             "type": "string",
@@ -361,7 +361,7 @@
               "first",
               "second"
             ],
-            "description": "lined_single_card only \u2014 which side owns the raw stored line. Replaces the legacy \"Team-A-gets-raw\" implicit convention."
+            "description": "lined_single_card only — which side owns the raw stored line. Replaces the legacy \"Team-A-gets-raw\" implicit convention."
           },
           "grid_cols_hint": {
             "type": "number",
@@ -370,10 +370,10 @@
               3,
               4
             ],
-            "description": "multi_outcome_grid only \u2014 column-count hint. Frontend can override for viewport."
+            "description": "multi_outcome_grid only — column-count hint. Frontend can override for viewport."
           }
         },
-        "description": "Optional per-section extras. Sparse \u2014 populated only when a render hint actually needs config (lined / multi-outcome). card_list emits no meta by design."
+        "description": "Optional per-section extras. Sparse — populated only when a render hint actually needs config (lined / multi-outcome). card_list emits no meta by design."
       },
       "DisplayType": {
         "type": "string",
@@ -437,7 +437,7 @@
               "string",
               "null"
             ],
-            "description": "Origin-relative path, e.g. \"/sports/tennis/lakers-vs-celtics-2026-04-29\". null when the event has no categories \u2014 caller falls back to inline render at /event/<canonical_slug>."
+            "description": "Origin-relative path, e.g. \"/sports/tennis/lakers-vs-celtics-2026-04-29\". null when the event has no categories — caller falls back to inline render at /event/<canonical_slug>."
           },
           "canonical_slug": {
             "type": "string",
@@ -510,7 +510,7 @@
                   "string",
                   "null"
                 ],
-                "description": "UUID of the event's primary leg market. For 2-way events this IS the main market. For 3-way events (soccer moneylines, etc.) this is the lead leg sync's rollup picked deterministically \u2014 readers needing the full leg group should use the API's `main_market_group` (assembled at read time via `neg_risk_id`). null when the event has no markets."
+                "description": "UUID of the event's primary leg market. For 2-way events this IS the main market. For 3-way events (soccer moneylines, etc.) this is the lead leg sync's rollup picked deterministically — readers needing the full leg group should use the API's `main_market_group` (assembled at read time via `neg_risk_id`). null when the event has no markets."
               },
               "resolution_status": {
                 "type": "string",
@@ -609,22 +609,22 @@
                 "items": {
                   "$ref": "#/components/schemas/MarketDetail"
                 },
-                "description": "Up to 2 featured spread markets nearest the event's main spread line. Ordered by distance from `display.spreads_main_line`. Detail only \u2014 listing card doesn't render spreads."
+                "description": "Up to 2 featured spread markets nearest the event's main spread line. Ordered by distance from `display.spreads_main_line`. Detail only — listing card doesn't render spreads."
               },
               "featured_totals_market": {
                 "$ref": "#/components/schemas/MarketDetail",
-                "description": "Single featured totals market, preferring exact match on `display.totals_main_line`. Detail only \u2014 listing card doesn't render totals."
+                "description": "Single featured totals market, preferring exact match on `display.totals_main_line`. Detail only — listing card doesn't render totals."
               },
               "market_tabs": {
                 "type": "array",
                 "items": {
                   "$ref": "#/components/schemas/MarketTab"
                 },
-                "description": "Pre-assembled event rendering tree: tabs \u2192 sections \u2192 groups \u2192 market_ids. Frontend hydrates each MarketGroup via market_ids.map(id => marketsById.get(id)). NULL on the DB maps to [] on the wire. See MarketTab."
+                "description": "Pre-assembled event rendering tree: tabs → sections → groups → market_ids. Frontend hydrates each MarketGroup via market_ids.map(id => marketsById.get(id)). NULL on the DB maps to [] on the wire. See MarketTab."
               },
               "disputed_market_count": {
                 "type": "number",
-                "description": "Counts for the resolution badges. Computed over the markets served on this payload \u2014 for RECURRING_PROPOSITION events that is the windowed subset (live window + capped upcoming/settled cycles), not all cycles the series ever ran."
+                "description": "Counts for the resolution badges. Computed over the markets served on this payload — for RECURRING_PROPOSITION events that is the windowed subset (live window + capped upcoming/settled cycles), not all cycles the series ever ran."
               },
               "resolved_market_count": {
                 "type": "number"
@@ -707,7 +707,7 @@
                   "string",
                   "null"
                 ],
-                "description": "UUID of the event's primary leg market. For 2-way events this IS the main market. For 3-way events (soccer moneylines, etc.) this is the lead leg sync's rollup picked deterministically \u2014 readers needing the full leg group should use the API's `main_market_group` (assembled at read time via `neg_risk_id`). null when the event has no markets."
+                "description": "UUID of the event's primary leg market. For 2-way events this IS the main market. For 3-way events (soccer moneylines, etc.) this is the lead leg sync's rollup picked deterministically — readers needing the full leg group should use the API's `main_market_group` (assembled at read time via `neg_risk_id`). null when the event has no markets."
               },
               "resolution_status": {
                 "type": "string",
@@ -806,22 +806,22 @@
                 "items": {
                   "$ref": "#/components/schemas/MarketDetail"
                 },
-                "description": "Up to 2 featured spread markets nearest the event's main spread line. Ordered by distance from `display.spreads_main_line`. Detail only \u2014 listing card doesn't render spreads."
+                "description": "Up to 2 featured spread markets nearest the event's main spread line. Ordered by distance from `display.spreads_main_line`. Detail only — listing card doesn't render spreads."
               },
               "featured_totals_market": {
                 "$ref": "#/components/schemas/MarketDetail",
-                "description": "Single featured totals market, preferring exact match on `display.totals_main_line`. Detail only \u2014 listing card doesn't render totals."
+                "description": "Single featured totals market, preferring exact match on `display.totals_main_line`. Detail only — listing card doesn't render totals."
               },
               "market_tabs": {
                 "type": "array",
                 "items": {
                   "$ref": "#/components/schemas/MarketTab"
                 },
-                "description": "Pre-assembled event rendering tree: tabs \u2192 sections \u2192 groups \u2192 market_ids. Frontend hydrates each MarketGroup via market_ids.map(id => marketsById.get(id)). NULL on the DB maps to [] on the wire. See MarketTab."
+                "description": "Pre-assembled event rendering tree: tabs → sections → groups → market_ids. Frontend hydrates each MarketGroup via market_ids.map(id => marketsById.get(id)). NULL on the DB maps to [] on the wire. See MarketTab."
               },
               "disputed_market_count": {
                 "type": "number",
-                "description": "Counts for the resolution badges. Computed over the markets served on this payload \u2014 for RECURRING_PROPOSITION events that is the windowed subset (live window + capped upcoming/settled cycles), not all cycles the series ever ran."
+                "description": "Counts for the resolution badges. Computed over the markets served on this payload — for RECURRING_PROPOSITION events that is the windowed subset (live window + capped upcoming/settled cycles), not all cycles the series ever ran."
               },
               "resolved_market_count": {
                 "type": "number"
@@ -903,7 +903,7 @@
                   "string",
                   "null"
                 ],
-                "description": "UUID of the event's primary leg market. For 2-way events this IS the main market. For 3-way events (soccer moneylines, etc.) this is the lead leg sync's rollup picked deterministically \u2014 readers needing the full leg group should use the API's `main_market_group` (assembled at read time via `neg_risk_id`). null when the event has no markets."
+                "description": "UUID of the event's primary leg market. For 2-way events this IS the main market. For 3-way events (soccer moneylines, etc.) this is the lead leg sync's rollup picked deterministically — readers needing the full leg group should use the API's `main_market_group` (assembled at read time via `neg_risk_id`). null when the event has no markets."
               },
               "resolution_status": {
                 "type": "string",
@@ -1002,22 +1002,22 @@
                 "items": {
                   "$ref": "#/components/schemas/MarketDetail"
                 },
-                "description": "Up to 2 featured spread markets nearest the event's main spread line. Ordered by distance from `display.spreads_main_line`. Detail only \u2014 listing card doesn't render spreads."
+                "description": "Up to 2 featured spread markets nearest the event's main spread line. Ordered by distance from `display.spreads_main_line`. Detail only — listing card doesn't render spreads."
               },
               "featured_totals_market": {
                 "$ref": "#/components/schemas/MarketDetail",
-                "description": "Single featured totals market, preferring exact match on `display.totals_main_line`. Detail only \u2014 listing card doesn't render totals."
+                "description": "Single featured totals market, preferring exact match on `display.totals_main_line`. Detail only — listing card doesn't render totals."
               },
               "market_tabs": {
                 "type": "array",
                 "items": {
                   "$ref": "#/components/schemas/MarketTab"
                 },
-                "description": "Pre-assembled event rendering tree: tabs \u2192 sections \u2192 groups \u2192 market_ids. Frontend hydrates each MarketGroup via market_ids.map(id => marketsById.get(id)). NULL on the DB maps to [] on the wire. See MarketTab."
+                "description": "Pre-assembled event rendering tree: tabs → sections → groups → market_ids. Frontend hydrates each MarketGroup via market_ids.map(id => marketsById.get(id)). NULL on the DB maps to [] on the wire. See MarketTab."
               },
               "disputed_market_count": {
                 "type": "number",
-                "description": "Counts for the resolution badges. Computed over the markets served on this payload \u2014 for RECURRING_PROPOSITION events that is the windowed subset (live window + capped upcoming/settled cycles), not all cycles the series ever ran."
+                "description": "Counts for the resolution badges. Computed over the markets served on this payload — for RECURRING_PROPOSITION events that is the windowed subset (live window + capped upcoming/settled cycles), not all cycles the series ever ran."
               },
               "resolved_market_count": {
                 "type": "number"
@@ -1099,7 +1099,7 @@
                   "string",
                   "null"
                 ],
-                "description": "UUID of the event's primary leg market. For 2-way events this IS the main market. For 3-way events (soccer moneylines, etc.) this is the lead leg sync's rollup picked deterministically \u2014 readers needing the full leg group should use the API's `main_market_group` (assembled at read time via `neg_risk_id`). null when the event has no markets."
+                "description": "UUID of the event's primary leg market. For 2-way events this IS the main market. For 3-way events (soccer moneylines, etc.) this is the lead leg sync's rollup picked deterministically — readers needing the full leg group should use the API's `main_market_group` (assembled at read time via `neg_risk_id`). null when the event has no markets."
               },
               "resolution_status": {
                 "type": "string",
@@ -1198,22 +1198,22 @@
                 "items": {
                   "$ref": "#/components/schemas/MarketDetail"
                 },
-                "description": "Up to 2 featured spread markets nearest the event's main spread line. Ordered by distance from `display.spreads_main_line`. Detail only \u2014 listing card doesn't render spreads."
+                "description": "Up to 2 featured spread markets nearest the event's main spread line. Ordered by distance from `display.spreads_main_line`. Detail only — listing card doesn't render spreads."
               },
               "featured_totals_market": {
                 "$ref": "#/components/schemas/MarketDetail",
-                "description": "Single featured totals market, preferring exact match on `display.totals_main_line`. Detail only \u2014 listing card doesn't render totals."
+                "description": "Single featured totals market, preferring exact match on `display.totals_main_line`. Detail only — listing card doesn't render totals."
               },
               "market_tabs": {
                 "type": "array",
                 "items": {
                   "$ref": "#/components/schemas/MarketTab"
                 },
-                "description": "Pre-assembled event rendering tree: tabs \u2192 sections \u2192 groups \u2192 market_ids. Frontend hydrates each MarketGroup via market_ids.map(id => marketsById.get(id)). NULL on the DB maps to [] on the wire. See MarketTab."
+                "description": "Pre-assembled event rendering tree: tabs → sections → groups → market_ids. Frontend hydrates each MarketGroup via market_ids.map(id => marketsById.get(id)). NULL on the DB maps to [] on the wire. See MarketTab."
               },
               "disputed_market_count": {
                 "type": "number",
-                "description": "Counts for the resolution badges. Computed over the markets served on this payload \u2014 for RECURRING_PROPOSITION events that is the windowed subset (live window + capped upcoming/settled cycles), not all cycles the series ever ran."
+                "description": "Counts for the resolution badges. Computed over the markets served on this payload — for RECURRING_PROPOSITION events that is the windowed subset (live window + capped upcoming/settled cycles), not all cycles the series ever ran."
               },
               "resolved_market_count": {
                 "type": "number"
@@ -1258,7 +1258,7 @@
           "proposition",
           "recurring_proposition"
         ],
-        "description": "Top-level event-shell selector. Set by sync's rollupAgaraEventMainMarket from event_type + display.sport_slug.\n\n- 'regular'       \u2014 GAME with non-esports sport (or unknown sport, with a warn-log).\n- 'esports'       \u2014 GAME with sport in the esports set (lol, cs2, val, ...).\n- 'multi_outcome' \u2014 MULTI_OUTCOME event_type.\n- 'proposition'   \u2014 PROPOSITION event_type."
+        "description": "Top-level event-shell selector. Set by sync's rollupAgaraEventMainMarket from event_type + display.sport_slug.\n\n- 'regular'       — GAME with non-esports sport (or unknown sport, with a warn-log).\n- 'esports'       — GAME with sport in the esports set (lol, cs2, val, ...).\n- 'multi_outcome' — MULTI_OUTCOME event_type.\n- 'proposition'   — PROPOSITION event_type."
       },
       "EventLifecycleState": {
         "type": "string",
@@ -1361,7 +1361,7 @@
                   "string",
                   "null"
                 ],
-                "description": "UUID of the event's primary leg market. For 2-way events this IS the main market. For 3-way events (soccer moneylines, etc.) this is the lead leg sync's rollup picked deterministically \u2014 readers needing the full leg group should use the API's `main_market_group` (assembled at read time via `neg_risk_id`). null when the event has no markets."
+                "description": "UUID of the event's primary leg market. For 2-way events this IS the main market. For 3-way events (soccer moneylines, etc.) this is the lead leg sync's rollup picked deterministically — readers needing the full leg group should use the API's `main_market_group` (assembled at read time via `neg_risk_id`). null when the event has no markets."
               },
               "resolution_status": {
                 "type": "string",
@@ -1484,7 +1484,7 @@
                   "string",
                   "null"
                 ],
-                "description": "UUID of the event's primary leg market. For 2-way events this IS the main market. For 3-way events (soccer moneylines, etc.) this is the lead leg sync's rollup picked deterministically \u2014 readers needing the full leg group should use the API's `main_market_group` (assembled at read time via `neg_risk_id`). null when the event has no markets."
+                "description": "UUID of the event's primary leg market. For 2-way events this IS the main market. For 3-way events (soccer moneylines, etc.) this is the lead leg sync's rollup picked deterministically — readers needing the full leg group should use the API's `main_market_group` (assembled at read time via `neg_risk_id`). null when the event has no markets."
               },
               "resolution_status": {
                 "type": "string",
@@ -1606,7 +1606,7 @@
                   "string",
                   "null"
                 ],
-                "description": "UUID of the event's primary leg market. For 2-way events this IS the main market. For 3-way events (soccer moneylines, etc.) this is the lead leg sync's rollup picked deterministically \u2014 readers needing the full leg group should use the API's `main_market_group` (assembled at read time via `neg_risk_id`). null when the event has no markets."
+                "description": "UUID of the event's primary leg market. For 2-way events this IS the main market. For 3-way events (soccer moneylines, etc.) this is the lead leg sync's rollup picked deterministically — readers needing the full leg group should use the API's `main_market_group` (assembled at read time via `neg_risk_id`). null when the event has no markets."
               },
               "resolution_status": {
                 "type": "string",
@@ -1729,7 +1729,7 @@
                   "string",
                   "null"
                 ],
-                "description": "UUID of the event's primary leg market. For 2-way events this IS the main market. For 3-way events (soccer moneylines, etc.) this is the lead leg sync's rollup picked deterministically \u2014 readers needing the full leg group should use the API's `main_market_group` (assembled at read time via `neg_risk_id`). null when the event has no markets."
+                "description": "UUID of the event's primary leg market. For 2-way events this IS the main market. For 3-way events (soccer moneylines, etc.) this is the lead leg sync's rollup picked deterministically — readers needing the full leg group should use the API's `main_market_group` (assembled at read time via `neg_risk_id`). null when the event has no markets."
               },
               "resolution_status": {
                 "type": "string",
@@ -1795,7 +1795,7 @@
             "items": {
               "type": "string"
             },
-            "description": "Event ids in render order. Resolve against `events` (single source of truth) \u2014 the API never duplicates rows in section vs. flat list."
+            "description": "Event ids in render order. Resolve against `events` (single source of truth) — the API never duplicates rows in section vs. flat list."
           }
         },
         "required": [
@@ -1820,7 +1820,7 @@
             "items": {
               "$ref": "#/components/schemas/EventListSection"
             },
-            "description": "Optional section grouping. Present only when the API has chosen a grouped layout for this query (currently: filter=sports_live, where events are bucketed by leaf category, sections sorted by aggregate volume desc). Absent \u21d2 caller renders the flat `events` list with whatever local grouping it normally applies."
+            "description": "Optional section grouping. Present only when the API has chosen a grouped layout for this query (currently: filter=sports_live, where events are bucketed by leaf category, sections sorted by aggregate volume desc). Absent ⇒ caller renders the flat `events` list with whatever local grouping it normally applies."
           }
         },
         "required": [
@@ -1922,7 +1922,7 @@
           },
           "resolution_source": {
             "type": "string",
-            "description": "URL or free-text describing how the event will be settled. Applies to every event type \u2014 individual market resolution sources live on each market's display bag."
+            "description": "URL or free-text describing how the event will be settled. Applies to every event type — individual market resolution sources live on each market's display bag."
           },
           "layout": {
             "$ref": "#/components/schemas/EventLayout",
@@ -1970,7 +1970,7 @@
           },
           "format_label": {
             "type": "string",
-            "description": "Sync-rendered fixture-context display string \u2014 `\"Best of 3 maps\"`, `\"Best of 5 games\"`, eventually `\"Best of 5 sets\"` / `\"5 rounds\"` / `\"T20\"`. Persists across the live \u2192 final transition so recap and pre-game surfaces both have the format on hand. Esports-only today; other sports require sport-specific lookup work that isn't wired yet. Absent when the format isn't derivable."
+            "description": "Sync-rendered fixture-context display string — `\"Best of 3 maps\"`, `\"Best of 5 games\"`, eventually `\"Best of 5 sets\"` / `\"5 rounds\"` / `\"T20\"`. Persists across the live → final transition so recap and pre-game surfaces both have the format on hand. Esports-only today; other sports require sport-specific lookup work that isn't wired yet. Absent when the format isn't derivable."
           },
           "spreads_main_line": {
             "type": "number"
@@ -1979,7 +1979,7 @@
             "type": "number"
           }
         },
-        "description": "Display bag for `event_type === 'GAME'` \u2014 sports games with two teams, sport/league classification.\n\nLive state (score + match lifecycle/period) lives on the top-level `game_state` column on agara_events, NOT in this display bag. WS-tick writes target a dedicated column to avoid fragmenting the display JSONB blob on every live frame. The wire-shape `EventDetail.game_state` surfaces it."
+        "description": "Display bag for `event_type === 'GAME'` — sports games with two teams, sport/league classification.\n\nLive state (score + match lifecycle/period) lives on the top-level `game_state` column on agara_events, NOT in this display bag. WS-tick writes target a dedicated column to avoid fragmenting the display JSONB blob on every live frame. The wire-shape `EventDetail.game_state` surfaces it."
       },
       "GameState": {
         "type": "object",
@@ -1989,17 +1989,17 @@
           },
           "score": {
             "$ref": "#/components/schemas/GameStateScore",
-            "description": "Parsed score. Discriminated on `sport` \u2014 callers should narrow via `score.sport === 'tennis'` before accessing per-set detail. Absent when the game hasn't started or the source hasn't shipped a parseable score yet."
+            "description": "Parsed score. Discriminated on `sport` — callers should narrow via `score.sport === 'tennis'` before accessing per-set detail. Absent when the game hasn't started or the source hasn't shipped a parseable score yet."
           },
           "match": {
             "$ref": "#/components/schemas/GameStateMatch",
-            "description": "Normalized match state \u2014 lifecycle (scheduled / live / intermission / final / cancelled / postponed) plus a sync-rendered `live_label` string. Absent when sync hasn't stamped it (forward-compat \u2014 treat as `'scheduled'`)."
+            "description": "Normalized match state — lifecycle (scheduled / live / intermission / final / cancelled / postponed) plus a sync-rendered `live_label` string. Absent when sync hasn't stamped it (forward-compat — treat as `'scheduled'`)."
           }
         },
         "required": [
           "id"
         ],
-        "description": "GAME-only live state \u2014 the contents of the agara_events.game_state JSONB column. Carries the WS-tick-mutating fields (score + match lifecycle/period) that used to live on display.score / display.match."
+        "description": "GAME-only live state — the contents of the agara_events.game_state JSONB column. Carries the WS-tick-mutating fields (score + match lifecycle/period) that used to live on display.score / display.match."
       },
       "GameStateDefaultScore": {
         "type": "object",
@@ -2028,7 +2028,7 @@
           "sport",
           "match"
         ],
-        "description": "Catch-all for any sport that fits a simple match-level pair \u2014 most of our current coverage (basketball, soccer, baseball, hockey, rugby, esports series, combat sports)."
+        "description": "Catch-all for any sport that fits a simple match-level pair — most of our current coverage (basketball, soccer, baseball, hockey, rugby, esports series, combat sports)."
       },
       "GameStateLifecycle": {
         "type": "string",
@@ -2050,7 +2050,7 @@
           },
           "live_label": {
             "type": "string",
-            "description": "Sync-rendered current-state display string \u2014 `\"Q3 \u00b7 06:44\"`, `\"TOP 5 \u00b7 02:14\"`, `\"OT\"`, `\"BREAK\"`, `\"HT\"`, `\"S2\"`. Sport-aware vocabulary lives in the sync adapter; consumers render this string verbatim. Present only when `lifecycle` is `live` or `intermission` \u2014 other lifecycles carry their own UI treatment."
+            "description": "Sync-rendered current-state display string — `\"Q3 · 06:44\"`, `\"TOP 5 · 02:14\"`, `\"OT\"`, `\"BREAK\"`, `\"HT\"`, `\"S2\"`. Sport-aware vocabulary lives in the sync adapter; consumers render this string verbatim. Present only when `lifecycle` is `live` or `intermission` — other lifecycles carry their own UI treatment."
           }
         },
         "required": [
@@ -2066,7 +2066,7 @@
             "$ref": "#/components/schemas/GameStateDefaultScore"
           }
         ],
-        "description": "Per-sport score shape. Discriminated on `sport` \u2014 TypeScript narrows `score.sport === 'tennis'` to expose the set-level array. `match.a` / `match.b` always line up with team_a / team_b and represent the sport's canonical match-level result (points for basketball, goals for soccer, sets won for tennis, maps won for esports series, etc.).\n\nToday we specialize only tennis (every other sport fits the simple two-number match result). Cricket / golf / motorsports land as peer variants when we have real demand to model them richly \u2014 the discriminator is deliberately the sport itself so future additions don't conflict with an orthogonal format tag."
+        "description": "Per-sport score shape. Discriminated on `sport` — TypeScript narrows `score.sport === 'tennis'` to expose the set-level array. `match.a` / `match.b` always line up with team_a / team_b and represent the sport's canonical match-level result (points for basketball, goals for soccer, sets won for tennis, maps won for esports series, etc.).\n\nToday we specialize only tennis (every other sport fits the simple two-number match result). Cricket / golf / motorsports land as peer variants when we have real demand to model them richly — the discriminator is deliberately the sport itself so future additions don't conflict with an orthogonal format tag."
       },
       "GameStateTennisScore": {
         "type": "object",
@@ -2162,7 +2162,7 @@
           },
           "pyth_feed_id": {
             "type": "string",
-            "description": "Pyth Hermes feed id stamped at provision (crypto cycles) \u2014 lets the listing card stream a live price from the same source the market resolves against. Absent for non-pyth markets."
+            "description": "Pyth Hermes feed id stamped at provision (crypto cycles) — lets the listing card stream a live price from the same source the market resolves against. Absent for non-pyth markets."
           },
           "pyth_pro_symbol": {
             "type": "string",
@@ -2178,7 +2178,7 @@
           },
           "reference_price": {
             "type": "string",
-            "description": "Reference price snapped at the cycle's reference_at (RECURRING_PROPOSITION) \u2014 the card's PRICE TO BEAT stat. String to avoid float precision loss. Absent without a stamped reference."
+            "description": "Reference price snapped at the cycle's reference_at (RECURRING_PROPOSITION) — the card's PRICE TO BEAT stat. String to avoid float precision loss. Absent without a stamped reference."
           },
           "currency": {
             "type": [
@@ -2209,7 +2209,7 @@
           "display_label",
           "outcomes"
         ],
-        "description": "Lean market shape for listing-card enrichment, shipped only when the `include_markets` query param is set. PROPOSITION / RECURRING_PROPOSITION events ship their single main market; MULTI_OUTCOME events ship their top-2 candidate markets by YES price. Subset of `MarketDetail` \u2014 just the identity + outcomes the card needs."
+        "description": "Lean market shape for listing-card enrichment, shipped only when the `include_markets` query param is set. PROPOSITION / RECURRING_PROPOSITION events ship their single main market; MULTI_OUTCOME events ship their top-2 candidate markets by YES price. Subset of `MarketDetail` — just the identity + outcomes the card needs."
       },
       "ListingMarketOutcome": {
         "type": "object",
@@ -2245,7 +2245,7 @@
           "price_micro",
           "token_id"
         ],
-        "description": "Lean outcome shape for listing-card enrichment \u2014 only the fields a crypto/proposition card renders (label/% + live-price token). Distinct from the full `MarketOutcome` (best_bid/ask, spread, resolution price, display bag) to keep the opt-in listing payload small."
+        "description": "Lean outcome shape for listing-card enrichment — only the fields a crypto/proposition card renders (label/% + live-price token). Distinct from the full `MarketOutcome` (best_bid/ask, spread, resolution price, display bag) to keep the opt-in listing payload small."
       },
       "MainMarketGroup": {
         "type": "object",
@@ -2261,14 +2261,14 @@
             "items": {
               "$ref": "#/components/schemas/MarketDetail"
             },
-            "description": "Markets in display order. Length 1 for singletons; length 3 for 3-way moneylines (sorted home \u2192 draw \u2192 away)."
+            "description": "Markets in display order. Length 1 for singletons; length 3 for 3-way moneylines (sorted home → draw → away)."
           }
         },
         "required": [
           "neg_risk_id",
           "markets"
         ],
-        "description": "Curated group of markets the event card header renders as ONE chart. Distinct from MarketTab's MarketGroup (id-only references inside the tabs tree) \u2014 this carries embedded MarketDetail rows so the renderer doesn't have to re-resolve through marketsById for the header.\n\n- Singletons (NBA, NFL, tennis moneylines) \u2014 `markets` length 1.\n- 3-way moneylines (soccer, rugby) \u2014 `markets` length 3, sorted   home \u2192 draw \u2192 away by `three_way_role`.\n\n`neg_risk_id` is the linking key when length > 1 (mirrors MarketDetail.neg_risk_id on every member). null for singletons. The API derives the group at read time from the selected main market and its sibling legs in the loaded markets list \u2014 sync still picks one leg as the row's main_market_id; that leg becomes the seed for sibling discovery."
+        "description": "Curated group of markets the event card header renders as ONE chart. Distinct from MarketTab's MarketGroup (id-only references inside the tabs tree) — this carries embedded MarketDetail rows so the renderer doesn't have to re-resolve through marketsById for the header.\n\n- Singletons (NBA, NFL, tennis moneylines) — `markets` length 1.\n- 3-way moneylines (soccer, rugby) — `markets` length 3, sorted   home → draw → away by `three_way_role`.\n\n`neg_risk_id` is the linking key when length > 1 (mirrors MarketDetail.neg_risk_id on every member). null for singletons. The API derives the group at read time from the selected main market and its sibling legs in the loaded markets list — sync still picks one leg as the row's main_market_id; that leg becomes the seed for sibling discovery."
       },
       "MarketDetail": {
         "type": "object",
@@ -2282,7 +2282,7 @@
           },
           "exchange": {
             "$ref": "#/components/schemas/Exchange",
-            "description": "Trading-side backend this market lists on. Mirrors `agara_markets.source` and the router's `agara_domain::Exchange`. Drives per-call routing on the trading side \u2014 buy validation reads the matching backend's free cash, order placement targets the matching wallet, etc. Distinct from `source_market_type` (gamma sport/event taxonomy: `'match_result'`, `'spread'`, \u2026)."
+            "description": "Trading-side backend this market lists on. Mirrors `agara_markets.source` and the router's `agara_domain::Exchange`. Drives per-call routing on the trading side — buy validation reads the matching backend's free cash, order placement targets the matching wallet, etc. Distinct from `source_market_type` (gamma sport/event taxonomy: `'match_result'`, `'spread'`, …)."
           },
           "slug": {
             "type": "string"
@@ -2320,7 +2320,7 @@
               "string",
               "null"
             ],
-            "description": "Admin-driven operational halt. Set \u21d2 trading is stopped and the engine has rejected orders since `halted_at`. Distinct from `is_accepting_orders=false` due to trading-window close."
+            "description": "Admin-driven operational halt. Set ⇒ trading is stopped and the engine has rejected orders since `halted_at`. Distinct from `is_accepting_orders=false` due to trading-window close."
           },
           "halted_reason": {
             "type": [
@@ -2395,7 +2395,7 @@
               "string",
               "null"
             ],
-            "description": "Server-derived \"who won?\" label \u2014 computed at serialization time from the outcome row whose resolution_price = 1.0. NULL when unresolved or VOID (no winner)."
+            "description": "Server-derived \"who won?\" label — computed at serialization time from the outcome row whose resolution_price = 1.0. NULL when unresolved or VOID (no winner)."
           },
           "resolved_at": {
             "type": [
@@ -2441,7 +2441,7 @@
                 "type": "null"
               }
             ],
-            "description": "Which leg of a 3-way moneyline this market represents \u2014 set by sync's three-way-role classifier. null for non-3-way markets."
+            "description": "Which leg of a 3-way moneyline this market represents — set by sync's three-way-role classifier. null for non-3-way markets."
           },
           "is_three_way": {
             "type": [
@@ -2455,22 +2455,11 @@
               "number",
               "null"
             ],
-            "description": "Esports per-game routing \u2014 extracted from market slug. null on non-esports markets / when the slug carries no -gameN suffix."
+            "description": "Esports per-game routing — extracted from market slug. null on non-esports markets / when the slug carries no -gameN suffix."
           },
           "display_label": {
             "type": "string",
-            "description": "Canonical card title \u2014 sync's computeMarketLabel recipe always populates this (3-way leg name \u2192 tennis-derived \u2192 esports strip \u2192 groupItemTitle \u2192 question). Renderers trust it directly."
-          },
-          "lp_incentive": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/MarketLpIncentive"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Current-epoch LP incentive terms. Optional on the wire: set on detail responses, absent on list cards; null when the market has no funded pool for the current epoch."
+            "description": "Canonical card title — sync's computeMarketLabel recipe always populates this (3-way leg name → tennis-derived → esports strip → groupItemTitle → question). Renderers trust it directly."
           },
           "display": {
             "$ref": "#/components/schemas/MarketDisplay"
@@ -2511,7 +2500,7 @@
         "properties": {
           "key": {
             "type": "string",
-            "description": "Stable id across syncs \u2014 neg_risk_id for 3-way / lined groups, market.id for singletons. Frontend uses as React key."
+            "description": "Stable id across syncs — neg_risk_id for 3-way / lined groups, market.id for singletons. Frontend uses as React key."
           },
           "market_ids": {
             "type": "array",
@@ -2525,30 +2514,7 @@
           "key",
           "market_ids"
         ],
-        "description": "One card's worth of markets. Singletons are length 1; 3-way moneyline groups are length 3 (home/draw/away); lined-card groups collect every line of one spread/totals family. The frontend renders the group as one card whose internals depend on the parent section's render_hint.\n\nMarkets are referenced by id, not embedded \u2014 full MarketDetail rows live in EventDetail.markets[]. The contract is: every id in market_tabs MUST be present in markets[]."
-      },
-      "MarketLpIncentive": {
-        "type": "object",
-        "properties": {
-          "pool_micro": {
-            "$ref": "#/components/schemas/MicroUsd",
-            "description": "Daily reward pool for the current epoch. BIGINT 1e-6 micro-USDC."
-          },
-          "max_spread_micro": {
-            "type": "number",
-            "description": "Max distance from the book midpoint that still scores. 1e-6 probability units."
-          },
-          "min_shares_micro": {
-            "type": "string",
-            "description": "Minimum resting order size that scores. BIGINT 1e-6 micro-shares (string on the wire)."
-          }
-        },
-        "required": [
-          "pool_micro",
-          "max_spread_micro",
-          "min_shares_micro"
-        ],
-        "description": "Current-epoch LP incentive terms for a market. Present \u21d4 the market has a funded reward pool for the current Eastern-day epoch \u2014 the same membership rule the router's `/trade/v1/lp-incentives` list applies, so the detail-page badge and the LP discovery table never disagree."
+        "description": "One card's worth of markets. Singletons are length 1; 3-way moneyline groups are length 3 (home/draw/away); lined-card groups collect every line of one spread/totals family. The frontend renders the group as one card whose internals depend on the parent section's render_hint.\n\nMarkets are referenced by id, not embedded — full MarketDetail rows live in EventDetail.markets[]. The contract is: every id in market_tabs MUST be present in markets[]."
       },
       "MarketOutcome": {
         "type": "object",
@@ -2611,7 +2577,7 @@
                 "type": "null"
               }
             ],
-            "description": "Persisted spread (best_ask_micro \u2212 best_bid_micro). 1e-6 micro-units."
+            "description": "Persisted spread (best_ask_micro − best_bid_micro). 1e-6 micro-units."
           },
           "kind": {
             "$ref": "#/components/schemas/OutcomeKind",
@@ -2630,7 +2596,7 @@
                 "type": "null"
               }
             ],
-            "description": "Which event-level team this outcome refers to. Resolves through event.display.team_a / team_b at render time \u2014 see OutcomeTeamSide doc comment. null for non-team outcomes (over/under, draw, no, etc.)."
+            "description": "Which event-level team this outcome refers to. Resolves through event.display.team_a / team_b at render time — see OutcomeTeamSide doc comment. null for non-team outcomes (over/under, draw, no, etc.)."
           },
           "side": {
             "type": [
@@ -2642,7 +2608,7 @@
               "right",
               null
             ],
-            "description": "Pill side for binary card layouts: index-0 \u2192 'left', index-1 \u2192 'right'. null for ternary or grid layouts."
+            "description": "Pill side for binary card layouts: index-0 → 'left', index-1 → 'right'. null for ternary or grid layouts."
           },
           "threshold": {
             "type": [
@@ -2664,7 +2630,7 @@
           },
           "bet_slip_title": {
             "type": "string",
-            "description": "Pre-rendered bet-slip header sentence for THIS outcome \u2014 single source of truth for the bet-slip card title. Sync's buildOutcomeBetSlipTitle stamps the full sentence at write time (e.g. \"Lakers to win\", \"Over 2.5 total goals\", \"Both Teams to Score: Yes\"). Client renders verbatim \u2014 no composition, no English literal templates, no client-side lookup tables. Hoisted from display.bet_slip_title."
+            "description": "Pre-rendered bet-slip header sentence for THIS outcome — single source of truth for the bet-slip card title. Sync's buildOutcomeBetSlipTitle stamps the full sentence at write time (e.g. \"Lakers to win\", \"Over 2.5 total goals\", \"Both Teams to Score: Yes\"). Client renders verbatim — no composition, no English literal templates, no client-side lookup tables. Hoisted from display.bet_slip_title."
           },
           "resolution_label": {
             "type": "string",
@@ -2755,7 +2721,7 @@
             "items": {
               "$ref": "#/components/schemas/CategorySection"
             },
-            "description": "Sections in display order \u2014 the full tab content."
+            "description": "Sections in display order — the full tab content."
           }
         },
         "required": [
@@ -2764,7 +2730,7 @@
           "order",
           "sections"
         ],
-        "description": "One tab in the event's tab strip \u2014 e.g. 'Game Lines', 'Goalscorers'. PROPOSITION / MULTI_OUTCOME / esports events emit a single 'all' tab. Frontend hides the pill strip when tabs.length === 1. Named to mirror the wire field `market_tabs` on EventDetail."
+        "description": "One tab in the event's tab strip — e.g. 'Game Lines', 'Goalscorers'. PROPOSITION / MULTI_OUTCOME / esports events emit a single 'all' tab. Frontend hides the pill strip when tabs.length === 1. Named to mirror the wire field `market_tabs` on EventDetail."
       },
       "MarketsListEventRef": {
         "type": "object",
@@ -2801,7 +2767,7 @@
           },
           "exchange": {
             "$ref": "#/components/schemas/Exchange",
-            "description": "Trading-side backend this market lists on. Mirrors `agara_markets.source` and the router's `agara_domain::Exchange`. Drives per-call routing on the trading side \u2014 buy validation reads the matching backend's free cash, order placement targets the matching wallet, etc. Distinct from `source_market_type` (gamma sport/event taxonomy: `'match_result'`, `'spread'`, \u2026)."
+            "description": "Trading-side backend this market lists on. Mirrors `agara_markets.source` and the router's `agara_domain::Exchange`. Drives per-call routing on the trading side — buy validation reads the matching backend's free cash, order placement targets the matching wallet, etc. Distinct from `source_market_type` (gamma sport/event taxonomy: `'match_result'`, `'spread'`, …)."
           },
           "slug": {
             "type": "string"
@@ -2839,7 +2805,7 @@
               "string",
               "null"
             ],
-            "description": "Admin-driven operational halt. Set \u21d2 trading is stopped and the engine has rejected orders since `halted_at`. Distinct from `is_accepting_orders=false` due to trading-window close."
+            "description": "Admin-driven operational halt. Set ⇒ trading is stopped and the engine has rejected orders since `halted_at`. Distinct from `is_accepting_orders=false` due to trading-window close."
           },
           "halted_reason": {
             "type": [
@@ -2914,7 +2880,7 @@
               "string",
               "null"
             ],
-            "description": "Server-derived \"who won?\" label \u2014 computed at serialization time from the outcome row whose resolution_price = 1.0. NULL when unresolved or VOID (no winner)."
+            "description": "Server-derived \"who won?\" label — computed at serialization time from the outcome row whose resolution_price = 1.0. NULL when unresolved or VOID (no winner)."
           },
           "resolved_at": {
             "type": [
@@ -2960,7 +2926,7 @@
                 "type": "null"
               }
             ],
-            "description": "Which leg of a 3-way moneyline this market represents \u2014 set by sync's three-way-role classifier. null for non-3-way markets."
+            "description": "Which leg of a 3-way moneyline this market represents — set by sync's three-way-role classifier. null for non-3-way markets."
           },
           "is_three_way": {
             "type": [
@@ -2974,22 +2940,11 @@
               "number",
               "null"
             ],
-            "description": "Esports per-game routing \u2014 extracted from market slug. null on non-esports markets / when the slug carries no -gameN suffix."
+            "description": "Esports per-game routing — extracted from market slug. null on non-esports markets / when the slug carries no -gameN suffix."
           },
           "display_label": {
             "type": "string",
-            "description": "Canonical card title \u2014 sync's computeMarketLabel recipe always populates this (3-way leg name \u2192 tennis-derived \u2192 esports strip \u2192 groupItemTitle \u2192 question). Renderers trust it directly."
-          },
-          "lp_incentive": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/MarketLpIncentive"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Current-epoch LP incentive terms. Optional on the wire: set on detail responses, absent on list cards; null when the market has no funded pool for the current epoch."
+            "description": "Canonical card title — sync's computeMarketLabel recipe always populates this (3-way leg name → tennis-derived → esports strip → groupItemTitle → question). Renderers trust it directly."
           },
           "display": {
             "$ref": "#/components/schemas/MarketDisplay"
@@ -3098,7 +3053,7 @@
           },
           "resolution_source": {
             "type": "string",
-            "description": "URL or free-text describing how the event will be settled. Applies to every event type \u2014 individual market resolution sources live on each market's display bag."
+            "description": "URL or free-text describing how the event will be settled. Applies to every event type — individual market resolution sources live on each market's display bag."
           },
           "layout": {
             "$ref": "#/components/schemas/EventLayout",
@@ -3134,15 +3089,15 @@
           },
           "subcategory": {
             "type": "string",
-            "description": "Topic slug \u2014 e.g. `\"election\"`, `\"nba-mvp\"`, `\"oscars\"`, `\"tech\"`. Higher-level bucket for navigation / breadcrumbs. Analog to GAME's `sport_slug`; the /categories tree already covers coarser navigation."
+            "description": "Topic slug — e.g. `\"election\"`, `\"nba-mvp\"`, `\"oscars\"`, `\"tech\"`. Higher-level bucket for navigation / breadcrumbs. Analog to GAME's `sport_slug`; the /categories tree already covers coarser navigation."
           },
           "candidate_count": {
             "type": "number",
-            "description": "Count of candidate markets ever listed on the event \u2014 includes eliminated/resolved candidates."
+            "description": "Count of candidate markets ever listed on the event — includes eliminated/resolved candidates."
           },
           "active_candidate_count": {
             "type": "number",
-            "description": "Count of candidates still active \u2014 excludes archived markets AND markets that have resolved to a losing outcome. Frontend should prefer this for \"N remaining\" copy over `candidate_count`."
+            "description": "Count of candidates still active — excludes archived markets AND markets that have resolved to a losing outcome. Frontend should prefer this for \"N remaining\" copy over `candidate_count`."
           },
           "top_candidate_name": {
             "type": "string",
@@ -3172,7 +3127,7 @@
                 "volume_micro"
               ]
             },
-            "description": "Ranked active candidates (default top-3). Structural \u2014 card renderers can slice to their N. Each entry carries name + price + volume in 1e-6 micro-units; frontend builds a \"Biden 52% \u00b7 Trump 44% \u00b7 Harris 12%\" pill row directly."
+            "description": "Ranked active candidates (default top-3). Structural — card renderers can slice to their N. Each entry carries name + price + volume in 1e-6 micro-units; frontend builds a \"Biden 52% · Trump 44% · Harris 12%\" pill row directly."
           },
           "resolved_winner_name": {
             "type": "string",
@@ -3187,7 +3142,7 @@
             "description": "True for multi-outcome groups that belong to a GAME parent (e.g. anytime-goalscorer within one match). Legacy `is_child_event` flag."
           }
         },
-        "description": "Display bag for `event_type === 'MULTI_OUTCOME'` \u2014 futures / elections / award shows / championship races. Multiple candidates, each a binary Yes/No market linked via `neg_risk_id`.\n\nSummary / candidate fields (candidate_count, top_*, top_candidates, resolved_winner_name, is_future, is_child_event) are computed at response time by the API serializer via `@agara/shared/sports. deriveMultiOutcomeEnrichment`. Sync doesn't currently persist them \u2014 a future `rollupAgaraEventMulti` pass can lift the computation to write-time if list-page reads become hot. Read-time keeps prices fresh (post-resolution candidates can't linger in stale snapshots) and avoids write amplification."
+        "description": "Display bag for `event_type === 'MULTI_OUTCOME'` — futures / elections / award shows / championship races. Multiple candidates, each a binary Yes/No market linked via `neg_risk_id`.\n\nSummary / candidate fields (candidate_count, top_*, top_candidates, resolved_winner_name, is_future, is_child_event) are computed at response time by the API serializer via `@agara/shared/sports. deriveMultiOutcomeEnrichment`. Sync doesn't currently persist them — a future `rollupAgaraEventMulti` pass can lift the computation to write-time if list-page reads become hot. Read-time keeps prices fresh (post-resolution candidates can't linger in stale snapshots) and avoids write amplification."
       },
       "NextSessionResponse": {
         "type": "object",
@@ -3287,7 +3242,7 @@
           "side_b",
           "unknown"
         ],
-        "description": "Semantic role of an outcome \u2014 set by sync's outcome classifier so the read path never has to string-sniff labels. See scratch/rendering-hints-schema.md \u00a76.1.\n\n- team_home / team_away: outcome IS a team (tennis, NFL spreads).\n- draw: outcome IS the draw leg of a 3-way moneyline.\n- yes / no: binary proposition or 3-way leg labeled literally Yes/No.\n- over / under: O/U totals leg.\n- candidate: multi-outcome candidate row (championship, MVP, etc.).\n- side_a / side_b: generic two-sided non-team market (cricket toss).\n- unknown: classifier couldn't decide \u2014 render with raw label fallback."
+        "description": "Semantic role of an outcome — set by sync's outcome classifier so the read path never has to string-sniff labels. See scratch/rendering-hints-schema.md §6.1.\n\n- team_home / team_away: outcome IS a team (tennis, NFL spreads).\n- draw: outcome IS the draw leg of a 3-way moneyline.\n- yes / no: binary proposition or 3-way leg labeled literally Yes/No.\n- over / under: O/U totals leg.\n- candidate: multi-outcome candidate row (championship, MVP, etc.).\n- side_a / side_b: generic two-sided non-team market (cricket toss).\n- unknown: classifier couldn't decide — render with raw label fallback."
       },
       "OutcomeTeamSide": {
         "type": "string",
@@ -3295,7 +3250,7 @@
           "home",
           "away"
         ],
-        "description": "Reference to the event-level team this outcome is associated with. An indicator only \u2014 NO embedded team data \u2014 so we don't duplicate the team object that already lives at event.display.team_a / team_b. Renderers resolve via:   outcome.team_side === 'home' \u2192 event.display.team_a   outcome.team_side === 'away' \u2192 event.display.team_b\n\nStays valid through any future migration to a first-class agara_teams table \u2014 only event-level resolution changes; outcome rows untouched."
+        "description": "Reference to the event-level team this outcome is associated with. An indicator only — NO embedded team data — so we don't duplicate the team object that already lives at event.display.team_a / team_b. Renderers resolve via:   outcome.team_side === 'home' → event.display.team_a   outcome.team_side === 'away' → event.display.team_b\n\nStays valid through any future migration to a first-class agara_teams table — only event-level resolution changes; outcome rows untouched."
       },
       "Pagination": {
         "type": "object",
@@ -3305,7 +3260,7 @@
               "string",
               "null"
             ],
-            "description": "Opaque cursor for the next page \u2014 null when there are no more results."
+            "description": "Opaque cursor for the next page — null when there are no more results."
           },
           "limit": {
             "type": "number",
@@ -3388,7 +3343,7 @@
           },
           "resolution_source": {
             "type": "string",
-            "description": "URL or free-text describing how the event will be settled. Applies to every event type \u2014 individual market resolution sources live on each market's display bag."
+            "description": "URL or free-text describing how the event will be settled. Applies to every event type — individual market resolution sources live on each market's display bag."
           },
           "layout": {
             "$ref": "#/components/schemas/EventLayout",
@@ -3424,10 +3379,10 @@
           },
           "subcategory": {
             "type": "string",
-            "description": "Topic slug \u2014 e.g. `\"fed-policy\"`, `\"geopolitics\"`."
+            "description": "Topic slug — e.g. `\"fed-policy\"`, `\"geopolitics\"`."
           }
         },
-        "description": "Display bag for `event_type === 'PROPOSITION'` \u2014 single yes/no markets on political / news / culture questions. Legacy stored these as 1-market MULTI_OUTCOME events; sandbox promotes them to their own type so the frontend can render a proposition-specific layout.\n\nMost resolution context (resolution_source, description) lives on the single market, not on the event. Event-level display stays minimal."
+        "description": "Display bag for `event_type === 'PROPOSITION'` — single yes/no markets on political / news / culture questions. Legacy stored these as 1-market MULTI_OUTCOME events; sandbox promotes them to their own type so the frontend can render a proposition-specific layout.\n\nMost resolution context (resolution_source, description) lives on the single market, not on the event. Event-level display stays minimal."
       },
       "Record_string_never": {
         "type": "object",
@@ -3656,7 +3611,7 @@
           },
           "resolution_source": {
             "type": "string",
-            "description": "URL or free-text describing how the event will be settled. Applies to every event type \u2014 individual market resolution sources live on each market's display bag."
+            "description": "URL or free-text describing how the event will be settled. Applies to every event type — individual market resolution sources live on each market's display bag."
           },
           "layout": {
             "$ref": "#/components/schemas/EventLayout",
@@ -3692,7 +3647,7 @@
           },
           "subcategory": {
             "type": "string",
-            "description": "Topic slug \u2014 e.g. `\"crypto\"`."
+            "description": "Topic slug — e.g. `\"crypto\"`."
           },
           "series_slug": {
             "type": "string",
@@ -3703,7 +3658,7 @@
             "description": "Cycle period in seconds (e.g. 900 for 15 minutes). Drives the countdown / chart axis."
           }
         },
-        "description": "Display bag for `event_type === 'RECURRING_PROPOSITION'` \u2014 a series of binary cycles (BTC up/down 15-min, etc.). One event represents the whole series; markets[] is a served window, not full history: the live cycle group, then whole-cycle-capped unsettled, upcoming, and settled sides. Wire order: live first, soonest upcoming next, then newest-first (settled and stuck cycles interleave by window). The current/live cycle is at event.main_market_id. Series-level metadata (cadence, source providers) is admin-authored on `agara_market_series` \u2014 only the fields the rendering needs land on the wire here."
+        "description": "Display bag for `event_type === 'RECURRING_PROPOSITION'` — a series of binary cycles (BTC up/down 15-min, etc.). One event represents the whole series; markets[] is a served window, not full history: the live cycle group, then whole-cycle-capped unsettled, upcoming, and settled sides. Wire order: live first, soonest upcoming next, then newest-first (settled and stuck cycles interleave by window). The current/live cycle is at event.main_market_id. Series-level metadata (cadence, source providers) is admin-authored on `agara_market_series` — only the fields the rendering needs land on the wire here."
       },
       "ResolutionSourceLink": {
         "type": "object",
@@ -3759,7 +3714,7 @@
             "properties": {
               "relevance_score": {
                 "type": "number",
-                "description": "Greatest trigram word similarity on a 0\u20131 scale; indirect category matches carry 0."
+                "description": "Greatest trigram word similarity on a 0–1 scale; indirect category matches carry 0."
               },
               "event_type": {
                 "type": "string",
@@ -3843,7 +3798,7 @@
                   "string",
                   "null"
                 ],
-                "description": "UUID of the event's primary leg market. For 2-way events this IS the main market. For 3-way events (soccer moneylines, etc.) this is the lead leg sync's rollup picked deterministically \u2014 readers needing the full leg group should use the API's `main_market_group` (assembled at read time via `neg_risk_id`). null when the event has no markets."
+                "description": "UUID of the event's primary leg market. For 2-way events this IS the main market. For 3-way events (soccer moneylines, etc.) this is the lead leg sync's rollup picked deterministically — readers needing the full leg group should use the API's `main_market_group` (assembled at read time via `neg_risk_id`). null when the event has no markets."
               },
               "resolution_status": {
                 "type": "string",
@@ -3890,7 +3845,7 @@
             "properties": {
               "relevance_score": {
                 "type": "number",
-                "description": "Greatest trigram word similarity on a 0\u20131 scale; indirect category matches carry 0."
+                "description": "Greatest trigram word similarity on a 0–1 scale; indirect category matches carry 0."
               },
               "event_type": {
                 "type": "string",
@@ -3971,7 +3926,7 @@
                   "string",
                   "null"
                 ],
-                "description": "UUID of the event's primary leg market. For 2-way events this IS the main market. For 3-way events (soccer moneylines, etc.) this is the lead leg sync's rollup picked deterministically \u2014 readers needing the full leg group should use the API's `main_market_group` (assembled at read time via `neg_risk_id`). null when the event has no markets."
+                "description": "UUID of the event's primary leg market. For 2-way events this IS the main market. For 3-way events (soccer moneylines, etc.) this is the lead leg sync's rollup picked deterministically — readers needing the full leg group should use the API's `main_market_group` (assembled at read time via `neg_risk_id`). null when the event has no markets."
               },
               "resolution_status": {
                 "type": "string",
@@ -4017,7 +3972,7 @@
             "properties": {
               "relevance_score": {
                 "type": "number",
-                "description": "Greatest trigram word similarity on a 0\u20131 scale; indirect category matches carry 0."
+                "description": "Greatest trigram word similarity on a 0–1 scale; indirect category matches carry 0."
               },
               "event_type": {
                 "type": "string",
@@ -4098,7 +4053,7 @@
                   "string",
                   "null"
                 ],
-                "description": "UUID of the event's primary leg market. For 2-way events this IS the main market. For 3-way events (soccer moneylines, etc.) this is the lead leg sync's rollup picked deterministically \u2014 readers needing the full leg group should use the API's `main_market_group` (assembled at read time via `neg_risk_id`). null when the event has no markets."
+                "description": "UUID of the event's primary leg market. For 2-way events this IS the main market. For 3-way events (soccer moneylines, etc.) this is the lead leg sync's rollup picked deterministically — readers needing the full leg group should use the API's `main_market_group` (assembled at read time via `neg_risk_id`). null when the event has no markets."
               },
               "resolution_status": {
                 "type": "string",
@@ -4144,7 +4099,7 @@
             "properties": {
               "relevance_score": {
                 "type": "number",
-                "description": "Greatest trigram word similarity on a 0\u20131 scale; indirect category matches carry 0."
+                "description": "Greatest trigram word similarity on a 0–1 scale; indirect category matches carry 0."
               },
               "event_type": {
                 "type": "string",
@@ -4226,7 +4181,7 @@
                   "string",
                   "null"
                 ],
-                "description": "UUID of the event's primary leg market. For 2-way events this IS the main market. For 3-way events (soccer moneylines, etc.) this is the lead leg sync's rollup picked deterministically \u2014 readers needing the full leg group should use the API's `main_market_group` (assembled at read time via `neg_risk_id`). null when the event has no markets."
+                "description": "UUID of the event's primary leg market. For 2-way events this IS the main market. For 3-way events (soccer moneylines, etc.) this is the lead leg sync's rollup picked deterministically — readers needing the full leg group should use the API's `main_market_group` (assembled at read time via `neg_risk_id`). null when the event has no markets."
               },
               "resolution_status": {
                 "type": "string",
@@ -4295,7 +4250,7 @@
         "properties": {
           "relevance_score": {
             "type": "number",
-            "description": "Greatest trigram word similarity on a 0\u20131 scale; indirect category matches carry 0."
+            "description": "Greatest trigram word similarity on a 0–1 scale; indirect category matches carry 0."
           },
           "id": {
             "type": "string"
@@ -4408,7 +4363,7 @@
           },
           "mic": {
             "type": "string",
-            "description": "Listing-venue MIC. Every security has a venue \u2014 crypto pairs live on the synthetic XCRYPTO venue \u2014 so the venue carries currency + calendar uniformly."
+            "description": "Listing-venue MIC. Every security has a venue — crypto pairs live on the synthetic XCRYPTO venue — so the venue carries currency + calendar uniformly."
           },
           "asset_class": {
             "type": "string",
@@ -4601,7 +4556,7 @@
               "string",
               "null"
             ],
-            "description": "Free-text label for an exception day \u2014 holiday name, \"early close\", \"outage\"; null on a plain regular day."
+            "description": "Free-text label for an exception day — holiday name, \"early close\", \"outage\"; null on a plain regular day."
           }
         },
         "required": [
@@ -5536,7 +5491,7 @@
       "get": {
         "operationId": "getApiV1EventsBySlug",
         "summary": "Event detail",
-        "description": "Returns the event + its group markets + curated \"see also\" relations + leaf category paths. Most event types ship every market in the group; RECURRING_PROPOSITION events serve a window: the live cycle group uncapped, up to 50 newest unsettled cycles, 49 soonest upcoming cycles, and 50 newest settled cycles - whole cycles only. A child-event slug resolves to its group root \u2014 clients should compare `slug` on the response and redirect to the canonical URL if it differs. Archived events 404.",
+        "description": "Returns the event + its group markets + curated \"see also\" relations + leaf category paths. Most event types ship every market in the group; RECURRING_PROPOSITION events serve a window: the live cycle group uncapped, up to 50 newest unsettled cycles, 49 soonest upcoming cycles, and 50 newest settled cycles - whole cycles only. A child-event slug resolves to its group root — clients should compare `slug` on the response and redirect to the canonical URL if it differs. Archived events 404.",
         "tags": [
           "Events"
         ],
@@ -5674,7 +5629,7 @@
             }
           },
           "422": {
-            "description": "A query parameter failed validation, `filter` is not a known key, or the `cursor` does not match the requested sort and filters \u2014 drop it and start from the first page.",
+            "description": "A query parameter failed validation, `filter` is not a known key, or the `cursor` does not match the requested sort and filters — drop it and start from the first page.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request correlation identifier for support and diagnostics.",
@@ -6020,7 +5975,7 @@
             }
           },
           "422": {
-            "description": "A query parameter failed validation, or the `cursor` does not match the requested filters \u2014 drop it and start from the first page.",
+            "description": "A query parameter failed validation, or the `cursor` does not match the requested filters — drop it and start from the first page.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request correlation identifier for support and diagnostics.",
@@ -6162,7 +6117,7 @@
       "get": {
         "operationId": "getApiV1PricesPoint",
         "summary": "Pinned price at a past second",
-        "description": "The price for an agara security + provider as of a past instant, served from the tiered cache (memory \u2192 our tick store \u2192 provider API). Every provider fetch is written through to the shared tick store. 422 = no such feed; 503 = the second is not yet available upstream (retry).",
+        "description": "The price for an agara security + provider as of a past instant, served from the tiered cache (memory → our tick store → provider API). Every provider fetch is written through to the shared tick store. 422 = no such feed; 503 = the second is not yet available upstream (retry).",
         "tags": [
           "Prices"
         ],
@@ -6323,7 +6278,7 @@
       "get": {
         "operationId": "getApiV1PricesTicks",
         "summary": "Settlement-lineage price history",
-        "description": "Price history for an agara security + provider over [from, to], as TradingView-shim history (`{ s, t, c }`, seconds + close). Returns roughly 30 points spanning the window, served DB-first (our shared tick cache) and filled with the fewest external calls \u2014 sampled point reads for a tight window, OHLCV minute bars for a wide one. Long-cached once the range is in the immutable past; no-cache while it overlaps the live edge.",
+        "description": "Price history for an agara security + provider over [from, to], as TradingView-shim history (`{ s, t, c }`, seconds + close). Returns roughly 30 points spanning the window, served DB-first (our shared tick cache) and filled with the fewest external calls — sampled point reads for a tight window, OHLCV minute bars for a wide one. Long-cached once the range is in the immutable past; no-cache while it overlaps the live edge.",
         "tags": [
           "Prices"
         ],
@@ -6609,7 +6564,7 @@
       "get": {
         "operationId": "getApiV1Search",
         "summary": "Search events, markets, and categories",
-        "description": "Typo-tolerant search over currently tradable AGARA event titles/slugs and market questions/slugs, plus category labels/slugs. Event and market matches include a comparable 0\u20131 relevance score; indirect category matches score 0. Each event arrives with its markets and their outcome prices \u2014 the same shape the events listing returns \u2014 so a result can be rendered without a follow-up request. Markets carry their leading outcomes (label + odds) and order-acceptance status. A category-name query also fans out that category\u2019s highest-volume tradable AGARA events.",
+        "description": "Typo-tolerant search over currently tradable AGARA event titles/slugs and market questions/slugs, plus category labels/slugs. Event and market matches include a comparable 0–1 relevance score; indirect category matches score 0. Each event arrives with its markets and their outcome prices — the same shape the events listing returns — so a result can be rendered without a follow-up request. Markets carry their leading outcomes (label + odds) and order-acceptance status. A category-name query also fans out that category’s highest-volume tradable AGARA events.",
         "tags": [
           "Search"
         ],

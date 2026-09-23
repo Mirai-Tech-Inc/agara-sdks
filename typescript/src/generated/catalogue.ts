@@ -1070,8 +1070,6 @@ export interface components {
             game_number?: number | null;
             /** @description Canonical card title — sync's computeMarketLabel recipe always populates this (3-way leg name → tennis-derived → esports strip → groupItemTitle → question). Renderers trust it directly. */
             display_label: string;
-            /** @description Current-epoch LP incentive terms. Optional on the wire: set on detail responses, absent on list cards; null when the market has no funded pool for the current epoch. */
-            lp_incentive?: components["schemas"]["MarketLpIncentive"] | null;
             display: components["schemas"]["MarketDisplay"];
         };
         MarketDisplay: components["schemas"]["BaseMarketDisplay"];
@@ -1085,15 +1083,6 @@ export interface components {
             key: string;
             /** @description Markets in display order. Resolve via marketsById.get(id). */
             market_ids: string[];
-        };
-        /** @description Current-epoch LP incentive terms for a market. Present ⇔ the market has a funded reward pool for the current Eastern-day epoch — the same membership rule the router's `/trade/v1/lp-incentives` list applies, so the detail-page badge and the LP discovery table never disagree. */
-        MarketLpIncentive: {
-            /** @description Daily reward pool for the current epoch. BIGINT 1e-6 micro-USDC. */
-            pool_micro: components["schemas"]["MicroUsd"];
-            /** @description Max distance from the book midpoint that still scores. 1e-6 probability units. */
-            max_spread_micro: number;
-            /** @description Minimum resting order size that scores. BIGINT 1e-6 micro-shares (string on the wire). */
-            min_shares_micro: string;
         };
         MarketOutcome: {
             id: string;
@@ -1206,8 +1195,6 @@ export interface components {
             game_number?: number | null;
             /** @description Canonical card title — sync's computeMarketLabel recipe always populates this (3-way leg name → tennis-derived → esports strip → groupItemTitle → question). Renderers trust it directly. */
             display_label: string;
-            /** @description Current-epoch LP incentive terms. Optional on the wire: set on detail responses, absent on list cards; null when the market has no funded pool for the current epoch. */
-            lp_incentive?: components["schemas"]["MarketLpIncentive"] | null;
             display: components["schemas"]["MarketDisplay"];
             event: components["schemas"]["MarketsListEventRef"];
         };

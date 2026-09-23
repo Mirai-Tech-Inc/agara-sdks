@@ -198,51 +198,6 @@
     "operationId": "portfolio_rebates"
   },
   {
-    "name": "listLpIncentives",
-    "service": "router",
-    "protocol": "HTTP",
-    "method": "GET",
-    "path": "/trade/v1/lp-incentives",
-    "auth": "anonymous; optional Privy JWT or PAT: PortfolioRead",
-    "operationId": "lp_incentives"
-  },
-  {
-    "name": "listLpIncentiveCategories",
-    "service": "router",
-    "protocol": "HTTP",
-    "method": "GET",
-    "path": "/trade/v1/lp-incentives/categories",
-    "auth": "anonymous",
-    "operationId": "lp_incentive_categories"
-  },
-  {
-    "name": "listClosedLpIncentives",
-    "service": "router",
-    "protocol": "HTTP",
-    "method": "GET",
-    "path": "/trade/v1/lp-incentives/closed",
-    "auth": "Privy JWT or PAT: PortfolioRead",
-    "operationId": "closed_lp_incentives"
-  },
-  {
-    "name": "listClosedLpIncentiveCategories",
-    "service": "router",
-    "protocol": "HTTP",
-    "method": "GET",
-    "path": "/trade/v1/lp-incentives/closed/categories",
-    "auth": "Privy JWT or PAT: PortfolioRead",
-    "operationId": "closed_lp_incentive_categories"
-  },
-  {
-    "name": "getLpIncentiveEarnings",
-    "service": "router",
-    "protocol": "HTTP",
-    "method": "GET",
-    "path": "/trade/v1/lp-incentives/earnings",
-    "auth": "Privy JWT or PAT: PortfolioRead",
-    "operationId": "lp_incentive_earnings"
-  },
-  {
     "name": "getRealizedPnl",
     "service": "router",
     "protocol": "HTTP",

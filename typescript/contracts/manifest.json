@@ -157,41 +157,6 @@
     },
     {
       "service": "router",
-      "protocol": "HTTP",
-      "method": "GET",
-      "path": "/trade/v1/lp-incentives",
-      "auth": "anonymous; optional Privy JWT or PAT: PortfolioRead"
-    },
-    {
-      "service": "router",
-      "protocol": "HTTP",
-      "method": "GET",
-      "path": "/trade/v1/lp-incentives/categories",
-      "auth": "anonymous"
-    },
-    {
-      "service": "router",
-      "protocol": "HTTP",
-      "method": "GET",
-      "path": "/trade/v1/lp-incentives/closed",
-      "auth": "Privy JWT or PAT: PortfolioRead"
-    },
-    {
-      "service": "router",
-      "protocol": "HTTP",
-      "method": "GET",
-      "path": "/trade/v1/lp-incentives/closed/categories",
-      "auth": "Privy JWT or PAT: PortfolioRead"
-    },
-    {
-      "service": "router",
-      "protocol": "HTTP",
-      "method": "GET",
-      "path": "/trade/v1/lp-incentives/earnings",
-      "auth": "Privy JWT or PAT: PortfolioRead"
-    },
-    {
-      "service": "router",
       "protocol": "WebSocket",
       "method": "GET",
       "path": "/trade/v1/market-stream",

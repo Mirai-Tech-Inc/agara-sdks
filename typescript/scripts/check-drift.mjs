@@ -2,9 +2,10 @@
 // operations in contracts/manifest.json only.
 //
 // Why this exists: the snapshots are a hand-scoped copy of the platform's specs, so nothing local
-// notices when the platform changes a field. Twice that shipped a broken client — a renamed field
-// killed getLpIncentiveEarnings outright, and a removed required field left listLpIncentives
-// throwing for any non-empty page while an empty-array fixture kept the suite green.
+// notices when the platform changes a field. Twice that shipped a broken client: a renamed field
+// killed one endpoint outright, and a removed required field left another throwing for any
+// non-empty page while an empty-array fixture kept the suite green. Both were LP reward endpoints,
+// since dropped, but nothing about either failure was specific to them.
 //
 // Usage: AGARA_DRIFT_BASE_URL=https://app.dev.agara.xyz node scripts/check-drift.mjs
 // Exits 1 on a breaking difference, 0 otherwise. Non-breaking differences print as warnings.

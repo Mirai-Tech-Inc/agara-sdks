@@ -52,32 +52,6 @@ const RECORDINGS = [
   },
   { name: "search", path: "/api/v1/search?q=inflation&limit=5", auth: false },
   {
-    name: "listLpIncentives",
-    path: "/trade/v1/lp-incentives",
-    collection: "markets",
-    allowEmpty: true,
-  },
-  {
-    name: "listLpIncentiveCategories",
-    path: "/trade/v1/lp-incentives/categories",
-    collection: "categories",
-    auth: false,
-    allowEmpty: true,
-  },
-  { name: "getLpIncentiveEarnings", path: "/trade/v1/lp-incentives/earnings" },
-  {
-    name: "listClosedLpIncentives",
-    path: "/trade/v1/lp-incentives/closed?limit=5",
-    collection: "markets",
-    allowEmpty: true,
-  },
-  {
-    name: "listClosedLpIncentiveCategories",
-    path: "/trade/v1/lp-incentives/closed/categories",
-    collection: "categories",
-    allowEmpty: true,
-  },
-  {
     name: "listPositions",
     path: "/trade/v1/portfolio/positions/list",
     method: "POST",
@@ -148,7 +122,7 @@ for (const recording of RECORDINGS) {
 
   const parsed = JSON.parse(text);
   const count = recording.collection ? (parsed[recording.collection]?.length ?? null) : null;
-  if (recording.collection && !count && !recording.allowEmpty) {
+  if (recording.collection && !count) {
     console.error(
       `  skip ${recording.name}: '${recording.collection}' is empty, which would record a fixture ` +
         "that cannot exercise the element schema. Create some state and retry.",
@@ -166,7 +140,6 @@ for (const recording of RECORDINGS) {
     request: `${method} ${recording.path}`,
     collection: recording.collection ?? null,
     elements: count,
-    allowEmpty: Boolean(recording.allowEmpty),
   });
   console.log(`  recorded ${recording.name}${count === null ? "" : ` (${count} element(s))`}`);
 }

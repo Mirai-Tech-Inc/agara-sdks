@@ -1,7 +1,7 @@
 # @agara/sdk
 
 TypeScript client for Agara public discovery, PAT trading, account batches, portfolio,
-LP rewards, P&L, router WebSockets, and price SSE. Alpha; not yet published by this change.
+P&L, router WebSockets, and price SSE. Alpha; not yet published by this change.
 Targets platform commit `e136dacf2e5442d1a8e2a05d7c77bf70b8f3aa6f`.
 
 Requires Node.js 22+ or a modern browser with fetch, AbortController, WebSocket,
@@ -37,7 +37,7 @@ response observers receive HTTP status, headers and request ID.
 
 ## Coverage and wire contracts
 
-All **45 REST operations**, both router WebSocket endpoints, and both price SSE feeds
+All **40 REST operations**, both router WebSocket endpoints, and both price SSE feeds
 in [the checked-in scope](contracts/manifest.json) have named APIs. The
 [method inventory](contracts/endpoints.json) maps each REST method to its path and auth.
 Concrete request/response types derive from scoped OpenAPI snapshots, with source-backed
@@ -47,7 +47,7 @@ common domain types such as `Order`, `Fill`, `BatchSubmission` are also exported
 
 Included families: orderbooks/orders/signed batches; account batch submission/status/
 supersede/group status; complete portfolio reads, split/merge, rebates, realized P&L; bridge
-withdrawal asset/quote reads; LP incentives; events, markets, categories, search,
+withdrawal asset/quote reads; events, markets, categories, search,
 calendars, securities, price point/ticks/token history. Disabled providers return their
 structured server failure; method presence does not enable them.
 
@@ -61,8 +61,10 @@ enum or response shape.
 
 JWT onboarding/account administration, token CRUD, standalone withdrawals, merge-all
 creation, browser configuration, home/navigation presentation, faucets, admin/internal
-routes, retired redemption endpoints, unrealized P&L, and bridge deposits are intentionally
-excluded. PAT account-batch `WITHDRAW` is supported and distinct from the excluded JWT withdrawal HTTP endpoint.
+routes, retired redemption endpoints, unrealized P&L, LP rewards, and bridge deposits are
+intentionally excluded. No deployment carries LP reward data, so the LP surface could never be
+exercised against one and its element schemas had no cover; the market payloads drop their
+embedded LP terms with it. PAT account-batch `WITHDRAW` is supported and distinct from the excluded JWT withdrawal HTTP endpoint.
 Across batch operations require server signing and are not accepted by presigned helpers.
 
 ## Exact amounts and completion

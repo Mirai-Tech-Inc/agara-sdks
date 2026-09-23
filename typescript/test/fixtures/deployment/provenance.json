@@ -8,134 +8,85 @@
       "name": "listMarkets",
       "request": "GET /api/v1/markets?source=agara&state=ACTIVE&limit=5",
       "collection": "markets",
-      "elements": 5,
-      "allowEmpty": false
+      "elements": 5
     },
     {
       "name": "listEvents",
       "request": "GET /api/v1/events?limit=5&include_markets=true",
       "collection": "events",
-      "elements": 5,
-      "allowEmpty": false
+      "elements": 5
     },
     {
       "name": "listSecurities",
       "request": "GET /api/v1/securities",
       "collection": "securities",
-      "elements": 16,
-      "allowEmpty": false
+      "elements": 16
     },
     {
       "name": "listCalendars",
       "request": "GET /api/v1/calendars",
       "collection": "venues",
-      "elements": 10,
-      "allowEmpty": false
+      "elements": 10
     },
     {
       "name": "listTradingDays",
       "request": "GET /api/v1/calendars/XHKG/days?from=2026-09-01&to=2026-09-30",
       "collection": "days",
-      "elements": 30,
-      "allowEmpty": false
+      "elements": 30
     },
     {
       "name": "search",
       "request": "GET /api/v1/search?q=inflation&limit=5",
       "collection": null,
-      "elements": null,
-      "allowEmpty": false
-    },
-    {
-      "name": "listLpIncentives",
-      "request": "GET /trade/v1/lp-incentives",
-      "collection": "markets",
-      "elements": 0,
-      "allowEmpty": true
-    },
-    {
-      "name": "listLpIncentiveCategories",
-      "request": "GET /trade/v1/lp-incentives/categories",
-      "collection": "categories",
-      "elements": 0,
-      "allowEmpty": true
-    },
-    {
-      "name": "getLpIncentiveEarnings",
-      "request": "GET /trade/v1/lp-incentives/earnings",
-      "collection": null,
-      "elements": null,
-      "allowEmpty": false
-    },
-    {
-      "name": "listClosedLpIncentives",
-      "request": "GET /trade/v1/lp-incentives/closed?limit=5",
-      "collection": "markets",
-      "elements": 0,
-      "allowEmpty": true
-    },
-    {
-      "name": "listClosedLpIncentiveCategories",
-      "request": "GET /trade/v1/lp-incentives/closed/categories",
-      "collection": "categories",
-      "elements": 0,
-      "allowEmpty": true
+      "elements": null
     },
     {
       "name": "listPositions",
       "request": "POST /trade/v1/portfolio/positions/list",
       "collection": "positions",
-      "elements": 2,
-      "allowEmpty": false
+      "elements": 2
     },
     {
       "name": "getPortfolioSummary",
       "request": "GET /trade/v1/portfolio/summary",
       "collection": "summaries",
-      "elements": 1,
-      "allowEmpty": false
+      "elements": 1
     },
     {
       "name": "listTrades",
       "request": "GET /trade/v1/portfolio/trades?limit=10",
       "collection": "trades",
-      "elements": 9,
-      "allowEmpty": false
+      "elements": 9
     },
     {
       "name": "listActivities",
       "request": "GET /trade/v1/portfolio/activities?limit=10",
       "collection": "activities",
-      "elements": 10,
-      "allowEmpty": false
+      "elements": 10
     },
     {
       "name": "getRebates",
       "request": "GET /trade/v1/portfolio/rebates",
       "collection": null,
-      "elements": null,
-      "allowEmpty": false
+      "elements": null
     },
     {
       "name": "getRealizedPnl",
       "request": "GET /trade/v1/portfolio/pnl/realized?granularity=day&window=30d",
       "collection": null,
-      "elements": null,
-      "allowEmpty": false
+      "elements": null
     },
     {
       "name": "listOrders",
       "request": "POST /trade/v1/orders/list",
       "collection": "orders",
-      "elements": 10,
-      "allowEmpty": false
+      "elements": 10
     },
     {
       "name": "listOpenOrders",
       "request": "POST /trade/v1/portfolio/open-orders/list",
       "collection": "orders",
-      "elements": 3,
-      "allowEmpty": false
+      "elements": 3
     }
   ]
 }

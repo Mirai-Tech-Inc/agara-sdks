@@ -166,40 +166,6 @@ export const endpointDocs = {
     remarks:
       "Pending rebates are not spendable trading collateral until the server reports the corresponding credit.",
   },
-  listLpIncentives: {
-    summary: "Read active/upcoming LP opportunities and optional personal standing.",
-    returns: "Current reward epoch, incentive terms and per-market scores/projected payouts.",
-    remarks:
-      "Anonymous callers can read opportunities. A PAT with portfolio:read adds the caller standing; projections are not guaranteed credited rewards.",
-    query:
-      "Optional category/search and sort field/direction; sort_order requires sort_by and otherwise defaults to descending when sorting.",
-  },
-  listLpIncentiveCategories: {
-    summary: "List root categories containing current LP-incentive opportunities.",
-    returns: "Category slugs, labels and matching-market counts.",
-    remarks:
-      "Use these slugs to filter listLpIncentives; categories may change as opportunities open and close.",
-  },
-  listClosedLpIncentives: {
-    summary: "Read one page of your historical LP reward cycles.",
-    returns: "Credited-cycle market rows, applied page/limit and total matching-row count.",
-    remarks:
-      "Use 1-based pagination rather than cursor helpers. Potential payout and credited reward are separate amounts in micro collateral.",
-    query:
-      "Optional category/search; page starts at 1, limit is 1 through 100 (default 20), sort defaults to date descending.",
-  },
-  listClosedLpIncentiveCategories: {
-    summary: "List categories represented in your historical LP rewards.",
-    returns: "Root-category slugs and labels available for filtering credited reward cycles.",
-    remarks:
-      "These are caller-specific historical categories, distinct from current public incentive opportunities.",
-  },
-  getLpIncentiveEarnings: {
-    summary: "Read current projected and trailing LP reward totals.",
-    returns: "Current-cycle, seven-day, thirty-day and all-time earnings in micro collateral.",
-    remarks:
-      "The current cycle is projected before minimum payout rules; trailing windows combine that projection with prior credited rewards.",
-  },
   getRealizedPnl: {
     summary: "Read exact realized-PnL attribution over a UTC calendar window.",
     returns:
