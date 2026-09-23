@@ -65,7 +65,6 @@ const RECORDINGS = [
     path: "/trade/v1/portfolio/activities?limit=10",
     collection: "activities",
   },
-  { name: "getRebates", path: "/trade/v1/portfolio/rebates" },
   {
     name: "listOrders",
     path: "/trade/v1/orders/list",

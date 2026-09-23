@@ -24,7 +24,6 @@ const names = {
   portfolio_positions_merge: "mergePosition",
   portfolio_summary: "getPortfolioSummary",
   portfolio_trades: "listTrades",
-  portfolio_rebates: "getRebates",
   getApiV1CalendarsByMicDaysByDate: "getTradingDay",
   getApiV1CalendarsByMicDays: "listTradingDays",
   getApiV1CalendarsByMicNextSession: "getNextSession",

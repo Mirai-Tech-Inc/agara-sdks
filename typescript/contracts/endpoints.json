@@ -189,15 +189,6 @@
     "operationId": "portfolio_trades"
   },
   {
-    "name": "getRebates",
-    "service": "router",
-    "protocol": "HTTP",
-    "method": "GET",
-    "path": "/trade/v1/portfolio/rebates",
-    "auth": "Privy JWT or PAT: PortfolioRead",
-    "operationId": "portfolio_rebates"
-  },
-  {
     "name": "getTradingDay",
     "service": "api",
     "protocol": "HTTP",

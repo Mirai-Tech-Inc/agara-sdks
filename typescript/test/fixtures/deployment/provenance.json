@@ -65,12 +65,6 @@
       "elements": 10
     },
     {
-      "name": "getRebates",
-      "request": "GET /trade/v1/portfolio/rebates",
-      "collection": null,
-      "elements": null
-    },
-    {
       "name": "listOrders",
       "request": "POST /trade/v1/orders/list",
       "collection": "orders",

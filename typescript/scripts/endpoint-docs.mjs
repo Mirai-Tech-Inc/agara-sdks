@@ -160,12 +160,6 @@ export const endpointDocs = {
       "Use tradePages to walk further pages. Check unavailable_exchanges before treating this history as complete.",
     query: "Page size from 1 to 500 (server default 500) and optional opaque next_cursor.",
   },
-  getRebates: {
-    summary: "Read pending maker, VIP and LP incentive balances.",
-    returns: "Pending incentive amounts in integer micro collateral.",
-    remarks:
-      "Pending rebates are not spendable trading collateral until the server reports the corresponding credit.",
-  },
   getTradingDay: {
     summary: "Read one venue-local calendar day and its trading sessions.",
     returns: "Calendar date, trading/closed state and any session segments.",

@@ -150,13 +150,6 @@
     },
     {
       "service": "router",
-      "protocol": "HTTP",
-      "method": "GET",
-      "path": "/trade/v1/portfolio/rebates",
-      "auth": "Privy JWT or PAT: PortfolioRead"
-    },
-    {
-      "service": "router",
       "protocol": "WebSocket",
       "method": "GET",
       "path": "/trade/v1/market-stream",

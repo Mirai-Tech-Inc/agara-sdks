@@ -72,7 +72,6 @@ const replay: Record<string, (client: AgaraClient) => Promise<unknown>> = {
   getPortfolioSummary: (c) => c.getPortfolioSummary(),
   listTrades: (c) => c.listTrades({ limit: 10 }),
   listActivities: (c) => c.listActivities({ limit: 10 }),
-  getRebates: (c) => c.getRebates(),
   listOrders: (c) => c.listOrders({ limit: 10 }),
   listOpenOrders: (c) => c.listOpenOrders({ limit: 10 }),
 };

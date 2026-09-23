@@ -1025,8 +1025,8 @@ export class TraderClient extends PublicClient {
    *
    * @remarks
    * Requires a personal access token with scope `portfolio:read`. Activity includes orders, splits,
-   * merges, redemptions, deposits, withdrawals and LP payouts. Use the realized-PnL report for
-   * accounting attribution.
+   * merges, redemptions, deposits and withdrawals. It records what happened, not accounting
+   * attribution.
    *
    * @param query - Page size from 1 to 500 (server default 50) and optional opaque cursor.
    * @param options - Per-request abort signal, timeout override and successful-response observer.
@@ -1336,38 +1336,6 @@ export class TraderClient extends PublicClient {
       options,
       true,
       "listTrades",
-    );
-  }
-
-  /**
-   * Read pending maker, VIP and LP incentive balances.
-   *
-   * @remarks
-   * Requires a personal access token with scope `portfolio:read`. Pending rebates are not spendable
-   * trading collateral until the server reports the corresponding credit.
-   *
-   * @param options - Per-request abort signal, timeout override and successful-response observer.
-   * @returns Pending incentive amounts in integer micro collateral.
-   * @throws TypeError for invalid local request shapes or text inputs.
-   * @throws RangeError for invalid local numeric inputs or timeout overrides.
-   * @throws AgaraError for an unsuccessful HTTP response; inspect its status and validated
-   * recovery.
-   * @throws TransportError for failed or aborted I/O; inspect its cause for the underlying failure.
-   * @throws ProtocolError when a successful response is malformed or exceeds the response-byte
-   * bound.
-   * @throws ResponseObserverError when a callback throws after receiving a valid success response.
-   */
-  getRebates(
-    options: RequestOptions = {},
-  ): Promise<Success<TradingOperations["portfolio_rebates"]>> {
-    return this.request(
-      "GET",
-      `/trade/v1/portfolio/rebates`,
-      undefined,
-      undefined,
-      options,
-      true,
-      "getRebates",
     );
   }
 }

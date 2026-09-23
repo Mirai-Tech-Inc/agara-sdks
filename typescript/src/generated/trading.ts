@@ -340,23 +340,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/trade/v1/portfolio/rebates": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get pending rebate balances */
-        get: operations["portfolio_rebates"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -1798,17 +1781,6 @@ export interface components {
             batch_hash: string;
             /** @enum {string} */
             status: "PENDING";
-        };
-        /** @description Accrued rebate balances across a user's wallets in micro-collateral units. */
-        RebatesSummaryResponse: {
-            /** @description Pending LP-incentive balance. */
-            lp_incentive_micro: components["schemas"]["MicroAmount"];
-            /** @description Pending maker-rebate balance. */
-            maker_rebate_micro: components["schemas"]["MicroAmount"];
-            /** @description Sum across all programs. */
-            total_micro: components["schemas"]["MicroAmount"];
-            /** @description Pending VIP taker-rebate balance. */
-            vip_rebate_micro: components["schemas"]["MicroAmount"];
         };
         /** @description A durable resource referenced by check-status recovery. */
         RecoveryResource: {
@@ -4567,92 +4539,6 @@ export interface operations {
             };
             /** @description The limit or cursor query parameter is invalid. */
             422: {
-                headers: {
-                    /** @description Origin request identifier to retain when contacting support. Edge-generated 429 responses may omit it. */
-                    "X-Request-ID"?: string;
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["KnownOriginProblemDetails"];
-                };
-            };
-            /** @description Rate limited. `Retry-After` carries the seconds to wait. When present, `X-RateLimit-*` describes the per-user bucket evaluated for the request; handler-level, limiter-unavailable, and edge-generated responses may omit it. The request was not processed, so the identical request is safe to resend after backing off. */
-            429: {
-                headers: {
-                    /** @description Whole seconds to wait before retrying the identical request. */
-                    "Retry-After"?: number;
-                    /** @description Per-user bucket evaluated for the request. Handler-level, limiter-unavailable, and edge-generated 429 responses may omit it. */
-                    "X-RateLimit-Bucket"?: "read" | "place" | "place_batch" | "cancel" | "cancel_all";
-                    /** @description Evaluated per-user bucket capacity. Handler-level, limiter-unavailable, and edge-generated 429 responses may omit it. */
-                    "X-RateLimit-Limit"?: number | bigint;
-                    /** @description Tightest remaining per-user budget. Handler-level, limiter-unavailable, and edge-generated 429 responses may omit it. */
-                    "X-RateLimit-Remaining"?: number | bigint;
-                    /** @description Whole seconds until the evaluated per-user bucket is full. Handler-level, limiter-unavailable, and edge-generated 429 responses may omit it. */
-                    "X-RateLimit-Reset"?: number | bigint;
-                    /** @description Origin request identifier to retain when contacting support. Edge-generated 429 responses may omit it. */
-                    "X-Request-ID"?: string;
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["KnownEdgeProblem"];
-                    "application/problem+json": components["schemas"]["KnownOriginProblemDetails"];
-                };
-            };
-            /** @description Unexpected server-side failure. Do not retry automatically; retain the request ID and contact support. */
-            500: {
-                headers: {
-                    /** @description Origin request identifier to retain when contacting support. Edge-generated 429 responses may omit it. */
-                    "X-Request-ID"?: string;
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["KnownOriginProblemDetails"];
-                };
-            };
-            /** @description Identity verification is temporarily unavailable. Retry with backoff. */
-            503: {
-                headers: {
-                    /** @description Origin request identifier to retain when contacting support. Edge-generated 429 responses may omit it. */
-                    "X-Request-ID"?: string;
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["KnownOriginProblemDetails"];
-                };
-            };
-        };
-    };
-    portfolio_rebates: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Pending rebate balances per program, in micro-collateral units. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RebatesSummaryResponse"];
-                };
-            };
-            /** @description Missing or invalid access token. */
-            401: {
-                headers: {
-                    /** @description Origin request identifier to retain when contacting support. Edge-generated 429 responses may omit it. */
-                    "X-Request-ID"?: string;
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["KnownOriginProblemDetails"];
-                };
-            };
-            /** @description Token lacks the `portfolio:read` scope. */
-            403: {
                 headers: {
                     /** @description Origin request identifier to retain when contacting support. Edge-generated 429 responses may omit it. */
                     "X-Request-ID"?: string;
