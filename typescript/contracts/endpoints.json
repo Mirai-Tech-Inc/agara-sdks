@@ -198,15 +198,6 @@
     "operationId": "portfolio_rebates"
   },
   {
-    "name": "getRealizedPnl",
-    "service": "router",
-    "protocol": "HTTP",
-    "method": "GET",
-    "path": "/trade/v1/portfolio/pnl/realized",
-    "auth": "Privy JWT or PAT: PortfolioRead",
-    "operationId": "portfolio_realized_pnl"
-  },
-  {
     "name": "getTradingDay",
     "service": "api",
     "protocol": "HTTP",

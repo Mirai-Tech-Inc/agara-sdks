@@ -73,7 +73,6 @@ const replay: Record<string, (client: AgaraClient) => Promise<unknown>> = {
   listTrades: (c) => c.listTrades({ limit: 10 }),
   listActivities: (c) => c.listActivities({ limit: 10 }),
   getRebates: (c) => c.getRebates(),
-  getRealizedPnl: (c) => c.getRealizedPnl({ granularity: "day", window: "30d" }),
   listOrders: (c) => c.listOrders({ limit: 10 }),
   listOpenOrders: (c) => c.listOpenOrders({ limit: 10 }),
 };

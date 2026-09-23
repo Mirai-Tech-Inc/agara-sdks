@@ -71,12 +71,6 @@
       "elements": null
     },
     {
-      "name": "getRealizedPnl",
-      "request": "GET /trade/v1/portfolio/pnl/realized?granularity=day&window=30d",
-      "collection": null,
-      "elements": null
-    },
-    {
       "name": "listOrders",
       "request": "POST /trade/v1/orders/list",
       "collection": "orders",

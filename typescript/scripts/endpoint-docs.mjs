@@ -96,7 +96,7 @@ export const endpointDocs = {
     summary: "Read one page of account activity.",
     returns: "Activity variants with market, condition and event metadata plus an opaque cursor.",
     remarks:
-      "Activity includes orders, splits, merges, redemptions, deposits, withdrawals and LP payouts. Use the realized-PnL report for accounting attribution.",
+      "Activity includes orders, splits, merges, redemptions, deposits and withdrawals. It records what happened, not accounting attribution.",
     query: "Page size from 1 to 500 (server default 50) and optional opaque cursor.",
   },
   getBridgeWithdrawAssets: {
@@ -165,14 +165,6 @@ export const endpointDocs = {
     returns: "Pending incentive amounts in integer micro collateral.",
     remarks:
       "Pending rebates are not spendable trading collateral until the server reports the corresponding credit.",
-  },
-  getRealizedPnl: {
-    summary: "Read exact realized-PnL attribution over a UTC calendar window.",
-    returns:
-      "Category totals, buckets, running totals and provenance; monetary values are decimal USDC strings.",
-    remarks:
-      "amountScale describes fractional precision, not a divisor to apply to the returned decimal USDC strings. Use week/all or hour/day with 1d, 7d or 30d.",
-    query: "Required granularity and window: hour/day with 1d, 7d or 30d, or week with all.",
   },
   getTradingDay: {
     summary: "Read one venue-local calendar day and its trading sessions.",

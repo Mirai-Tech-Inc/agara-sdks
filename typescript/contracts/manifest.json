@@ -170,13 +170,6 @@
       "auth": "anonymous WebSocket upgrade; account subscription payload requires valid JWT or PAT: AccountStream"
     },
     {
-      "service": "router",
-      "protocol": "HTTP",
-      "method": "GET",
-      "path": "/trade/v1/portfolio/pnl/realized",
-      "auth": "Privy JWT or PAT: PortfolioRead"
-    },
-    {
       "service": "api",
       "protocol": "HTTP",
       "method": "GET",

@@ -25,7 +25,6 @@ const names = {
   portfolio_summary: "getPortfolioSummary",
   portfolio_trades: "listTrades",
   portfolio_rebates: "getRebates",
-  portfolio_realized_pnl: "getRealizedPnl",
   getApiV1CalendarsByMicDaysByDate: "getTradingDay",
   getApiV1CalendarsByMicDays: "listTradingDays",
   getApiV1CalendarsByMicNextSession: "getNextSession",

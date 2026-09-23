@@ -1370,40 +1370,4 @@ export class TraderClient extends PublicClient {
       "getRebates",
     );
   }
-
-  /**
-   * Read exact realized-PnL attribution over a UTC calendar window.
-   *
-   * @remarks
-   * Requires a personal access token with scope `portfolio:read`. amountScale describes fractional
-   * precision, not a divisor to apply to the returned decimal USDC strings. Use week/all or
-   * hour/day with 1d, 7d or 30d.
-   *
-   * @param query - Required granularity and window: hour/day with 1d, 7d or 30d, or week with all.
-   * @param options - Per-request abort signal, timeout override and successful-response observer.
-   * @returns Category totals, buckets, running totals and provenance; monetary values are decimal
-   * USDC strings.
-   * @throws TypeError for invalid local request shapes or text inputs.
-   * @throws RangeError for invalid local numeric inputs or timeout overrides.
-   * @throws AgaraError for an unsuccessful HTTP response; inspect its status and validated
-   * recovery.
-   * @throws TransportError for failed or aborted I/O; inspect its cause for the underlying failure.
-   * @throws ProtocolError when a successful response is malformed or exceeds the response-byte
-   * bound.
-   * @throws ResponseObserverError when a callback throws after receiving a valid success response.
-   */
-  getRealizedPnl(
-    query: Query<TradingOperations["portfolio_realized_pnl"]>,
-    options: RequestOptions = {},
-  ): Promise<Success<TradingOperations["portfolio_realized_pnl"]>> {
-    return this.request(
-      "GET",
-      `/trade/v1/portfolio/pnl/realized`,
-      undefined,
-      query,
-      options,
-      true,
-      "getRealizedPnl",
-    );
-  }
 }

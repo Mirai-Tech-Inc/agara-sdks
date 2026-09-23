@@ -85,8 +85,9 @@ function failure(code: keyof typeof problemRegistry) {
 
   return new AgaraError(status, { type: urn, title, status, code, recovery });
 }
-// `pnl_not_ready` carries recovery strategy "retry", which is what lets the polling loop read again.
-const transient = () => failure("pnl_not_ready");
+// `dependency_unavailable` carries recovery strategy "retry", which is what lets the polling loop
+// read again, and unlike `pnl_not_ready` it is still reachable from an endpoint this package ships.
+const transient = () => failure("dependency_unavailable");
 const open = { order: { status: "OPEN", is_terminal: false } as Order, markets: {} };
 const done = { order: { status: "MATCHED", is_terminal: true } as Order, markets: {} };
 

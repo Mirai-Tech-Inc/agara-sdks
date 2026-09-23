@@ -66,7 +66,6 @@ const RECORDINGS = [
     collection: "activities",
   },
   { name: "getRebates", path: "/trade/v1/portfolio/rebates" },
-  { name: "getRealizedPnl", path: "/trade/v1/portfolio/pnl/realized?granularity=day&window=30d" },
   {
     name: "listOrders",
     path: "/trade/v1/orders/list",
