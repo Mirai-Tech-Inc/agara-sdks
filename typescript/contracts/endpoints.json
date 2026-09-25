@@ -1,0 +1,344 @@
+[
+  {
+    "name": "getStatus",
+    "service": "router",
+    "protocol": "HTTP",
+    "method": "GET",
+    "path": "/trade/v1/status",
+    "auth": "anonymous",
+    "operationId": "status"
+  },
+  {
+    "name": "placeOrder",
+    "service": "router",
+    "protocol": "HTTP",
+    "method": "POST",
+    "path": "/trade/v1/orders",
+    "auth": "Privy JWT or PAT: OrdersPlace",
+    "operationId": "create_order"
+  },
+  {
+    "name": "placeSignedOrder",
+    "service": "router",
+    "protocol": "HTTP",
+    "method": "POST",
+    "path": "/trade/v1/orders/signed",
+    "auth": "Privy JWT or PAT: OrdersPlaceSigned",
+    "operationId": "create_signed_order"
+  },
+  {
+    "name": "placeSignedOrders",
+    "service": "router",
+    "protocol": "HTTP",
+    "method": "POST",
+    "path": "/trade/v1/orders/signed/batch",
+    "auth": "Privy JWT or PAT: OrdersPlaceSigned",
+    "operationId": "create_signed_order_batch"
+  },
+  {
+    "name": "listOrders",
+    "service": "router",
+    "protocol": "HTTP",
+    "method": "POST",
+    "path": "/trade/v1/orders/list",
+    "auth": "Privy JWT or PAT: OrdersRead",
+    "operationId": "list_orders"
+  },
+  {
+    "name": "getOrder",
+    "service": "router",
+    "protocol": "HTTP",
+    "method": "GET",
+    "path": "/trade/v1/orders/{order_id}",
+    "auth": "Privy JWT or PAT: OrdersRead",
+    "operationId": "get_order"
+  },
+  {
+    "name": "cancelOrder",
+    "service": "router",
+    "protocol": "HTTP",
+    "method": "DELETE",
+    "path": "/trade/v1/orders/{order_id}",
+    "auth": "Privy JWT or PAT: OrdersCancel",
+    "operationId": "cancel_order"
+  },
+  {
+    "name": "getOrderTrades",
+    "service": "router",
+    "protocol": "HTTP",
+    "method": "GET",
+    "path": "/trade/v1/orders/{order_id}/trades",
+    "auth": "Privy JWT or PAT: OrdersRead",
+    "operationId": "get_order_trades"
+  },
+  {
+    "name": "cancelAllOrders",
+    "service": "router",
+    "protocol": "HTTP",
+    "method": "POST",
+    "path": "/trade/v1/orders/cancel-all",
+    "auth": "Privy JWT or PAT: OrdersCancelAll",
+    "operationId": "cancel_all_orders"
+  },
+  {
+    "name": "submitBatch",
+    "service": "router",
+    "protocol": "HTTP",
+    "method": "POST",
+    "path": "/trade/v1/batches",
+    "auth": "Privy JWT or PAT: BatchesSubmit",
+    "operationId": "create_batch"
+  },
+  {
+    "name": "getBatch",
+    "service": "router",
+    "protocol": "HTTP",
+    "method": "GET",
+    "path": "/trade/v1/batches/{batch_hash}",
+    "auth": "Privy JWT or PAT: BatchesSubmit",
+    "operationId": "get_batch"
+  },
+  {
+    "name": "getOrderbook",
+    "service": "router",
+    "protocol": "HTTP",
+    "method": "GET",
+    "path": "/trade/v1/orderbook/{token_id}",
+    "auth": "anonymous",
+    "operationId": "agara_orderbook"
+  },
+  {
+    "name": "listActivities",
+    "service": "router",
+    "protocol": "HTTP",
+    "method": "GET",
+    "path": "/trade/v1/portfolio/activities",
+    "auth": "Privy JWT or PAT: PortfolioRead",
+    "operationId": "portfolio_activities"
+  },
+  {
+    "name": "getBridgeWithdrawAssets",
+    "service": "router",
+    "protocol": "HTTP",
+    "method": "GET",
+    "path": "/trade/v1/portfolio/bridge/withdraw/supported-assets",
+    "auth": "Privy JWT or PAT: PortfolioRead",
+    "operationId": "portfolio_bridge_withdraw_supported_assets"
+  },
+  {
+    "name": "quoteBridgeWithdrawal",
+    "service": "router",
+    "protocol": "HTTP",
+    "method": "POST",
+    "path": "/trade/v1/portfolio/bridge/withdraw/quote",
+    "auth": "Privy JWT or PAT: PortfolioRead",
+    "operationId": "portfolio_bridge_withdraw_quote"
+  },
+  {
+    "name": "listOpenOrders",
+    "service": "router",
+    "protocol": "HTTP",
+    "method": "POST",
+    "path": "/trade/v1/portfolio/open-orders/list",
+    "auth": "Privy JWT or PAT: PortfolioRead",
+    "operationId": "portfolio_open_orders_list"
+  },
+  {
+    "name": "listPositions",
+    "service": "router",
+    "protocol": "HTTP",
+    "method": "POST",
+    "path": "/trade/v1/portfolio/positions/list",
+    "auth": "Privy JWT or PAT: PortfolioRead",
+    "operationId": "portfolio_positions_list"
+  },
+  {
+    "name": "splitPosition",
+    "service": "router",
+    "protocol": "HTTP",
+    "method": "POST",
+    "path": "/trade/v1/portfolio/positions/split",
+    "auth": "Privy JWT or PAT: PositionsSplit",
+    "operationId": "portfolio_positions_split"
+  },
+  {
+    "name": "mergePosition",
+    "service": "router",
+    "protocol": "HTTP",
+    "method": "POST",
+    "path": "/trade/v1/portfolio/positions/merge",
+    "auth": "Privy JWT or PAT: PositionsMerge",
+    "operationId": "portfolio_positions_merge"
+  },
+  {
+    "name": "getPortfolioSummary",
+    "service": "router",
+    "protocol": "HTTP",
+    "method": "GET",
+    "path": "/trade/v1/portfolio/summary",
+    "auth": "Privy JWT or PAT: PortfolioRead",
+    "operationId": "portfolio_summary"
+  },
+  {
+    "name": "listTrades",
+    "service": "router",
+    "protocol": "HTTP",
+    "method": "GET",
+    "path": "/trade/v1/portfolio/trades",
+    "auth": "Privy JWT or PAT: PortfolioRead",
+    "operationId": "portfolio_trades"
+  },
+  {
+    "name": "getTradingDay",
+    "service": "api",
+    "protocol": "HTTP",
+    "method": "GET",
+    "path": "/api/v1/calendars/{mic}/days/{date}",
+    "auth": "anonymous",
+    "operationId": "getApiV1CalendarsByMicDaysByDate"
+  },
+  {
+    "name": "listTradingDays",
+    "service": "api",
+    "protocol": "HTTP",
+    "method": "GET",
+    "path": "/api/v1/calendars/{mic}/days",
+    "auth": "anonymous",
+    "operationId": "getApiV1CalendarsByMicDays"
+  },
+  {
+    "name": "getNextSession",
+    "service": "api",
+    "protocol": "HTTP",
+    "method": "GET",
+    "path": "/api/v1/calendars/{mic}/next-session",
+    "auth": "anonymous",
+    "operationId": "getApiV1CalendarsByMicNextSession"
+  },
+  {
+    "name": "listCalendars",
+    "service": "api",
+    "protocol": "HTTP",
+    "method": "GET",
+    "path": "/api/v1/calendars",
+    "auth": "anonymous",
+    "operationId": "getApiV1Calendars"
+  },
+  {
+    "name": "getCalendar",
+    "service": "api",
+    "protocol": "HTTP",
+    "method": "GET",
+    "path": "/api/v1/calendars/{mic}",
+    "auth": "anonymous",
+    "operationId": "getApiV1CalendarsByMic"
+  },
+  {
+    "name": "getCategory",
+    "service": "api",
+    "protocol": "HTTP",
+    "method": "GET",
+    "path": "/api/v1/categories/{slug}",
+    "auth": "anonymous",
+    "operationId": "getApiV1CategoriesBySlug"
+  },
+  {
+    "name": "getEventCanonicalUrl",
+    "service": "api",
+    "protocol": "HTTP",
+    "method": "GET",
+    "path": "/api/v1/events/{slug}/canonical-url",
+    "auth": "anonymous",
+    "operationId": "getApiV1EventsBySlugCanonicalUrl"
+  },
+  {
+    "name": "getEvent",
+    "service": "api",
+    "protocol": "HTTP",
+    "method": "GET",
+    "path": "/api/v1/events/{slug}",
+    "auth": "anonymous",
+    "operationId": "getApiV1EventsBySlug"
+  },
+  {
+    "name": "listEvents",
+    "service": "api",
+    "protocol": "HTTP",
+    "method": "GET",
+    "path": "/api/v1/events",
+    "auth": "anonymous",
+    "operationId": "getApiV1Events"
+  },
+  {
+    "name": "getMarket",
+    "service": "api",
+    "protocol": "HTTP",
+    "method": "GET",
+    "path": "/api/v1/markets/{id}",
+    "auth": "anonymous",
+    "operationId": "getApiV1MarketsById"
+  },
+  {
+    "name": "listMarkets",
+    "service": "api",
+    "protocol": "HTTP",
+    "method": "GET",
+    "path": "/api/v1/markets",
+    "auth": "anonymous",
+    "operationId": "getApiV1Markets"
+  },
+  {
+    "name": "getPricePoint",
+    "service": "api",
+    "protocol": "HTTP",
+    "method": "GET",
+    "path": "/api/v1/prices/point",
+    "auth": "anonymous",
+    "operationId": "getApiV1PricesPoint"
+  },
+  {
+    "name": "getPriceTicks",
+    "service": "api",
+    "protocol": "HTTP",
+    "method": "GET",
+    "path": "/api/v1/prices/ticks",
+    "auth": "anonymous",
+    "operationId": "getApiV1PricesTicks"
+  },
+  {
+    "name": "getTokenHistory",
+    "service": "api",
+    "protocol": "HTTP",
+    "method": "GET",
+    "path": "/api/v1/prices/token-history",
+    "auth": "anonymous",
+    "operationId": "getApiV1PricesTokenHistory"
+  },
+  {
+    "name": "search",
+    "service": "api",
+    "protocol": "HTTP",
+    "method": "GET",
+    "path": "/api/v1/search",
+    "auth": "anonymous",
+    "operationId": "getApiV1Search"
+  },
+  {
+    "name": "listSecurities",
+    "service": "api",
+    "protocol": "HTTP",
+    "method": "GET",
+    "path": "/api/v1/securities",
+    "auth": "anonymous",
+    "operationId": "getApiV1Securities"
+  },
+  {
+    "name": "getSecurity",
+    "service": "api",
+    "protocol": "HTTP",
+    "method": "GET",
+    "path": "/api/v1/securities/{symbol}",
+    "auth": "anonymous",
+    "operationId": "getApiV1SecuritiesBySymbol"
+  }
+]

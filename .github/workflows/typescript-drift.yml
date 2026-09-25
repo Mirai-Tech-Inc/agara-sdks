@@ -1,0 +1,82 @@
+# Contract drift is not detectable from the repository alone: the snapshots under
+# typescript/contracts are a scoped copy of the platform's OpenAPI, so a platform field rename is
+# invisible here until a consumer hits it. This job compares them against a live deployment.
+#
+# Deliberately not part of the required PR check: it needs network and a reachable deployment, and a
+# deployment being down must not block a pull request. It runs on a schedule and on demand, and an
+# unreachable deployment (exit 2) reports without failing.
+name: TypeScript SDK contract drift
+on:
+  schedule:
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: Deployment to compare against
+        required: false
+        default: https://app.sandbox.agara.xyz
+permissions:
+  contents: read
+jobs:
+  drift:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: typescript
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: typescript/package-lock.json
+      - run: npm ci
+      - name: Compare contracts against the deployment
+        env:
+          AGARA_DRIFT_BASE_URL: ${{ inputs.base_url || vars.AGARA_DRIFT_BASE_URL || 'https://app.sandbox.agara.xyz' }}
+          AGARA_DRIFT_GATE_COOKIE: ${{ secrets.AGARA_DRIFT_GATE_COOKIE }}
+        run: |
+          set +e
+          npm run drift:check
+          status=$?
+          set -e
+          if [ "$status" -eq 2 ]; then
+            echo "::warning::deployment unreachable; drift not checked"
+            exit 0
+          fi
+          exit "$status"
+
+  # Separate job, not a later step: a REST drift failure must not hide a stream failure, and the
+  # stream check is the only cover streams have. There is no WebSocket schema to diff, so this one
+  # makes the deployment speak and requires the pinned decoder to accept every frame.
+  streams:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: typescript
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: typescript/package-lock.json
+      - run: npm ci
+      - run: npm run build
+      - name: Decode live stream frames
+        env:
+          AGARA_STREAM_BASE_URL: ${{ inputs.base_url || vars.AGARA_DRIFT_BASE_URL || 'https://app.sandbox.agara.xyz' }}
+          AGARA_STREAM_GATE_COOKIE: ${{ secrets.AGARA_DRIFT_GATE_COOKIE }}
+          AGARA_STREAM_TOKEN: ${{ secrets.AGARA_STREAM_TOKEN }}
+        run: |
+          set +e
+          npm run streams:check
+          status=$?
+          set -e
+          if [ "$status" -eq 2 ]; then
+            echo "::warning::deployment unreachable; stream frames not checked"
+            exit 0
+          fi
+          exit "$status"

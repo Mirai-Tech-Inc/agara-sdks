@@ -1,0 +1,488 @@
+{
+  "markets": [
+    {
+      "id": "b9721a97-dc02-4703-a074-680b59c5b348",
+      "exchange": "AGARA",
+      "slug": "china-annual-inflation-2026-1-6",
+      "question": ">= 1.6%",
+      "display_type": "BINARY",
+      "source_market_type": null,
+      "outcomes": [
+        {
+          "id": "d9ed3d68-7a3e-4531-919e-5e4a6382786a",
+          "index": 0,
+          "label": "Yes",
+          "price_micro": null,
+          "token_id": "3080354623804693924140594680509310463211971617800178260199236136438405504979",
+          "best_bid_micro": null,
+          "best_ask_micro": null,
+          "spread_micro": null,
+          "kind": "yes",
+          "short_label": "Yes",
+          "team_side": null,
+          "side": "left",
+          "threshold": null,
+          "resolution_price_micro": null,
+          "display": {
+            "kind": "yes",
+            "side": "left",
+            "label": "Yes",
+            "short_label": "Yes"
+          }
+        },
+        {
+          "id": "9c1630af-b8d3-4717-bd0c-0ede9c9000a3",
+          "index": 1,
+          "label": "No",
+          "price_micro": null,
+          "token_id": "53001811052467883992819895815006000371851434699384551262153764437950873430832",
+          "best_bid_micro": null,
+          "best_ask_micro": null,
+          "spread_micro": null,
+          "kind": "no",
+          "short_label": "No",
+          "team_side": null,
+          "side": "right",
+          "threshold": null,
+          "resolution_price_micro": null,
+          "display": {
+            "kind": "no",
+            "side": "right",
+            "label": "No",
+            "short_label": "No"
+          }
+        }
+      ],
+      "state": "ACTIVE",
+      "is_accepting_orders": true,
+      "halted_at": null,
+      "halted_reason": null,
+      "volume_micro": "138450000",
+      "liquidity": "0",
+      "volume_24h_micro": "0",
+      "tick_size_micro": "10000",
+      "engine_config": {
+        "tick_size": 1,
+        "price_scale": 100,
+        "size_scale": 100,
+        "min_price": 1,
+        "max_price": 99
+      },
+      "min_order_size_micro": "1000000",
+      "line": null,
+      "resolution_status": null,
+      "resolution_outcome": null,
+      "resolved_at": null,
+      "resolution": null,
+      "archived_at": null,
+      "condition_id": "0x2dcfeea0061ce44d559bda09c89733bc7d1ba82d93572543132781737038abd3",
+      "neg_risk_id": null,
+      "three_way_role": null,
+      "is_three_way": null,
+      "game_number": null,
+      "display_label": ">= 1.6%",
+      "display": {
+        "description": "This is a market about the variation of consumer prices in China over the 12-month period ending December 2026, as reported by the National Bureau of Statistics (NBS) of China.\n\nThis market will resolve according to the percentage change in the Consumer Price Index (CPI) during the 12-month period ending December 2026 according to the monthly NBS report.\n\nThe resolution source for this market will be the NBS Consumer Price Index monthly report released for December 2026 (https://www.stats.gov.cn/english/PressRelease/), currently expected to be released in January 2027. Resolution of this market will take place upon release of the aforementioned data. If no data for the specified month is released by the date the next month's data is scheduled to be released, this market will resolve based on data from the last available month.\n\nYou can find the relevant figure by locating the report for December 2026 on the Press Releases page (see: https://www.stats.gov.cn/english/PressRelease/), locating the table named \"Consumer Price Indexes in December 2026\", and finding the consumer price index figure in the column labeled \"Growth Rate Y/Y (%)\".\n\nNote: the resolution source for this market will be the official monthly NBS CPI news release which reports inflation during 12-month periods to only one decimal point (e.g. 1.9%). Thus, this is the level of precision that will be used when resolving the market. For the full release schedule, see: https://www.stats.gov.cn/english/PressRelease/ReleaseCalendar/",
+        "portfolio_title": "China Annual Inflation 2026 - >= 1.6%",
+        "resolution_source": "https://www.stats.gov.cn/english/PressRelease/"
+      },
+      "event": {
+        "id": "268cf2dc-6380-4a7b-a84f-24ddfcfea1c5",
+        "slug": "china-annual-inflation-2026",
+        "title": "China Annual Inflation 2026",
+        "active": true
+      }
+    },
+    {
+      "id": "1cca0116-ccc8-4611-8376-710b5e2c1eda",
+      "exchange": "AGARA",
+      "slug": "bitcoin-price-up-or-down-15-minutes-2026-09-22T19-15-00-000Z",
+      "question": "Bitcoin Price Up or Down (15 Minutes) - Sep 22, 3:15PM-3:30PM ET",
+      "display_type": "BINARY",
+      "source_market_type": null,
+      "outcomes": [
+        {
+          "id": "fc4dfdcc-558a-412e-b9ba-ebe38c84e6b7",
+          "index": 0,
+          "label": "Up",
+          "price_micro": null,
+          "token_id": "33231424087103601352900538585717167306820646175443179167996936797703020028788",
+          "best_bid_micro": null,
+          "best_ask_micro": null,
+          "spread_micro": null,
+          "kind": "yes",
+          "team_side": null,
+          "side": "left",
+          "threshold": null,
+          "resolution_price_micro": null,
+          "resolution_label": "BTC Up",
+          "display": {
+            "kind": "yes",
+            "side": "left",
+            "label": "Up",
+            "resolution_label": "BTC Up"
+          }
+        },
+        {
+          "id": "eba3ab72-249c-4f07-aa9c-3da8bc4865a9",
+          "index": 1,
+          "label": "Down",
+          "price_micro": null,
+          "token_id": "100738980932050963470361957877548825119600273266136652438694686877435118962663",
+          "best_bid_micro": null,
+          "best_ask_micro": null,
+          "spread_micro": null,
+          "kind": "no",
+          "team_side": null,
+          "side": "right",
+          "threshold": null,
+          "resolution_price_micro": null,
+          "resolution_label": "BTC Down",
+          "display": {
+            "kind": "no",
+            "side": "right",
+            "label": "Down",
+            "resolution_label": "BTC Down"
+          }
+        }
+      ],
+      "state": "ACTIVE",
+      "is_accepting_orders": true,
+      "halted_at": null,
+      "halted_reason": null,
+      "volume_micro": "0",
+      "liquidity": "0",
+      "volume_24h_micro": "0",
+      "tick_size_micro": "10000",
+      "engine_config": {
+        "tick_size": 1,
+        "price_scale": 100,
+        "size_scale": 100,
+        "min_price": 1,
+        "max_price": 99
+      },
+      "min_order_size_micro": "1000000",
+      "line": null,
+      "resolution_status": null,
+      "resolution_outcome": null,
+      "resolved_at": null,
+      "resolution": null,
+      "archived_at": null,
+      "condition_id": "0xe5418dd31bbb679bb30c009e2425d161c798871c6ee5a19c284f34c6f2d904b8",
+      "neg_risk_id": null,
+      "three_way_role": null,
+      "is_three_way": null,
+      "game_number": null,
+      "display_label": "Bitcoin Price Up or Down (15 Minutes) - Sep 22, 3:15PM-3:30PM ET",
+      "display": {
+        "currency": "USD",
+        "observe_at": "2026-09-22T19:30:00.000Z",
+        "description": "This market will resolve to \"Up\" if the closing price for Bitcoin / US Dollar at 3:30PM ET on Sep 22, 2026 is equal to or higher than its opening price at 3:15PM ET on Sep 22, 2026. A lower closing price resolves the market to \"Down\". Equal opening and closing prices resolve to \"Up\".\nOpening and closing prices are sourced exclusively from Pyth Pro using the timestamped Crypto.BTC/USD point-price feed. The timestamp provided by the source must be at or before the opening or closing instant, never later, and no more than 3 seconds old at that instant.\nPrices are compared at their original source precision, before any display rounding.\nIf no valid opening price is available, the market will not become Active. If no valid closing price is available, resolution may be delayed for manual review at the discretion of the Agara team.\nFinal settlement may occur after the closing instant, once any applicable review or dispute process has completed.",
+        "series_slug": "bitcoin-price-up-or-down-15-minutes",
+        "reference_at": "2026-09-22T19:15:00.000Z",
+        "pyth_pro_symbol": "Crypto.BTC/USD",
+        "reference_price": "86480.23180505",
+        "resolution_source": "https://app.pyth.com/explore/Crypto.BTC%2FUSD"
+      },
+      "event": {
+        "id": "1933103a-7380-4981-a9c9-c1f19fc84e1f",
+        "slug": "bitcoin-price-up-or-down-15-minutes-event",
+        "title": "Bitcoin Price Up or Down (15 Minutes) Series",
+        "active": true
+      }
+    },
+    {
+      "id": "2cf3a795-dde1-4d71-9d37-15d946ee17fe",
+      "exchange": "AGARA",
+      "slug": "bitcoin-price-up-or-down-30-minutes-2026-09-22T19-00-00-000Z",
+      "question": "Bitcoin Price Up or Down (30 Minutes) - Sep 22, 3:00PM-3:30PM ET",
+      "display_type": "BINARY",
+      "source_market_type": null,
+      "outcomes": [
+        {
+          "id": "6af084ec-29e9-40cd-9c19-b8d4d5e23734",
+          "index": 0,
+          "label": "Up",
+          "price_micro": null,
+          "token_id": "4509907702847552069692159697287101029901467844149875868186917038449414314564",
+          "best_bid_micro": null,
+          "best_ask_micro": null,
+          "spread_micro": null,
+          "kind": "yes",
+          "team_side": null,
+          "side": "left",
+          "threshold": null,
+          "resolution_price_micro": null,
+          "resolution_label": "BTC Up",
+          "display": {
+            "kind": "yes",
+            "side": "left",
+            "label": "Up",
+            "resolution_label": "BTC Up"
+          }
+        },
+        {
+          "id": "d8ccf7cf-f728-498a-a299-71a5f211f9c8",
+          "index": 1,
+          "label": "Down",
+          "price_micro": null,
+          "token_id": "95873886427078516566146636760435616404639449000591986736576876539872773348036",
+          "best_bid_micro": null,
+          "best_ask_micro": null,
+          "spread_micro": null,
+          "kind": "no",
+          "team_side": null,
+          "side": "right",
+          "threshold": null,
+          "resolution_price_micro": null,
+          "resolution_label": "BTC Down",
+          "display": {
+            "kind": "no",
+            "side": "right",
+            "label": "Down",
+            "resolution_label": "BTC Down"
+          }
+        }
+      ],
+      "state": "ACTIVE",
+      "is_accepting_orders": true,
+      "halted_at": null,
+      "halted_reason": null,
+      "volume_micro": "0",
+      "liquidity": "0",
+      "volume_24h_micro": "0",
+      "tick_size_micro": "10000",
+      "engine_config": {
+        "tick_size": 1,
+        "price_scale": 100,
+        "size_scale": 100,
+        "min_price": 1,
+        "max_price": 99
+      },
+      "min_order_size_micro": "1000000",
+      "line": null,
+      "resolution_status": null,
+      "resolution_outcome": null,
+      "resolved_at": null,
+      "resolution": null,
+      "archived_at": null,
+      "condition_id": "0x484bcc79bc8c01ac40bd8cd03a88ffafe3142e0a34a91eabab44991f6dc4367b",
+      "neg_risk_id": null,
+      "three_way_role": null,
+      "is_three_way": null,
+      "game_number": null,
+      "display_label": "Bitcoin Price Up or Down (30 Minutes) - Sep 22, 3:00PM-3:30PM ET",
+      "display": {
+        "currency": "USD",
+        "observe_at": "2026-09-22T19:30:00.000Z",
+        "description": "This market will resolve to \"Up\" if the closing price for Bitcoin / US Dollar at 3:30PM ET on Sep 22, 2026 is equal to or higher than its opening price at 3:00PM ET on Sep 22, 2026. A lower closing price resolves the market to \"Down\". Equal opening and closing prices resolve to \"Up\".\nOpening and closing prices are sourced exclusively from Pyth Pro using the timestamped Crypto.BTC/USD point-price feed. The timestamp provided by the source must be at or before the opening or closing instant, never later, and no more than 3 seconds old at that instant.\nPrices are compared at their original source precision, before any display rounding.\nIf no valid opening price is available, the market will not become Active. If no valid closing price is available, resolution may be delayed for manual review at the discretion of the Agara team.\nFinal settlement may occur after the closing instant, once any applicable review or dispute process has completed.",
+        "series_slug": "bitcoin-price-up-or-down-30-minutes",
+        "reference_at": "2026-09-22T19:00:00.000Z",
+        "pyth_pro_symbol": "Crypto.BTC/USD",
+        "reference_price": "86460.68638838",
+        "resolution_source": "https://app.pyth.com/explore/Crypto.BTC%2FUSD"
+      },
+      "event": {
+        "id": "30310888-676a-42ed-af70-ff1cc119561e",
+        "slug": "bitcoin-price-up-or-down-30-minutes-event",
+        "title": "Bitcoin Price Up or Down (30 Minutes) Series",
+        "active": true
+      }
+    },
+    {
+      "id": "4fe1d587-2634-426b-b862-cd9a27c7ac65",
+      "exchange": "AGARA",
+      "slug": "bank-of-thailand-rate-decision-in-october-2026-increase",
+      "question": "Increase",
+      "display_type": "BINARY",
+      "source_market_type": null,
+      "outcomes": [
+        {
+          "id": "aebbb63d-bbb7-4674-a8e7-e3ab2da5a44f",
+          "index": 0,
+          "label": "Yes",
+          "price_micro": null,
+          "token_id": "45214404783685011196945027216471148370600189604468048410635300837169884388109",
+          "best_bid_micro": null,
+          "best_ask_micro": null,
+          "spread_micro": null,
+          "kind": "yes",
+          "short_label": "Yes",
+          "team_side": null,
+          "side": "left",
+          "threshold": null,
+          "resolution_price_micro": null,
+          "display": {
+            "kind": "yes",
+            "side": "left",
+            "label": "Yes",
+            "short_label": "Yes"
+          }
+        },
+        {
+          "id": "c95a3279-8284-4dbc-bade-86aa1a11720e",
+          "index": 1,
+          "label": "No",
+          "price_micro": null,
+          "token_id": "70152895834794535539787616542151802164693441341819763119249397665672548469199",
+          "best_bid_micro": null,
+          "best_ask_micro": null,
+          "spread_micro": null,
+          "kind": "no",
+          "short_label": "No",
+          "team_side": null,
+          "side": "right",
+          "threshold": null,
+          "resolution_price_micro": null,
+          "display": {
+            "kind": "no",
+            "side": "right",
+            "label": "No",
+            "short_label": "No"
+          }
+        }
+      ],
+      "state": "ACTIVE",
+      "is_accepting_orders": true,
+      "halted_at": null,
+      "halted_reason": null,
+      "volume_micro": "0",
+      "liquidity": "0",
+      "volume_24h_micro": "0",
+      "tick_size_micro": "10000",
+      "engine_config": {
+        "tick_size": 1,
+        "price_scale": 100,
+        "size_scale": 100,
+        "min_price": 1,
+        "max_price": 99
+      },
+      "min_order_size_micro": "1000000",
+      "line": null,
+      "resolution_status": null,
+      "resolution_outcome": null,
+      "resolved_at": null,
+      "resolution": null,
+      "archived_at": null,
+      "condition_id": "0x888899314150ae9d67293c58b786d2f106c4c08f85e932948c13aa8e6a01961c",
+      "neg_risk_id": null,
+      "three_way_role": null,
+      "is_three_way": null,
+      "game_number": null,
+      "display_label": "Increase",
+      "display": {
+        "description": "This market resolves to Yes if the Bank of Thailand’s Monetary Policy Committee adopts a policy interest rate higher than the rate immediately preceding its decision at the meeting originally scheduled for 28 October 2026.\nIt resolves to No if the committee holds or decreases the policy rate at that meeting.\nAn increase of any size qualifies. This market measures the decision at the designated meeting, not the cumulative rate change since this market opened. \n\n“Policy rate” means BOT’s policy interest rate used for one-day bilateral repurchase transactions. Changes to commercial-bank lending rates, deposit rates, other BOT facilities, reserve requirements, or asset purchases do not count. No rounding applies.\n\nResolution uses BOT’s official written MPC decision announcement, published through its MPC meeting page. Another official BOT written publication may be used if it explicitly identifies the designated meeting and its decision. If Thai and English versions conflict, the official Thai version controls. Media reports, leaks, forecasts, and individual members’ views are not resolution sources.\n\nSeparate emergency decisions do not resolve this event. An earlier decision updates the rate against which the designated decision is compared. A separate later decision does not affect the result.\n\nAn unconditional rate change adopted at the designated meeting counts even if implementation is delayed. If multiple future rate levels are adopted, use the first newly adopted level in effective-date order. A proposal or conditional commitment does not count.\n\nFor a valid decision, exactly one outcome resolves Yes and the other two resolve No.",
+        "portfolio_title": "Bank of Thailand rate decision in October 2026? - Increase",
+        "resolution_source": "https://www.bot.or.th/en/our-roles/monetary-policy/mpc-meeting.html"
+      },
+      "event": {
+        "id": "40a20094-1d38-40bb-afc4-dbf4f9583dba",
+        "slug": "bank-of-thailand-rate-decision-in-october-2026",
+        "title": "Bank of Thailand rate decision in October 2026?",
+        "active": true
+      }
+    },
+    {
+      "id": "528d2c0a-8b87-4857-9549-3ef95b385935",
+      "exchange": "AGARA",
+      "slug": "solana-price-up-or-down-5-minutes-2026-09-22T19-15-00-000Z",
+      "question": "Solana Price Up or Down (5 Minutes) - Sep 22, 3:15PM-3:20PM ET",
+      "display_type": "BINARY",
+      "source_market_type": null,
+      "outcomes": [
+        {
+          "id": "680636b3-3946-4a97-acdf-2f30ff0e9892",
+          "index": 0,
+          "label": "Up",
+          "price_micro": null,
+          "token_id": "2449282324328700957058913109898977425741547394116836244906593390171269507042",
+          "best_bid_micro": null,
+          "best_ask_micro": null,
+          "spread_micro": null,
+          "kind": "yes",
+          "team_side": null,
+          "side": "left",
+          "threshold": null,
+          "resolution_price_micro": null,
+          "resolution_label": "SOL Up",
+          "display": {
+            "kind": "yes",
+            "side": "left",
+            "label": "Up",
+            "resolution_label": "SOL Up"
+          }
+        },
+        {
+          "id": "c563b0b0-3df2-47dd-8350-eba507c386f2",
+          "index": 1,
+          "label": "Down",
+          "price_micro": null,
+          "token_id": "114593387963607048219043426550079319883033188165419945065607168256653777543709",
+          "best_bid_micro": null,
+          "best_ask_micro": null,
+          "spread_micro": null,
+          "kind": "no",
+          "team_side": null,
+          "side": "right",
+          "threshold": null,
+          "resolution_price_micro": null,
+          "resolution_label": "SOL Down",
+          "display": {
+            "kind": "no",
+            "side": "right",
+            "label": "Down",
+            "resolution_label": "SOL Down"
+          }
+        }
+      ],
+      "state": "ACTIVE",
+      "is_accepting_orders": true,
+      "halted_at": null,
+      "halted_reason": null,
+      "volume_micro": "0",
+      "liquidity": "0",
+      "volume_24h_micro": "0",
+      "tick_size_micro": "10000",
+      "engine_config": {
+        "tick_size": 1,
+        "price_scale": 100,
+        "size_scale": 100,
+        "min_price": 1,
+        "max_price": 99
+      },
+      "min_order_size_micro": "1000000",
+      "line": null,
+      "resolution_status": null,
+      "resolution_outcome": null,
+      "resolved_at": null,
+      "resolution": null,
+      "archived_at": null,
+      "condition_id": "0xfe13e5a7c14daa5af85679bb53330e84eaf140703c71f0303652abaffd0799b2",
+      "neg_risk_id": null,
+      "three_way_role": null,
+      "is_three_way": null,
+      "game_number": null,
+      "display_label": "Solana Price Up or Down (5 Minutes) - Sep 22, 3:15PM-3:20PM ET",
+      "display": {
+        "currency": "USD",
+        "observe_at": "2026-09-22T19:20:00.000Z",
+        "description": "This market will resolve to \"Up\" if the closing price for Solana / USD at 3:20PM ET on Sep 22, 2026 is equal to or higher than its opening price at 3:15PM ET on Sep 22, 2026. A lower closing price resolves the market to \"Down\". Equal opening and closing prices resolve to \"Up\".\nOpening and closing prices are sourced exclusively from Pyth Pro using the timestamped Crypto.SOL/USD point-price feed. The timestamp provided by the source must be at or before the opening or closing instant, never later, and no more than 3 seconds old at that instant.\nPrices are compared at their original source precision, before any display rounding.\nIf no valid opening price is available, the market will not become Active. If no valid closing price is available, resolution may be delayed for manual review at the discretion of the Agara team.\nFinal settlement may occur after the closing instant, once any applicable review or dispute process has completed.",
+        "series_slug": "solana-price-up-or-down-5-minutes",
+        "reference_at": "2026-09-22T19:15:00.000Z",
+        "pyth_pro_symbol": "Crypto.SOL/USD",
+        "reference_price": "118.17622004",
+        "resolution_source": "https://app.pyth.com/explore/Crypto.SOL%2FUSD"
+      },
+      "event": {
+        "id": "19b7f64b-05b6-44b4-aad3-aa74038f97d2",
+        "slug": "solana-price-up-or-down-5-minutes-event",
+        "title": "Solana Price Up or Down (5 Minutes) Series",
+        "active": true
+      }
+    }
+  ],
+  "pagination": {
+    "next_cursor": "eyJ2ZXIiOjEsImYiOiJlYjI0NTBhZWIzYjEiLCJhIjoxLCJ2IjoiMCIsImkiOiI1MjhkMmMwYS04Yjg3LTQ4NTctOTU0OS0zZWY5NWIzODU5MzUifQ",
+    "limit": 5
+  }
+}

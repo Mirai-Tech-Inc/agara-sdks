@@ -1,0 +1,80 @@
+{
+  "comment": "Responses recorded from a real deployment. Not derived from contracts/, so they fail offline when a snapshot drifts from what the server sends. Re-record with scripts/record-fixtures.mjs.",
+  "recorded_at": "2026-09-22T19:17:30.671Z",
+  "deployment": "https://app.dev.agara.xyz",
+  "platform_commit": "e136dacf2e5442d1a8e2a05d7c77bf70b8f3aa6f",
+  "recordings": [
+    {
+      "name": "listMarkets",
+      "request": "GET /api/v1/markets?source=agara&state=ACTIVE&limit=5",
+      "collection": "markets",
+      "elements": 5
+    },
+    {
+      "name": "listEvents",
+      "request": "GET /api/v1/events?limit=5&include_markets=true",
+      "collection": "events",
+      "elements": 5
+    },
+    {
+      "name": "listSecurities",
+      "request": "GET /api/v1/securities",
+      "collection": "securities",
+      "elements": 16
+    },
+    {
+      "name": "listCalendars",
+      "request": "GET /api/v1/calendars",
+      "collection": "venues",
+      "elements": 10
+    },
+    {
+      "name": "listTradingDays",
+      "request": "GET /api/v1/calendars/XHKG/days?from=2026-09-01&to=2026-09-30",
+      "collection": "days",
+      "elements": 30
+    },
+    {
+      "name": "search",
+      "request": "GET /api/v1/search?q=inflation&limit=5",
+      "collection": null,
+      "elements": null
+    },
+    {
+      "name": "listPositions",
+      "request": "POST /trade/v1/portfolio/positions/list",
+      "collection": "positions",
+      "elements": 2
+    },
+    {
+      "name": "getPortfolioSummary",
+      "request": "GET /trade/v1/portfolio/summary",
+      "collection": "summaries",
+      "elements": 1
+    },
+    {
+      "name": "listTrades",
+      "request": "GET /trade/v1/portfolio/trades?limit=10",
+      "collection": "trades",
+      "elements": 9
+    },
+    {
+      "name": "listActivities",
+      "request": "GET /trade/v1/portfolio/activities?limit=10",
+      "collection": "activities",
+      "elements": 10
+    },
+    {
+      "name": "listOrders",
+      "request": "POST /trade/v1/orders/list",
+      "collection": "orders",
+      "elements": 10
+    },
+    {
+      "name": "listOpenOrders",
+      "request": "POST /trade/v1/portfolio/open-orders/list",
+      "collection": "orders",
+      "elements": 3
+    }
+  ]
+}

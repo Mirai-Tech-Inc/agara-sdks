@@ -1,0 +1,20 @@
+{
+  "comment": "Differences between the committed snapshots and a deployment's OpenAPI that are deliberate. Each is explained in contracts/README.md. Entries match an operation name (or \"*\") plus an exact `difference` or a `pattern` regex. Keep this list small: it is the thing that stops check-drift.mjs from being read.",
+  "deliberate": [
+    {
+      "operation": "*",
+      "pattern": "^request ops\\[\\]<(ACROSS_SWAP_APPROVE|WITHDRAW_ACROSS_SWAP_[A-Z0-9_]+)>",
+      "reason": "Across and CCTP batch operations require server signing. The snapshot keeps their variants so the types stay complete, and the presigned helpers reject them locally; a deployment without the bridge omits them."
+    },
+    {
+      "operation": "*",
+      "pattern": "^not documented by the deployment \\(\\w+ /trade/v1/portfolio/bridge/withdraw/",
+      "reason": "Both withdrawal paths are source-backed additions; the environment-projected OpenAPI omits them even though the routes respond (401 unauthenticated, and the handler runs when authorized). Absence from the document is not absence of the route."
+    },
+    {
+      "operation": "*",
+      "pattern": "^response status#enum: snapshot PENDING, deployment absent$",
+      "reason": "AGARA split/merge acceptance status is PENDING (apps/router/src/handlers.rs); the projected document does not carry the enum."
+    }
+  ]
+}

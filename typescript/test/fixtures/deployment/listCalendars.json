@@ -1,0 +1,159 @@
+{
+  "venues": [
+    {
+      "mic": "XCRYPTO",
+      "name": "Crypto",
+      "timezone": "America/New_York",
+      "country": "US",
+      "currency": "USD",
+      "default_segments": [],
+      "active": true
+    },
+    {
+      "mic": "XHKG",
+      "name": "Hong Kong Stock Exchange",
+      "timezone": "Asia/Hong_Kong",
+      "country": "HK",
+      "currency": "HKD",
+      "default_segments": [
+        {
+          "open": "09:30",
+          "close": "12:00"
+        },
+        {
+          "open": "13:00",
+          "close": "16:00"
+        }
+      ],
+      "active": true
+    },
+    {
+      "mic": "XIDX",
+      "name": "Indonesia Stock Exchange",
+      "timezone": "Asia/Jakarta",
+      "country": "ID",
+      "currency": "IDR",
+      "default_segments": [
+        {
+          "open": "09:00",
+          "close": "12:00"
+        },
+        {
+          "open": "13:30",
+          "close": "15:49"
+        }
+      ],
+      "active": true
+    },
+    {
+      "mic": "XKRX",
+      "name": "Korea Exchange (Stock Market)",
+      "timezone": "Asia/Seoul",
+      "country": "KR",
+      "currency": "KRW",
+      "default_segments": [
+        {
+          "open": "09:00",
+          "close": "15:30"
+        }
+      ],
+      "active": true
+    },
+    {
+      "mic": "XNAS",
+      "name": "Nasdaq Stock Market",
+      "timezone": "America/New_York",
+      "country": "US",
+      "currency": "USD",
+      "default_segments": [
+        {
+          "open": "09:30",
+          "close": "16:00"
+        }
+      ],
+      "active": true
+    },
+    {
+      "mic": "XNSE",
+      "name": "National Stock Exchange of India",
+      "timezone": "Asia/Calcutta",
+      "country": "IN",
+      "currency": "INR",
+      "default_segments": [
+        {
+          "open": "09:15",
+          "close": "15:30"
+        }
+      ],
+      "active": true
+    },
+    {
+      "mic": "XPHS",
+      "name": "The Philippine Stock Exchange, Inc.",
+      "timezone": "Asia/Manila",
+      "country": "PH",
+      "currency": "PHP",
+      "default_segments": [
+        {
+          "open": "09:30",
+          "close": "12:00"
+        },
+        {
+          "open": "13:00",
+          "close": "15:00"
+        }
+      ],
+      "active": true
+    },
+    {
+      "mic": "XSHG",
+      "name": "Shanghai Stock Exchange",
+      "timezone": "Asia/Shanghai",
+      "country": "CN",
+      "currency": "CNY",
+      "default_segments": [
+        {
+          "open": "09:30",
+          "close": "11:30"
+        },
+        {
+          "open": "13:00",
+          "close": "14:57"
+        }
+      ],
+      "active": true
+    },
+    {
+      "mic": "XSTC",
+      "name": "Ho Chi Minh Stock Exchange",
+      "timezone": "Asia/Saigon",
+      "country": "VN",
+      "currency": "VND",
+      "default_segments": [
+        {
+          "open": "09:00",
+          "close": "11:30"
+        },
+        {
+          "open": "13:00",
+          "close": "15:00"
+        }
+      ],
+      "active": true
+    },
+    {
+      "mic": "XTAI",
+      "name": "Taiwan Stock Exchange",
+      "timezone": "Asia/Taipei",
+      "country": "TW",
+      "currency": "TWD",
+      "default_segments": [
+        {
+          "open": "09:00",
+          "close": "13:30"
+        }
+      ],
+      "active": true
+    }
+  ]
+}

@@ -1,0 +1,254 @@
+{
+  "activities": [
+    {
+      "type": "ORDER",
+      "exchange": "AGARA",
+      "id": "order:01a0ca2a-645d-71f0-8d79-646219caf970",
+      "order_id": "01a0ca2a-645d-71f0-8d79-646219caf970",
+      "status": "MATCHED",
+      "fill_status": "FULL",
+      "condition_id": "0x2dcfeea0061ce44d559bda09c89733bc7d1ba82d93572543132781737038abd3",
+      "token_id": "3080354623804693924140594680509310463211971617800178260199236136438405504979",
+      "side": "SELL",
+      "filled_shares_micro": "1000000",
+      "average_fill_price_micro": "600000",
+      "filled_amount_micro": "600000",
+      "fees_micro": "0",
+      "created_at": "2026-09-22T17:29:39.444265Z"
+    },
+    {
+      "type": "ORDER",
+      "exchange": "AGARA",
+      "id": "order:01a0ca29-e5e3-7a11-9443-4bbc510302f9",
+      "order_id": "01a0ca29-e5e3-7a11-9443-4bbc510302f9",
+      "status": "MATCHED",
+      "fill_status": "FULL",
+      "condition_id": "0x2dcfeea0061ce44d559bda09c89733bc7d1ba82d93572543132781737038abd3",
+      "token_id": "3080354623804693924140594680509310463211971617800178260199236136438405504979",
+      "side": "SELL",
+      "filled_shares_micro": "1000000",
+      "average_fill_price_micro": "500000",
+      "filled_amount_micro": "500000",
+      "fees_micro": "0",
+      "created_at": "2026-09-22T17:28:59.048200Z"
+    },
+    {
+      "type": "ORDER",
+      "exchange": "AGARA",
+      "id": "order:01a0ca29-a1af-7680-919b-c7af0a97f284",
+      "order_id": "01a0ca29-a1af-7680-919b-c7af0a97f284",
+      "status": "MATCHED",
+      "fill_status": "FULL",
+      "condition_id": "0x2dcfeea0061ce44d559bda09c89733bc7d1ba82d93572543132781737038abd3",
+      "token_id": "3080354623804693924140594680509310463211971617800178260199236136438405504979",
+      "side": "SELL",
+      "filled_shares_micro": "1000000",
+      "average_fill_price_micro": "550000",
+      "filled_amount_micro": "550000",
+      "fees_micro": "0",
+      "created_at": "2026-09-22T17:28:41.754450Z"
+    },
+    {
+      "type": "WITHDRAWAL",
+      "exchange": "AGARA",
+      "id": "withdrawal:b492590d-e85d-4026-a6ac-c81f284d6562",
+      "amount_micro": "1000000",
+      "chain_id": 84532,
+      "token_address": "0xc999400c662f360ac0d2953f0d78f5e121f71f67",
+      "counterparty_address": "0x94bb4ec20ff52c19d2908cc0768226cbde95e168",
+      "tx_hash": "0x5faef79fd8a0756eab639daefee8ef718fcf44864a5e45ec7e1f045553d5587a",
+      "created_at": "2026-09-22T16:19:13.214618Z"
+    },
+    {
+      "type": "SPLIT",
+      "exchange": "AGARA",
+      "id": "split:0x1e960cb1946ba1f274d6d802cf87564e02925d7b0b4e45409e4a1f7f500bea12:0000000000",
+      "condition_id": "0x2dcfeea0061ce44d559bda09c89733bc7d1ba82d93572543132781737038abd3",
+      "shares_micro": "1000000",
+      "amount_micro": "1000000",
+      "tx_hash": "0x393b4af065314a854e13116e8e3d1e54dcdaa99fc2e111c7539576b0afb47287",
+      "created_at": "2026-09-22T16:19:00.623262Z"
+    },
+    {
+      "type": "ORDER",
+      "exchange": "AGARA",
+      "id": "order:01a0c9e8-d8b1-7a43-b7b6-09a615fda34e",
+      "order_id": "01a0c9e8-d8b1-7a43-b7b6-09a615fda34e",
+      "status": "MATCHED",
+      "fill_status": "FULL",
+      "condition_id": "0x2dcfeea0061ce44d559bda09c89733bc7d1ba82d93572543132781737038abd3",
+      "token_id": "3080354623804693924140594680509310463211971617800178260199236136438405504979",
+      "side": "BUY",
+      "filled_shares_micro": "1000000",
+      "average_fill_price_micro": "600000",
+      "filled_amount_micro": "600000",
+      "fees_micro": "0",
+      "created_at": "2026-09-22T16:18:04.073409Z"
+    },
+    {
+      "type": "ORDER",
+      "exchange": "AGARA",
+      "id": "order:01a0c9b6-ac87-73f2-ab4f-91b0752fcbcc",
+      "order_id": "01a0c9b6-ac87-73f2-ab4f-91b0752fcbcc",
+      "status": "MATCHED",
+      "fill_status": "FULL",
+      "condition_id": "0xeb2632ff089655330cdca873f292ee5baed720ffba591e7dcb73a2ef35cdb946",
+      "token_id": "104640906757864346691844812154405452972337921714258432458463934631395739043847",
+      "side": "BUY",
+      "filled_shares_micro": "1000000",
+      "average_fill_price_micro": "600000",
+      "filled_amount_micro": "600000",
+      "fees_micro": "0",
+      "created_at": "2026-09-22T15:23:12.091661Z"
+    },
+    {
+      "type": "MERGE",
+      "exchange": "AGARA",
+      "id": "merge:0xb04e8291defecf27f68fd25a8c4e585a968a9d54a9f411777aafe0f4b8ff0ebe:0000000000",
+      "condition_id": "0x2dcfeea0061ce44d559bda09c89733bc7d1ba82d93572543132781737038abd3",
+      "shares_micro": "1000000",
+      "amount_micro": "1000000",
+      "tx_hash": "0x51db331bcc598864b763d824e063e6e333b3bcdecc358e73c25bd06ded775401",
+      "created_at": "2026-09-22T15:05:48.345057Z"
+    },
+    {
+      "type": "SPLIT",
+      "exchange": "AGARA",
+      "id": "split:0x8429e085ba755a9d371c343c1c1d0a8614fae98cf2213330048e237d7f221730:0000000000",
+      "condition_id": "0x2dcfeea0061ce44d559bda09c89733bc7d1ba82d93572543132781737038abd3",
+      "shares_micro": "1000000",
+      "amount_micro": "1000000",
+      "tx_hash": "0xb7a1896160aa9c05c353521bbc60665de2a8d34bbe4ba536cfcff8ad735180dc",
+      "created_at": "2026-09-22T15:05:37.335284Z"
+    },
+    {
+      "type": "ORDER",
+      "exchange": "AGARA",
+      "id": "order:01a0c96d-9e45-7562-a2a1-23ec1af9c185",
+      "order_id": "01a0c96d-9e45-7562-a2a1-23ec1af9c185",
+      "status": "MATCHED",
+      "fill_status": "FULL",
+      "condition_id": "0x2dcfeea0061ce44d559bda09c89733bc7d1ba82d93572543132781737038abd3",
+      "token_id": "3080354623804693924140594680509310463211971617800178260199236136438405504979",
+      "side": "BUY",
+      "filled_shares_micro": "1000000",
+      "average_fill_price_micro": "600000",
+      "filled_amount_micro": "600000",
+      "fees_micro": "0",
+      "created_at": "2026-09-22T14:03:24.399335Z"
+    }
+  ],
+  "markets": {
+    "104640906757864346691844812154405452972337921714258432458463934631395739043847": {
+      "market_id": "1244542c-8264-4f1c-8310-be524b36ef7d",
+      "market_title": "Bitcoin Price Up or Down (15 Minutes) - Sep 22, 11:15AM-11:30AM ET",
+      "outcome_name": "Up",
+      "logo_url": null,
+      "event_slug": "bitcoin-price-up-or-down-15-minutes-event",
+      "state": "RESOLVED",
+      "neg_risk_id": null,
+      "display": {
+        "market": {
+          "currency": "USD",
+          "description": "This market will resolve to \"Up\" if the closing price for Bitcoin / US Dollar at 11:30AM ET on Sep 22, 2026 is equal to or higher than its opening price at 11:15AM ET on Sep 22, 2026. A lower closing price resolves the market to \"Down\". Equal opening and closing prices resolve to \"Up\".\nOpening and closing prices are sourced exclusively from Pyth Pro using the timestamped Crypto.BTC/USD point-price feed. The timestamp provided by the source must be at or before the opening or closing instant, never later, and no more than 3 seconds old at that instant.\nPrices are compared at their original source precision, before any display rounding.\nIf no valid opening price is available, the market will not become Active. If no valid closing price is available, resolution may be delayed for manual review at the discretion of the Agara team.\nFinal settlement may occur after the closing instant, once any applicable review or dispute process has completed.",
+          "observe_at": "2026-09-22T15:30:00.000Z",
+          "pyth_pro_symbol": "Crypto.BTC/USD",
+          "reference_at": "2026-09-22T15:15:00.000Z",
+          "reference_price": "86301.02855499",
+          "resolution_source": "https://app.pyth.com/explore/Crypto.BTC%2FUSD",
+          "series_slug": "bitcoin-price-up-or-down-15-minutes"
+        },
+        "outcome": {
+          "kind": "yes",
+          "label": "Up",
+          "resolution_label": "BTC Up",
+          "side": "left"
+        }
+      }
+    },
+    "3080354623804693924140594680509310463211971617800178260199236136438405504979": {
+      "market_id": "b9721a97-dc02-4703-a074-680b59c5b348",
+      "market_title": "China Annual Inflation 2026 - >= 1.6%",
+      "outcome_name": "Yes",
+      "logo_url": null,
+      "event_slug": "china-annual-inflation-2026",
+      "state": "ACTIVE",
+      "neg_risk_id": null,
+      "display": {
+        "market": {
+          "description": "This is a market about the variation of consumer prices in China over the 12-month period ending December 2026, as reported by the National Bureau of Statistics (NBS) of China.\n\nThis market will resolve according to the percentage change in the Consumer Price Index (CPI) during the 12-month period ending December 2026 according to the monthly NBS report.\n\nThe resolution source for this market will be the NBS Consumer Price Index monthly report released for December 2026 (https://www.stats.gov.cn/english/PressRelease/), currently expected to be released in January 2027. Resolution of this market will take place upon release of the aforementioned data. If no data for the specified month is released by the date the next month's data is scheduled to be released, this market will resolve based on data from the last available month.\n\nYou can find the relevant figure by locating the report for December 2026 on the Press Releases page (see: https://www.stats.gov.cn/english/PressRelease/), locating the table named \"Consumer Price Indexes in December 2026\", and finding the consumer price index figure in the column labeled \"Growth Rate Y/Y (%)\".\n\nNote: the resolution source for this market will be the official monthly NBS CPI news release which reports inflation during 12-month periods to only one decimal point (e.g. 1.9%). Thus, this is the level of precision that will be used when resolving the market. For the full release schedule, see: https://www.stats.gov.cn/english/PressRelease/ReleaseCalendar/",
+          "portfolio_title": "China Annual Inflation 2026 - >= 1.6%",
+          "resolution_source": "https://www.stats.gov.cn/english/PressRelease/"
+        },
+        "outcome": {
+          "kind": "yes",
+          "label": "Yes",
+          "short_label": "Yes",
+          "side": "left"
+        }
+      }
+    }
+  },
+  "conditions": {
+    "0x2dcfeea0061ce44d559bda09c89733bc7d1ba82d93572543132781737038abd3": {
+      "market_id": "b9721a97-dc02-4703-a074-680b59c5b348",
+      "market_title": "China Annual Inflation 2026 - >= 1.6%",
+      "logo_url": null,
+      "event_slug": "china-annual-inflation-2026",
+      "display": {
+        "market": {
+          "description": "This is a market about the variation of consumer prices in China over the 12-month period ending December 2026, as reported by the National Bureau of Statistics (NBS) of China.\n\nThis market will resolve according to the percentage change in the Consumer Price Index (CPI) during the 12-month period ending December 2026 according to the monthly NBS report.\n\nThe resolution source for this market will be the NBS Consumer Price Index monthly report released for December 2026 (https://www.stats.gov.cn/english/PressRelease/), currently expected to be released in January 2027. Resolution of this market will take place upon release of the aforementioned data. If no data for the specified month is released by the date the next month's data is scheduled to be released, this market will resolve based on data from the last available month.\n\nYou can find the relevant figure by locating the report for December 2026 on the Press Releases page (see: https://www.stats.gov.cn/english/PressRelease/), locating the table named \"Consumer Price Indexes in December 2026\", and finding the consumer price index figure in the column labeled \"Growth Rate Y/Y (%)\".\n\nNote: the resolution source for this market will be the official monthly NBS CPI news release which reports inflation during 12-month periods to only one decimal point (e.g. 1.9%). Thus, this is the level of precision that will be used when resolving the market. For the full release schedule, see: https://www.stats.gov.cn/english/PressRelease/ReleaseCalendar/",
+          "portfolio_title": "China Annual Inflation 2026 - >= 1.6%",
+          "resolution_source": "https://www.stats.gov.cn/english/PressRelease/"
+        }
+      }
+    },
+    "0xeb2632ff089655330cdca873f292ee5baed720ffba591e7dcb73a2ef35cdb946": {
+      "market_id": "1244542c-8264-4f1c-8310-be524b36ef7d",
+      "market_title": "Bitcoin Price Up or Down (15 Minutes) - Sep 22, 11:15AM-11:30AM ET",
+      "logo_url": null,
+      "event_slug": "bitcoin-price-up-or-down-15-minutes-event",
+      "display": {
+        "market": {
+          "currency": "USD",
+          "description": "This market will resolve to \"Up\" if the closing price for Bitcoin / US Dollar at 11:30AM ET on Sep 22, 2026 is equal to or higher than its opening price at 11:15AM ET on Sep 22, 2026. A lower closing price resolves the market to \"Down\". Equal opening and closing prices resolve to \"Up\".\nOpening and closing prices are sourced exclusively from Pyth Pro using the timestamped Crypto.BTC/USD point-price feed. The timestamp provided by the source must be at or before the opening or closing instant, never later, and no more than 3 seconds old at that instant.\nPrices are compared at their original source precision, before any display rounding.\nIf no valid opening price is available, the market will not become Active. If no valid closing price is available, resolution may be delayed for manual review at the discretion of the Agara team.\nFinal settlement may occur after the closing instant, once any applicable review or dispute process has completed.",
+          "observe_at": "2026-09-22T15:30:00.000Z",
+          "pyth_pro_symbol": "Crypto.BTC/USD",
+          "reference_at": "2026-09-22T15:15:00.000Z",
+          "reference_price": "86301.02855499",
+          "resolution_source": "https://app.pyth.com/explore/Crypto.BTC%2FUSD",
+          "series_slug": "bitcoin-price-up-or-down-15-minutes"
+        }
+      }
+    }
+  },
+  "events": {
+    "bitcoin-price-up-or-down-15-minutes-event": {
+      "event_title": "Bitcoin Price Up or Down (15 Minutes) Series",
+      "display": {
+        "event": {}
+      }
+    },
+    "china-annual-inflation-2026": {
+      "event_title": "China Annual Inflation 2026",
+      "display": {
+        "event": {
+          "game_unit_label": null,
+          "has_legacy_prop_markets": false,
+          "has_prop_markets": false,
+          "has_three_way_markets": false,
+          "layout": "multi_outcome",
+          "liquidity": 0,
+          "market_categories": [],
+          "spreads_main_market_id": null,
+          "totals_main_market_id": null
+        }
+      }
+    }
+  },
+  "pagination": {
+    "next_cursor": "eyJ2IjozLCJyIjoicG9ydGZvbGlvL2FjdGl2aXRpZXMiLCJmIjoiY2JmMjljZTQ4NDIyMjMyNSIsInQiOjE3OTAwODU4MDQzOTkzMzUsImkiOiIwYjJlN2YwNy05ZjQ3LTRkMzEtYTEyMC1jMDVkYzI3MzhjYTAifQ",
+    "limit": 10
+  },
+  "as_of": "2026-09-22T19:17:27.696273Z"
+}

@@ -1,0 +1,106 @@
+{
+  "positions": [
+    {
+      "accounting_status": "PENDING",
+      "open_cost_basis_micro": null,
+      "exchange": "AGARA",
+      "condition_id": "0x2dcfeea0061ce44d559bda09c89733bc7d1ba82d93572543132781737038abd3",
+      "token_id": "53001811052467883992819895815006000371851434699384551262153764437950873430832",
+      "shares_micro": "1000000",
+      "available_shares_micro": "1000000",
+      "avg_price_micro": null,
+      "current_price_micro": "870000",
+      "current_value_micro": "870000",
+      "to_win_micro": "1000000",
+      "profit_loss_micro": null,
+      "profit_loss_percent": null,
+      "redeemable": false,
+      "mergeable": true,
+      "mergeable_shares_micro": "1000000"
+    },
+    {
+      "accounting_status": "UNAVAILABLE",
+      "open_cost_basis_micro": null,
+      "exchange": "AGARA",
+      "condition_id": "0x2dcfeea0061ce44d559bda09c89733bc7d1ba82d93572543132781737038abd3",
+      "token_id": "3080354623804693924140594680509310463211971617800178260199236136438405504979",
+      "shares_micro": "3000000",
+      "available_shares_micro": "3000000",
+      "avg_price_micro": null,
+      "current_price_micro": "130000",
+      "current_value_micro": "390000",
+      "to_win_micro": "3000000",
+      "profit_loss_micro": null,
+      "profit_loss_percent": null,
+      "redeemable": false,
+      "mergeable": true,
+      "mergeable_shares_micro": "1000000"
+    }
+  ],
+  "markets": {
+    "3080354623804693924140594680509310463211971617800178260199236136438405504979": {
+      "market_id": "b9721a97-dc02-4703-a074-680b59c5b348",
+      "market_title": "China Annual Inflation 2026 - >= 1.6%",
+      "outcome_name": "Yes",
+      "logo_url": null,
+      "event_slug": "china-annual-inflation-2026",
+      "state": "ACTIVE",
+      "neg_risk_id": null,
+      "display": {
+        "market": {
+          "description": "This is a market about the variation of consumer prices in China over the 12-month period ending December 2026, as reported by the National Bureau of Statistics (NBS) of China.\n\nThis market will resolve according to the percentage change in the Consumer Price Index (CPI) during the 12-month period ending December 2026 according to the monthly NBS report.\n\nThe resolution source for this market will be the NBS Consumer Price Index monthly report released for December 2026 (https://www.stats.gov.cn/english/PressRelease/), currently expected to be released in January 2027. Resolution of this market will take place upon release of the aforementioned data. If no data for the specified month is released by the date the next month's data is scheduled to be released, this market will resolve based on data from the last available month.\n\nYou can find the relevant figure by locating the report for December 2026 on the Press Releases page (see: https://www.stats.gov.cn/english/PressRelease/), locating the table named \"Consumer Price Indexes in December 2026\", and finding the consumer price index figure in the column labeled \"Growth Rate Y/Y (%)\".\n\nNote: the resolution source for this market will be the official monthly NBS CPI news release which reports inflation during 12-month periods to only one decimal point (e.g. 1.9%). Thus, this is the level of precision that will be used when resolving the market. For the full release schedule, see: https://www.stats.gov.cn/english/PressRelease/ReleaseCalendar/",
+          "portfolio_title": "China Annual Inflation 2026 - >= 1.6%",
+          "resolution_source": "https://www.stats.gov.cn/english/PressRelease/"
+        },
+        "outcome": {
+          "kind": "yes",
+          "label": "Yes",
+          "short_label": "Yes",
+          "side": "left"
+        }
+      }
+    },
+    "53001811052467883992819895815006000371851434699384551262153764437950873430832": {
+      "market_id": "b9721a97-dc02-4703-a074-680b59c5b348",
+      "market_title": "China Annual Inflation 2026 - >= 1.6%",
+      "outcome_name": "No",
+      "logo_url": null,
+      "event_slug": "china-annual-inflation-2026",
+      "state": "ACTIVE",
+      "neg_risk_id": null,
+      "display": {
+        "market": {
+          "description": "This is a market about the variation of consumer prices in China over the 12-month period ending December 2026, as reported by the National Bureau of Statistics (NBS) of China.\n\nThis market will resolve according to the percentage change in the Consumer Price Index (CPI) during the 12-month period ending December 2026 according to the monthly NBS report.\n\nThe resolution source for this market will be the NBS Consumer Price Index monthly report released for December 2026 (https://www.stats.gov.cn/english/PressRelease/), currently expected to be released in January 2027. Resolution of this market will take place upon release of the aforementioned data. If no data for the specified month is released by the date the next month's data is scheduled to be released, this market will resolve based on data from the last available month.\n\nYou can find the relevant figure by locating the report for December 2026 on the Press Releases page (see: https://www.stats.gov.cn/english/PressRelease/), locating the table named \"Consumer Price Indexes in December 2026\", and finding the consumer price index figure in the column labeled \"Growth Rate Y/Y (%)\".\n\nNote: the resolution source for this market will be the official monthly NBS CPI news release which reports inflation during 12-month periods to only one decimal point (e.g. 1.9%). Thus, this is the level of precision that will be used when resolving the market. For the full release schedule, see: https://www.stats.gov.cn/english/PressRelease/ReleaseCalendar/",
+          "portfolio_title": "China Annual Inflation 2026 - >= 1.6%",
+          "resolution_source": "https://www.stats.gov.cn/english/PressRelease/"
+        },
+        "outcome": {
+          "kind": "no",
+          "label": "No",
+          "short_label": "No",
+          "side": "right"
+        }
+      }
+    }
+  },
+  "events": {
+    "china-annual-inflation-2026": {
+      "event_title": "China Annual Inflation 2026",
+      "display": {
+        "event": {
+          "game_unit_label": null,
+          "has_legacy_prop_markets": false,
+          "has_prop_markets": false,
+          "has_three_way_markets": false,
+          "layout": "multi_outcome",
+          "liquidity": 0,
+          "market_categories": [],
+          "spreads_main_market_id": null,
+          "totals_main_market_id": null
+        }
+      }
+    }
+  },
+  "unavailable_exchanges": [],
+  "as_of": "2026-09-22T19:17:25.608789587Z"
+}
